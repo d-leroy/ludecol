@@ -1,0 +1,22 @@
+{
+    "ludecolApp": {
+        "feature" : {
+            "home": {
+                "title": "Features",
+                "createLabel": "Créer un nouveau Feature",
+                "createOrEditLabel": "Créer ou éditer un Feature"
+            },
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Feature {{ id }} ?"
+            },
+            "detail": {
+                "title": "Feature"
+            },
+            "wkt": "Wkt",
+            "reference": "Reference",
+            "image": "image",
+            "user": "user"
+        }
+    }
+}
+

@@ -1,0 +1,186 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>ludecol</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        <!-- build:css assets/styles/vendor.css -->
+        <!-- bower:css -->
+        <!-- endbower -->
+        <!-- endbuild -->
+        <!-- build:css assets/styles/main.css -->
+        <link rel="stylesheet" href="assets/styles/main.css">
+        <link type="text/css" rel="stylesheet" href="bower_components/annotorious/css/annotorious.css" />
+        <!-- endbuild -->
+    </head>
+    <body ng-app="ludecolApp">
+        <!--[if lt IE 10]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <!--<div ng-show="{{ENV === 'dev'}}" class="development" ng-cloak=""></div>-->
+        <div ui-view="navbar" ng-cloak=""></div>
+        <div>
+            <div class="container" ui-view="content" style="width: 100%;"></div>
+        </div>
+
+        <!-- Google Analytics: uncomment and change UA-XXXXX-X to be your site's ID.
+        <script>
+            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+            e.src='//www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+            ga('create','UA-XXXXX-X');ga('send','pageview');
+        </script>-->
+
+        <!-- build:js scripts/vendor.js -->
+        <!-- bower:js -->
+        <script src="bower_components/modernizr/modernizr.js"></script>
+        <script src="bower_components/jquery/dist/jquery.js"></script>
+        <script src="bower_components/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
+        <script src="bower_components/json3/lib/json3.js"></script>
+        <script src="bower_components/angular/angular.js"></script>
+        <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+        <script src="bower_components/angular-resource/angular-resource.js"></script>
+        <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+        <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+        <script src="bower_components/angular-translate/angular-translate.js"></script>
+        <script src="bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
+        <script src="bower_components/angular-translate-loader-partial/angular-translate-loader-partial.js"></script>
+        <script src="bower_components/angular-dynamic-locale/src/tmhDynamicLocale.js"></script>
+        <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
+        <script src="bower_components/angular-cache-buster/angular-cache-buster.js"></script>
+        <script src="bower_components/ngInfiniteScroll/build/ng-infinite-scroll.js"></script>
+        <!-- endbower -->
+        <!-- endbuild -->
+
+        <script src="http://ol3js.org/en/master/build/ol.js"></script>
+        <link rel="stylesheet" href="http://ol3js.org/en/master/css/ol.css" />
+        <script src="http://www.parsecdn.com/js/parse-1.2.8.min.js"></script>
+
+        <!-- build:js({.tmp,src/main/webapp}) scripts/app.js -->
+        <script src="scripts/app/app.js"></script>
+        <script src="scripts/app/app.constants.js"></script>
+        <script src="scripts/components/auth/auth.service.js"></script>
+        <script src="scripts/components/auth/principal.service.js"></script>
+        <script src="scripts/components/auth/services/account.service.js"></script>
+        <script src="scripts/components/auth/services/activate.service.js"></script>
+        <script src="scripts/components/auth/services/password.service.js"></script>
+        <script src="scripts/components/auth/services/register.service.js"></script>
+        <script src="scripts/components/form/form.directive.js"></script>
+        <script src="scripts/components/language/language.service.js"></script>
+        <script src="scripts/components/language/language.controller.js"></script>
+        <script src="scripts/components/admin/audits.service.js"></script>
+        <script src="scripts/components/admin/logs.service.js"></script>
+        <script src="scripts/components/admin/configuration.service.js"></script>
+        <script src="scripts/components/admin/monitoring.service.js"></script>
+        <script src="scripts/components/navbar/navbar.directive.js"></script>
+        <script src="scripts/components/navbar/navbar.controller.js"></script>
+        <script src="scripts/components/user/user.service.js"></script>
+        <script src="scripts/components/util/truncate.filter.js"></script>
+        <script src="scripts/components/util/base64.service.js"></script>
+        <script src="scripts/components/util/parse-links.service.js"></script>
+        <script src="scripts/components/util/pretty-printing.service.js"></script>
+        <script src="scripts/components/util/notification.service.js"></script>
+        <script src="scripts/components/util/objective.service.js"></script>
+        <script src="scripts/components/util/file-upload.service.js"></script>
+        <script src="scripts/components/game/map.service.js"></script>
+        <script src="scripts/components/game/game.service.js"></script>
+        <script src="scripts/components/game/plant.service.js"></script>
+        <script src="scripts/components/game/animal.service.js"></script>
+        <script src="scripts/components/game/expert-animal.service.js"></script>
+        <script src="scripts/components/game/allstars.service.js"></script>
+        <script src="scripts/app/account/account.js"></script>
+        <script src="scripts/app/account/activate/activate.js"></script>
+        <script src="scripts/app/account/activate/activate.controller.js"></script>
+        <script src="scripts/app/account/login/login.js"></script>
+        <script src="scripts/app/account/login/login.controller.js"></script>
+        <script src="scripts/app/account/logout/logout.js"></script>
+        <script src="scripts/app/account/logout/logout.controller.js"></script>
+        <script src="scripts/app/account/password/password.js"></script>
+        <script src="scripts/app/account/password/password.controller.js"></script>
+        <script src="scripts/app/account/password/password.directive.js"></script>
+        <script src="scripts/app/account/profile/profile.js"></script>
+        <script src="scripts/app/account/profile/profile.controller.js"></script>
+        <script src="scripts/app/account/register/register.js"></script>
+        <script src="scripts/app/account/register/register.controller.js"></script>
+        <script src="scripts/app/account/settings/settings.js"></script>
+        <script src="scripts/app/account/settings/settings.controller.js"></script>
+        <script src="scripts/app/game-history/game-history.js"></script>
+        <script src="scripts/app/game-history/game-history.controller.js"></script>
+        <script src="scripts/app/statistics/statistics.js"></script>
+        <script src="scripts/app/statistics/statistics.controller.js"></script>
+        <script src="scripts/app/games/games.js"></script>
+        <script src="scripts/app/games/games.controller.js"></script>
+        <script src="scripts/app/admin/admin.js"></script>
+        <script src="scripts/app/admin/audits/audits.js"></script>
+        <script src="scripts/app/admin/audits/audits.controller.js"></script>
+        <script src="scripts/app/admin/configuration/configuration.js"></script>
+        <script src="scripts/app/admin/configuration/configuration.controller.js"></script>
+        <script src="scripts/app/admin/docs/docs.js"></script>
+        <script src="scripts/app/admin/health/health.js"></script>
+        <script src="scripts/app/admin/health/health.controller.js"></script>
+        <script src="scripts/app/admin/logs/logs.js"></script>
+        <script src="scripts/app/admin/logs/logs.controller.js"></script>
+        <script src="scripts/app/admin/metrics/metrics.js"></script>
+        <script src="scripts/app/admin/metrics/metrics.controller.js"></script>
+        <script src="scripts/app/admin/feedback/feedback.js"></script>
+        <script src="scripts/app/admin/feedback/feedback.controller.js"></script>
+        <script src="scripts/app/admin/image-manager/image-manager.js"></script>
+        <script src="scripts/app/admin/image-manager/image-manager.controller.js"></script>
+        <script src="scripts/app/admin/image-manager/image-manager-detail.controller.js"></script>
+        <script src="scripts/app/entities/entity.js"></script>
+        <script src="scripts/app/error/error.js"></script>
+        <script src="scripts/app/feedback/feedback.js"></script>
+        <script src="scripts/app/feedback/feedback.controller.js"></script>
+        <!--<script src="scripts/app/main/ditches/main.js"></script>-->
+        <!--<script src="scripts/app/main/ditches/main.controller.js"></script>-->
+        <script src="scripts/app/main/marsh/main.js"></script>
+        <script src="scripts/app/main/marsh/main.controller.js"></script>
+        <script src="scripts/app/play/play.js"></script>
+        <script src="scripts/app/play/play.controller.js"></script>
+        <script src="scripts/app/play/all-stars/all-stars.js"></script>
+        <script src="scripts/app/play/all-stars/all-stars.controller.js"></script>
+        <script src="scripts/app/play/animal-identification/animal-identification.js"></script>
+        <script src="scripts/app/play/animal-identification/animal-identification.controller.js"></script>
+        <script src="scripts/app/play/plant-identification/plant-identification.js"></script>
+        <script src="scripts/app/play/plant-identification/plant-identification.controller.js"></script>
+        <script src="scripts/app/expert/all-stars/all-stars.js"></script>
+        <script src="scripts/app/expert/all-stars/all-stars.controller.js"></script>
+        <script src="scripts/app/expert/animal-identification/animal-identification.js"></script>
+        <script src="scripts/app/expert/animal-identification/animal-identification.controller.js"></script>
+        <script src="scripts/app/expert/plant-identification/plant-identification.js"></script>
+        <script src="scripts/app/expert/plant-identification/plant-identification.controller.js"></script>
+        <script src="scripts/app/modal/submit-modal.controller.js"></script>
+        <script src="scripts/app/modal/modal.service.js"></script>
+        <script src="scripts/app/modal/training-submit-modal.controller.js"></script>
+        <script src="scripts/app/modal/tutorial-modal.controller.js"></script>
+        <script src="scripts/app/tutorial/tutorial.js"></script>
+        <script src="scripts/app/tutorial/tutorial.controller.js"></script>
+        <script src="scripts/app/training/animal-identification/animal-identification.js"></script>
+        <script src="scripts/app/training/animal-identification/animal-identification.controller.js"></script>
+        <script src="scripts/app/training/plants/training-plants.js"></script>
+        <script src="scripts/app/training/plants/training-plants.controller.js"></script>
+        <script src="scripts/components/auth/services/sessions.service.js"></script>
+        <script src="scripts/components/auth/provider/auth.session.service.js"></script>
+        <script src="scripts/app/account/sessions/sessions.js"></script>
+        <script src="scripts/app/account/sessions/sessions.controller.js"></script>
+        <script src="scripts/app/entities/image/image.js"></script>
+        <script src="scripts/app/entities/image/image.controller.js"></script>
+        <script src="scripts/app/entities/image/image-detail.controller.js"></script>
+        <script src="scripts/components/entities/image/image.service.js"></script>
+        <script src="scripts/components/entities/image-set/image-set.service.js"></script>
+        <script src="scripts/components/entities/notification/notification.service.js"></script>
+        <script src="scripts/components/entities/objective/objective.service.js"></script>
+        <script src="scripts/components/entities/game/game.service.js"></script>
+        <script src="scripts/ui-bootstrap-0.12.1.js"></script>
+        <script src="scripts/ui-bootstrap-tpls-0.12.1.js"></script>
+        <!-- endbuild -->
+</body>
+</html>

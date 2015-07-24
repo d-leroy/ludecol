@@ -1,0 +1,23 @@
+{
+    "ludecolApp": {
+        "image" : {
+            "home": {
+                "title": "Images",
+                "createLabel": "Create a new Image",
+                "createOrEditLabel": "Create or edit a Image"
+            },
+            "delete": {
+                "question": "Are you sure you want to delete Image {{ id }}?"
+            },
+            "detail": {
+                "title": "Image"
+            },
+            "name": "Name",
+            "path": "Path",
+            "width": "Width",
+            "height": "Height",
+            "training": "Training",
+            "features": "features"
+        }
+    }
+}

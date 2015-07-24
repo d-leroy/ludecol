@@ -1,0 +1,193 @@
+<div ng-cloak>
+
+    <img src="images/ludecol-banner.jpg" style="width:100%; margin-bottom: 20px;">
+
+    <div ng-switch="isAuthenticated()">
+        <div class="row">
+            <div class="well col-md-offset-3 col-md-6">
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addImagesModal" ng-click="clear()">
+                    <span class="glyphicon glyphicon-plus"></span> <span>Add images</span></button>
+                <pagination boundary-links="true" total-items="totalItems" items-per-page="itemsPerPage"
+                            ng-change="loadPage()" ng-model="currentPage" class="pagination" previous-text="&lsaquo;"
+                            next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+                <div style="text-align: justify;">
+                    <div ng-repeat="image in images" style="display: inline-block; margin: 50px; position: relative;">
+                        <a data-toggle="modal" data-target="#editImageModal" ng-click="setCurrentImage($index)">
+                            <img ng-src="/images/{{image.image_set}}/thumbnail/thumbnail.{{image.name}}.JPG">
+                            <p>{{image.name}}</p>
+                        </a>
+                        <button type="button" class="close" style="float: none; position: absolute; top: -10px; right: -10px;" ng-click="delete($index)">
+                            <span class="glyphicon glyphicon-remove-sign"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addImagesModal" tabindex="-1" role="dialog" aria-labelledby="addImagesLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form name="addForm" role="form" novalidate ng-submit="add()" show-validation>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                                ng-click="clear()">&times;</button>
+                        <h4 class="modal-title" id="addImagesLabel">Add images to an image set</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Images to upload</label>
+                            <input type="file" name="input" multiple file-model="files" style="color: transparent;">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Rows</label>
+                            <input type="number" name="rows" required ng-model="rows">
+                            <div ng-show="addForm.rows.$invalid">
+                                <p class="help-block" ng-show="addForm.rows.$error.required">
+                                    This field is required.
+                                </p>
+                            </div>
+                            <label>Columns</label>
+                            <input type="number" name="cols" required ng-model="cols">
+                            <div ng-show="addForm.cols.$invalid">
+                                <p class="help-block" ng-show="addForm.cols.$error.required">
+                                    This field is required.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default" ng-click="clearUploaded()" ng-disabled="uploadedFiles.length === 0">
+                                Remove uploaded files
+                            </button>
+                            <div class="list-group" style="height: 300px; overflow: auto;">
+                                <a href="#" class="list-group-item list-group-item-success" ng-repeat="file in uploadedFiles">
+                                    {{file.name}}
+                                    <span class="glyphicon glyphicon-ok pull-right"></span>
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-warning" ng-show="currentFile !== null">
+                                    {{currentFile.name}}
+                                    <span class="glyphicon glyphicon-remove pull-right" ng-click="currentFile = null"></span>
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-info" ng-repeat="file in filesToUpload">
+                                    {{file.name}}
+                                    <span class="glyphicon glyphicon-remove pull-right" ng-click="filesToUpload.splice($index,1)"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
+                            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span>Close</span>
+                        </button>
+                        <button type="submit" ng-disabled="filesToUpload.length === 0" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-plus"></span>&nbsp;<span>Add</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editImageModal" tabindex="-1" role="dialog" aria-labelledby="editImageLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form name="editForm" role="form" novalidate ng-submit="submit()" show-validation>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                                ng-click="clear()">&times;</button>
+                        <h4 class="modal-title" id="editImageLabel">Edit image {{currentImage.name}}</h4>
+                    </div>
+                    <div class="modal-body" style="height: 600px; overflow: auto;">
+
+                        <div class="form-group">
+                            <label>Image preview</label>
+                            <button type="button" class="btn btn-default" ng-click="showPreview(true)" ng-show="!previewing">
+                                Show preview
+                            </button>
+                            <button type="button" class="btn btn-default" ng-click="showPreview(false)" ng-show="previewing">
+                                Hide preview
+                            </button>
+                            <div id="preview" ng-class="previewing ? 'well' : ''"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Game modes</label>
+                            <div class="row">
+                                <div class="col-md-5 col-md-offset-1">
+                                    <label>Available modes</label>
+                                </div>
+                                <div class="col-md-5">
+                                    <label>Unavailable modes</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="well col-md-5 col-md-offset-1">
+                                    <a class="btn btn-default" style="display: inline-block;"
+                                       ng-click="addToUnavailable($index)" ng-repeat="mode in availableModes">{{mode}}</a>
+                                </div>
+                                <div class="well col-md-5">
+                                    <a class="btn btn-default" style="display: inline-block;"
+                                       ng-click="addToAvailable($index)" ng-repeat="mode in unavailableModes">{{mode}}</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Flora species</label>
+                            <div class="row">
+                                <div class="col-md-5 col-md-offset-1">
+                                    <label>Present flora</label>
+                                </div>
+                                <div class="col-md-5">
+                                    <label>Absent flora</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="well col-md-5 col-md-offset-1" style="height: auto;">
+                                    <a class="btn btn-default" style="display: inline-block;"
+                                       ng-click="addToAbsentFlora($index)" ng-repeat="flora in presentFlora">{{flora}}</a>
+                                </div>
+                                <div class="well col-md-5" style="height: auto;">
+                                    <a class="btn btn-default" style="display: inline-block;"
+                                       ng-click="addToPresentFlora($index)" ng-repeat="flora in absentFlora">{{flora}}</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Fauna species</label>
+                            <div class="row">
+                                <div class="col-md-5 col-md-offset-1">
+                                    <label>Present fauna</label>
+                                </div>
+                                <div class="col-md-5">
+                                    <label>Absent fauna</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="well col-md-5 col-md-offset-1">
+                                    <a class="btn btn-default" style="display: inline-block;"
+                                       ng-click="addToAbsentFauna($index)" ng-repeat="fauna in presentFauna">{{fauna}}</a>
+                                </div>
+                                <div class="well col-md-5">
+                                    <a class="btn btn-default" style="display: inline-block;"
+                                       ng-click="addToPresentFauna($index)" ng-repeat="fauna in absentFauna">{{fauna}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
+                            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span>Close</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-plus"></span>&nbsp;<span>Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

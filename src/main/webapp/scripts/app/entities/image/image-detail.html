@@ -1,0 +1,53 @@
+
+<div>
+    <h2><span translate="ludecolApp.image.detail.title">Image</span> {{image.id}}</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th translate="entity.detail.field">Field</th>
+                    <th translate="entity.detail.value">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <span translate="ludecolApp.image.name">Name</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{image.name}}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span translate="ludecolApp.image.path">Path</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{image.path}}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span translate="ludecolApp.image.width">Width</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{image.width}}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span translate="ludecolApp.image.height">Height</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{image.height}}" readonly>
+                    </td>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit"
+            ui-sref="image"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span translate="entity.action.back"> Back</span>
+    </button>
+</div>

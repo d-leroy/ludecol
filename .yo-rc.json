@@ -1,0 +1,19 @@
+{
+  "generator-jhipster": {
+    "baseName": "ludecol",
+    "packageName": "com.irisa.ludecol",
+    "packageFolder": "com/irisa/ludecol",
+    "authenticationType": "session",
+    "hibernateCache": "no",
+    "clusteredHttpSession": "no",
+    "websocket": "no",
+    "databaseType": "mongodb",
+    "devDatabaseType": "mongodb",
+    "prodDatabaseType": "mongodb",
+    "useCompass": true,
+    "buildTool": "maven",
+    "frontendBuilder": "grunt",
+    "javaVersion": "8",
+    "rememberMeKey": "5434a8c2106be84a21d59d2b148682e09eeb3101"
+  }
+}

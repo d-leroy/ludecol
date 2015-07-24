@@ -1,0 +1,121 @@
+<div ng-cloak>
+
+    <img src="images/ludecol-banner.jpg" style="width:100%; margin-bottom: 20px;">
+
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <h1>Welcome to Ludecol!</h1>
+            <h2>Presentation</h2>
+            <p>
+                Marsh ecosystems are particularly sensitive to climate change.
+                Species distribution are indeed strongly dependent on the extent
+                of high tides and on their interactions with other species.
+                In coastal habitats, one manifestation of climate change is
+                accelerating sea level rise, this long-term slow rise being
+                hidden within much greater annual variation. In the Long Term
+                Ecological Research Site “Georgia Coastal Ecosystems”, long-term
+                observation are made in order to analyze the impact of climate
+                change on this ecosystem functioning. This game will help thanks
+                to you to collect useful data for studying this impact.
+            </p>
+            <p ng-hide="moreDetails">
+                <a ng-click="moreDetails = !moreDetails">(more details)</a>
+            </p>
+            <p ng-show="moreDetails">
+                More precisely, we set up an annual survey based on images taken
+                rigorously on the same site every year since 2010. Together with
+                the climatic and soil data collected on the site, this survey will
+                help to analyse the ecological processes linked with species
+                distribution and their interactions (for instance trophic interactions).
+                Thanks to the game, we will get a huge amount of ecological data of
+                interests in order to document species distribution and investigate
+                with an unprecedented accuracy the mechanisms underlying their spatial
+                patterns. In the figure below, you may show the design for image collection.
+            </p>
+            <figure ng-show="moreDetails">
+                <img src="images/details.jpg" width="100%">
+                <figcaption>
+                    Image database presentation on the salt marsh of LTER GCE site.
+                    A-study area; B-plant community of the salt marsh;
+                    C-image mosaic; D-image to analyse with the game
+                </figcaption>
+            </figure>
+            <p ng-show="moreDetails">
+                <a ng-click="moreDetails = !moreDetails">(less details)</a>
+            </p>
+        </div>
+    </div>
+
+    <div ng-switch="isAuthenticated()">
+
+        <div ng-switch-when="false">
+            <div class="alert alert-warning" translate="global.messages.info.register">
+                Don't have an account? <a href=\"#/register\">Register</a>
+            </div>
+        </div>
+
+        <div ng-switch-when="true">
+
+            <h2 class="text-center">New to the game?</h2>
+            <div style="width: 25%; margin: 0 auto;">
+                <a ui-sref="tutorial" class="btn btn-primary btn-lg" style="width: 100%;">Read the tutorial</a>
+            </div>
+
+            <h2 class="text-center">Choose a game mode</h2>
+
+            <div style="width: 50%; margin: 0 auto; min-width: 200px;">
+                <ul class="nav nav-pills">
+                    <li style="padding: 2px; width: 33%; height: auto;">
+                        <button class="btn btn-primary btn-lg" ng-click="isTrainingCollapsed = !isTrainingCollapsed" style="width: 100%;">Practice</button>
+                        <ul class="width" collapse="isTrainingCollapsed" style="list-style-type: none; padding: 0; margin: 0 auto; width: 75%">
+                            <li style="padding: 1px;">
+                                <a ui-sref="training-animal-identification" class="btn btn-success" style="width: 100%;">Animals</a>
+                            </li>
+                            <li style="padding: 1px;">
+                                <a ui-sref="training-plants" class="btn btn-success" style="width: 100%;">Plants</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li style="padding: 2px; width: 33%;">
+                        <button class="btn btn-primary btn-lg" ng-click="isPlayCollapsed = !isPlayCollapsed" style="width: 100%;">Play</button>
+                        <ul class="width" collapse="isPlayCollapsed" style="list-style-type: none; padding: 0; margin: 0 auto; width: 75%">
+                            <li style="padding: 1px;">
+                                <a ui-sref="all-stars" class="btn btn-success" style="width: 100%;">
+                                    All-stars
+                                </a>
+                            </li>
+                            <li style="padding: 1px;">
+                                <a ui-sref="animal-identification" class="btn btn-success" style="width: 100%;">
+                                    Animals
+                                </a>
+                            </li>
+                            <li style="padding: 1px;">
+                                <a ui-sref="plant-identification" class="btn btn-success" style="width: 100%;">
+                                    Plants
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li style="padding: 2px; width: 33%;">
+                        <button class="btn btn-primary btn-lg" ng-click="isExpertCollapsed = !isExpertCollapsed" style="width: 100%;">Expert</button>
+                        <ul class="width" collapse="isExpertCollapsed" style="list-style-type: none; padding: 0; margin: 0 auto; width: 75%">
+                            <li style="padding: 1px;">
+                                <a ui-sref="expert-all-stars" class="btn btn-success" style="width: 100%;">All-stars</a>
+                            </li>
+                            <li style="padding: 1px;">
+                                <a ui-sref="expert-animal-identification" class="btn btn-success" style="width: 100%;">Animals</a>
+                            </li>
+                            <li style="padding: 1px;">
+                                <a ui-sref="expert-plant-identification" class="btn btn-success" style="width: 100%;">Plants</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div style="width: 25%; margin: 0 auto; padding: 100px 0;">
+                <a ui-sref="feedback" class="btn btn-primary btn-lg" style="width: 100%;">Give us feedback!</a>
+            </div>
+        </div>
+    </div>
+</div>

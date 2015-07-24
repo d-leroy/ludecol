@@ -1,0 +1,22 @@
+{
+    "ludecolApp": {
+        "animal" : {
+            "home": {
+                "title": "Animals",
+                "createLabel": "Create a new Animal",
+                "createOrEditLabel": "Create or edit a Animal"
+            },
+            "delete": {
+                "question": "Are you sure you want to delete Animal {{ id }}?"
+            },
+            "detail": {
+                "title": "Animal"
+            },
+            "species": "Species",
+            "x_coord": "X_coord",
+            "y_coord": "Y_coord",
+            "image": "image",
+            "user": "user"
+        }
+    }
+}

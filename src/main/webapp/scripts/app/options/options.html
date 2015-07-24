@@ -1,0 +1,39 @@
+<div ng-cloak>
+    <h1 translate="main.title">Training</h1>
+    <div id="controls" class="ol-control control-panel">
+        <button type="button" ng-show="displayControls" ng-click="toggleControls()">&#x25B2;</button>
+        <button type="button" ng-hide="displayControls" ng-click="toggleControls()">&#x25BC;</button>
+
+        <div ng-show="displayControls">
+            <div>
+                Draw:
+                <select ng-model="drawType">
+                    <option value="Point">Point</option>
+                    <option value="LineString">Line</option>
+                </select>
+            </div>
+            <!--<div>-->
+                <!--Display:-->
+                <!--<input type="checkbox" value="poly" ng-model="displayPoly">Polygon-->
+                <!--<input type="checkbox" value="point" ng-model="displayPoint">Point-->
+                <!--<input type="checkbox" value="line" ng-model="displayPoint">Line-->
+            <!--</div>-->
+            <div style="height:2em;">
+                <button type="button" ng-disabled="first()" ng-click="previous()" style="float:left;">&#x25C0;</button>
+                <button type="button" ng-disabled="last()" ng-click="next()" style="float:right;">&#x25B6;</button>
+            </div>
+            <div>
+                Features:
+                <div class="feature-div"
+                     ng-repeat="feature in features"
+                     ng-mouseenter="highlightFeature($index, true)"
+                     ng-mouseleave="highlightFeature($index, false)">
+                        Feature-{{$index}}
+                    <button type="button" ng-click="removeFeature($index)" style="float:right;">&#xd7;</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div id="map" class="map"></div>
+</div>

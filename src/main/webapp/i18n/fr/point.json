@@ -1,0 +1,21 @@
+{
+    "ludecolApp": {
+        "point" : {
+            "home": {
+                "title": "Points",
+                "createLabel": "Créer un nouveau Point",
+                "createOrEditLabel": "Créer ou éditer un Point"
+            },
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Point {{ id }} ?"
+            },
+            "detail": {
+                "title": "Point"
+            },
+            "x_pos": "X_pos",
+            "y_pos": "Y_pos",
+            "image": "image"
+        }
+    }
+}
+

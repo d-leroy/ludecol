@@ -1,0 +1,32 @@
+<div ng-cloak>
+
+    <img src="images/ludecol-banner.jpg" style="width:100%; margin-bottom: 20px;">
+
+    <h1 class="text-center">Give us some feedback to help improve the game!</h1>
+
+    <div ng-switch="isAuthenticated()">
+        <div ng-repeat="question in questions" class="row">
+            <div  class="col-md-offset-4 col-md-4">
+                <h4>{{question.title}}</h4>
+                <div>
+                    <rating ng-model="question.rating"></rating>
+                </div>
+                <p>Remarques supplémentaires:</p>
+                <textarea ng-model="question.answer" rows="5" cols="50" display="block" style="resize: none;"></textarea>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-offset-4 col-md-4">
+                <h4>Other remarks</h4>
+                <textarea ng-model="other" rows="5" cols="50" display="block" style="resize: none;"></textarea>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-offset-4 col-md-4">
+                <button ng-click="submit()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>

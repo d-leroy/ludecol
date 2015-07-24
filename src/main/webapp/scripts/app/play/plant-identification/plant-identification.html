@@ -1,0 +1,112 @@
+<div ng-cloak>
+    <h1 class="text-center">Plant identification</h1>
+
+    <div ng-show="errorMsg === true">
+        <p class="text-center">
+            Sorry, no image is available to you in this game mode at this time.
+        </p>
+        <div style="width: 25%; margin: 0 auto;">
+            <a class="btn btn-primary btn-lg" ui-sref="home" style="width: 100%;">Back to the menu</a>
+        </div>
+    </div>
+
+    <div id="controls" class="ol-control control-panel" ng-show="errorMsg === false">
+        <button type="button" ng-show="displayControls" ng-click="toggleControls()">
+            <span class="glyphicon glyphicon-triangle-top"></span>
+        </button>
+        <button type="button" ng-hide="displayControls" ng-click="toggleControls()">
+            <span class="glyphicon glyphicon-triangle-bottom"></span>
+        </button>
+        <div ng-show="displayControls">
+            <div class="btn-group btn-group-justified" style="width: 350px;">
+                <label class="btn color1" ng-model="radioModel.selected"
+                       btn-radio="'Salicornia'" uncheckable style="border-bottom-left-radius: 0px;"
+                       ng-disabled="Salicornia === undefined">
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Salicornia'"></span>
+                    <span class="glyphicon glyphicon-lock" ng-show="Salicornia === undefined"></span>
+                    Salicornia
+                </label>
+                <label class="btn color2" ng-model="radioModel.selected"
+                       btn-radio="'Spartina'" uncheckable
+                       ng-disabled="Spartina === undefined">
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Spartina'"></span>
+                    <span class="glyphicon glyphicon-lock" ng-show="Spartina === undefined"></span>
+                    Spartina
+                </label>
+                <label class="btn color3" ng-model="radioModel.selected"
+                       btn-radio="'Batis'" uncheckable style="border-bottom-right-radius: 0px;"
+                       ng-disabled="Batis === undefined">
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Batis'"></span>
+                    <span class="glyphicon glyphicon-lock" ng-show="Batis === undefined"></span>
+                    Batis
+                </label>
+            </div>
+            <div class="btn-group btn-group-justified" style="width: 350px;">
+                <label class="btn color4" ng-model="radioModel.selected"
+                       btn-radio="'Borrichia'" uncheckable style="border-top-left-radius: 0px;"
+                       ng-disabled="Borrichia === undefined">
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Borrichia'"></span>
+                    <span class="glyphicon glyphicon-lock" ng-show="Borrichia === undefined"></span>
+                    Borrichia
+                </label>
+                <label class="btn color5" ng-model="radioModel.selected"
+                       btn-radio="'Limonium'" uncheckable
+                       ng-disabled="Limonium === undefined">
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Limonium'"></span>
+                    <span class="glyphicon glyphicon-lock" ng-show="Limonium === undefined"></span>
+                    Limonium
+                </label>
+                <label class="btn color6" ng-model="radioModel.selected"
+                       btn-radio="'Juncus'" uncheckable style="border-top-right-radius: 0px;"
+                       ng-disabled="Juncus === undefined">
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Juncus'"></span>
+                    <span class="glyphicon glyphicon-lock" ng-show="Juncus === undefined"></span>
+                    Juncus
+                </label>
+            </div>
+            <hr/>
+            <div style="margin: 0 auto; width: 128px; height: 128px; background-color: lightgrey;">
+                <img ng-show="radioModel.selected !== null" ng-src="images/plants/{{radioModel.selected}}.jpg" />
+            </div>
+            <hr/>
+            <div>
+                <a class="btn btn-default" ng-click="submit()">Submit</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="options" class="ol-control options-panel" ng-show="errorMsg === false">
+        <button type="button" ng-show="displayOptions" ng-click="displayOptions = !displayOptions" style="float: right;">
+            <span class="glyphicon glyphicon-triangle-top"></span>
+        </button>
+        <button type="button" ng-hide="displayOptions" ng-click="displayOptions = !displayOptions" style="float: right;">
+            <span class="glyphicon glyphicon-triangle-bottom"></span>
+        </button>
+        <div ng-show="displayOptions" style="clear: both;">
+            <ul class="list-unstyled">
+                <li ng-show="Batis !== undefined">
+                    <input type="checkbox" id="batisCheckbox" ng-model="showBatis"><label for="batisCheckbox">Show batis</label>
+                </li>
+                <li ng-show="Borrichia !== undefined">
+                    <input type="checkbox" id="borrichiaCheckbox" ng-model="showBorrichia"><label for="borrichiaCheckbox">Show borrichia</label>
+                </li>
+                <li ng-show="Juncus !== undefined">
+                    <input type="checkbox" id="juncusCheckbox" ng-model="showJuncus"><label for="juncusCheckbox">Show juncus</label>
+                </li>
+                <li ng-show="Limonium !== undefined">
+                    <input type="checkbox" id="limoniumCheckbox" ng-model="showLimonium"><label for="limoniumCheckbox">Show limonium</label>
+                </li>
+                <li ng-show="Salicornia !== undefined">
+                    <input type="checkbox" id="salicorniaCheckbox" ng-model="showSalicornia"><label for="salicorniaCheckbox">Show salicornia</label>
+                </li>
+                <li ng-show="Spartina !== undefined">
+                    <input type="checkbox" id="spartinaCheckbox" ng-model="showSpartina"><label for="spartinaCheckbox">Show spartina</label>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div>
+        <div id="map" class="map" style="background-color: #9DA9A5;"></div>
+    </div>
+</div>

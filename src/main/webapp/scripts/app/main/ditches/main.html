@@ -1,0 +1,25 @@
+<div ng-cloak>
+    <h1>Welcome!</h1>
+
+    <div ng-switch="isAuthenticated()">
+
+        <div ng-switch-when="false">
+            <div class="alert alert-warning" translate="global.messages.info.register">
+                Don't have an account? <a href=\"#/register\">Register</a>
+            </div>
+        </div>
+
+        <div ng-switch-when="true">
+
+            <p class="lead">Choose a game mode</p>
+
+            <div style="width: 25%; margin: 0 auto; min-width: 200px;">
+                <ul style="list-style-type: none; padding: 0">
+                    <li style="padding: 2px;">
+                        <a class="btn btn-primary btn-lg" ui-sref="play" style="width: 100%;">Ditches</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

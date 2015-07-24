@@ -1,0 +1,15 @@
+<div ng-cloak>
+
+    <img src="images/ludecol-banner.jpg" style="width:100%; margin-bottom: 20px;">
+
+    <div ng-switch="isAuthenticated()">
+        <div ng-repeat="feedback in feedbacks" class="row">
+            <div  class="col-md-offset-4 col-md-4">
+                <h4>{{feedback.title}}</h4>
+                <p>Note : {{feedback.rating}}</p>
+                <p>Remarques supplémentaires:</p>
+                <p>{{feedback.answer}}</p>
+            </div>
+        </div>
+    </div>
+</div>

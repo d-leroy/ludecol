@@ -1,0 +1,56 @@
+<div ng-cloak>
+    <img src="images/ludecol-banner.jpg" style="width:100%; margin-bottom: 20px;">
+    <div class="row" style="margin-left: 0px; margin-right: 0px;">
+
+        <div class="col-md-3 col-md-offset-1">
+            <div class="list-group">
+                <a ui-sref="profile" class="list-group-item">
+                    <h4 class="text-center">Summary</h4>
+                </a>
+                <a ui-sref="game-history" class="list-group-item active">
+                    <h4 class="text-center">Game History</h4>
+                </a>
+                <a ui-sref="statistics" class="list-group-item">
+                    <h4 class="text-center">Statistics</h4>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <h2><strong>{{settingAccount.login}}'s Game History</strong></h2>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <pagination boundary-links="true" total-items="totalItems" items-per-page="itemsPerPage"
+                                ng-change="loadPage()" ng-model="currentPage" class="pagination" previous-text="&lsaquo;"
+                                next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+
+                    <style>
+                        td.scoreWidth {width:15%;}
+                        td.modeWidth {width:35%;}
+                        td.defaultWidth {width:25%;}
+                    </style>
+
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Game Mode</th>
+                                <th>Date</th>
+                                <th>Score</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="game in gameList">
+                                <td class="modeWidth">{{getMode(game.game_mode,true)}}</td>
+                                <td class="defaultWidth">{{getTime(game.last_modified)}}</td>
+                                <td class="scoreWidth">{{game.score}}</td>
+                                <td class="defaultWidth"><a ui-sref="games({id:game.id})">View correction</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

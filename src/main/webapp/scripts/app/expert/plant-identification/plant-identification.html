@@ -1,0 +1,67 @@
+<div ng-cloak>
+    <h1 class="text-center">Expert Plant identification</h1>
+
+    <div ng-hide="img !== undefined">
+        <p class="text-center">
+            Sorry, no image is available to you in this game mode at this time.
+        </p>
+        <div style="width: 25%; margin: 0 auto;">
+            <a class="btn btn-primary btn-lg" ui-sref="home" style="width: 100%;">Back to the menu</a>
+        </div>
+    </div>
+
+    <div id="controls" class="ol-control control-panel" ng-show="img !== undefined">
+        <button type="button" ng-show="displayControls" ng-click="toggleControls()">
+            <span class="glyphicon glyphicon-triangle-top"></span>
+        </button>
+        <button type="button" ng-hide="displayControls" ng-click="toggleControls()">
+            <span class="glyphicon glyphicon-triangle-bottom"></span>
+        </button>
+        <div ng-show="displayControls">
+            <div class="btn-group btn-group-justified" style="width: 350px;">
+                <label class="btn color1" ng-model="radioModel"
+                       btn-radio="'Salicornia'" uncheckable style="border-bottom-left-radius: 0px;">
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Salicornia'"></span>
+                    Salicornia
+                </label>
+                <label class="btn color2" ng-model="radioModel" btn-radio="'Spartina'" uncheckable>
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Spartina'"></span>
+                    Spartina
+                </label>
+                <label class="btn color3" ng-model="radioModel"
+                       btn-radio="'Batis'" uncheckable style="border-bottom-right-radius: 0px;">
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Batis'"></span>
+                    Batis
+                </label>
+            </div>
+            <div class="btn-group btn-group-justified" style="width: 350px;">
+                <label class="btn color4" ng-model="radioModel"
+                       btn-radio="'Borrichia'" uncheckable style="border-top-left-radius: 0px;">
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Borrichia'"></span>
+                    Borrichia
+                </label>
+                <label class="btn color5" ng-model="radioModel" btn-radio="'Limonium'" uncheckable>
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Limonium'"></span>
+                    Limonium
+                </label>
+                <label class="btn color6" ng-model="radioModel"
+                       btn-radio="'Juncus'" uncheckable style="border-top-right-radius: 0px;">
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Juncus'"></span>
+                    Juncus
+                </label>
+            </div>
+            <hr/>
+            <div style="margin: 0 auto; width: 128px; height: 128px; background-color: lightgrey;">
+                <img ng-show="radioModel !== null" ng-src="images/plants/{{radioModel}}.jpg" />
+            </div>
+            <hr/>
+            <div>
+                <a class="btn btn-default" ng-click="submit()">Submit</a>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div id="map" class="map" style="background-color: #9DA9A5;"></div>
+    </div>
+</div>
