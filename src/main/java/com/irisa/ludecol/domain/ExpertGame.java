@@ -42,7 +42,6 @@ public class ExpertGame<T extends ProcessedGameResult, S extends GameResult> {
     @JsonProperty("game_mode")
     private GameMode gameMode;
 
-    @NotNull
     @Field("processed_result")
     @JsonProperty("processed_result")
     private T processedResult;

@@ -2,15 +2,14 @@ package com.irisa.ludecol.service;
 
 import com.codahale.metrics.annotation.Timed;
 import com.irisa.ludecol.domain.Authority;
+import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.domain.Objective;
 import com.irisa.ludecol.domain.User;
 import com.irisa.ludecol.domain.subdomain.GameMode;
-import com.irisa.ludecol.repository.AuthorityRepository;
-import com.irisa.ludecol.repository.ObjectiveRepository;
-import com.irisa.ludecol.repository.PersistentTokenRepository;
-import com.irisa.ludecol.repository.UserRepository;
+import com.irisa.ludecol.repository.*;
 import com.irisa.ludecol.security.SecurityUtils;
 import com.irisa.ludecol.service.util.RandomUtil;
+import com.irisa.ludecol.web.rest.dto.UserStatisticsDTO;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -38,6 +37,9 @@ public class UserService {
 
     @Inject
     private ObjectiveRepository objectiveRepository;
+
+    @Inject
+    private GameRepository gameRepository;
 
     @Inject
     private PersistentTokenRepository persistentTokenRepository;
@@ -106,6 +108,65 @@ public class UserService {
         User currentUser = userRepository.findOneByLogin(SecurityUtils.getCurrentLogin()).get();
         currentUser.getAuthorities().size(); // eagerly load the association
         return currentUser;
+    }
+
+    public UserStatisticsDTO getUserStatistics(String login) {
+
+        UserStatisticsDTO result = new UserStatisticsDTO();
+        List<UserStatisticsDTO.GameModeStatistics> gameModeStatistics = new ArrayList<>();
+        int totalEarnedPoints = 0;
+
+        List<Game> allStarsGames = gameRepository.findAllByUsrAndGameModeAndCompleted(login, GameMode.AllStars, true);
+        int averageScore = 0;
+        int nbGames = 0;
+        for (Game allStarsGame : allStarsGames) {
+            if(allStarsGame.getScore() >= 0) {
+                averageScore += allStarsGame.getScore();
+                totalEarnedPoints += allStarsGame.getScore() - 50;
+                nbGames++;
+            }
+        }
+        averageScore = nbGames > 0 ? averageScore / nbGames : 0;
+        UserStatisticsDTO.GameModeStatistics allStars = new UserStatisticsDTO.GameModeStatistics(GameMode.AllStars,averageScore,nbGames);
+        gameModeStatistics.add(allStars);
+
+        List<Game> plantIdentificationGames = gameRepository.findAllByUsrAndGameModeAndCompleted(login, GameMode.PlantIdentification, true);
+        averageScore = 0;
+        nbGames = 0;
+        for (Game plantIdentificationGame : plantIdentificationGames) {
+            if(plantIdentificationGame.getScore() >= 0) {
+                averageScore += plantIdentificationGame.getScore();
+                totalEarnedPoints += plantIdentificationGame.getScore() - 50;
+                nbGames++;
+            }
+        }
+        averageScore = nbGames > 0 ? averageScore / nbGames : 0;
+        UserStatisticsDTO.GameModeStatistics plantIdentification = new UserStatisticsDTO.GameModeStatistics(GameMode.AnimalIdentification,averageScore,nbGames);
+        gameModeStatistics.add(plantIdentification);
+
+        List<Game> animalIdentificationGames = gameRepository.findAllByUsrAndGameModeAndCompleted(login, GameMode.AnimalIdentification, true);
+        averageScore = 0;
+        nbGames = 0;
+        for (Game animalIdentificationGame : animalIdentificationGames) {
+            if(animalIdentificationGame.getScore() >= 0) {
+                averageScore += animalIdentificationGame.getScore();
+                totalEarnedPoints += animalIdentificationGame.getScore() - 50;
+                nbGames++;
+            }
+        }
+        averageScore = nbGames > 0 ? averageScore / nbGames : 0;
+        UserStatisticsDTO.GameModeStatistics animalIdentification = new UserStatisticsDTO.GameModeStatistics(GameMode.AnimalIdentification,averageScore,nbGames);
+        gameModeStatistics.add(animalIdentification);
+
+        result.setGameModeStatistics(gameModeStatistics);
+        result.setTotalEarnedPoints(totalEarnedPoints);
+
+        User player = userRepository.findOneByLogin(login).get();
+        result.setBonusPoints(player.getBonusPoints());
+        result.setMinRank(player.getBestRank());
+        result.setMeanRank(player.getMeanRank());
+
+        return result;
     }
 
     /**

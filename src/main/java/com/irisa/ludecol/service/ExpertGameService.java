@@ -256,7 +256,9 @@ public class ExpertGameService {
                     awardPoints(game,score);
                 }
                 Image image = imageRepository.findOne(expertGame.getImg());
-                image.getGameModes().remove(GameMode.ExpertAnimalIdentification);
+                ImageModeStatus status = image.getModeStatus().get(ImageStatus.IN_PROCESSING).stream().filter(s->s.getMode().equals(GameMode.ExpertAnimalIdentification)).findFirst().get();
+                image.getModeStatus().get(ImageStatus.IN_PROCESSING).remove(status);
+                image.getModeStatus().get(ImageStatus.PROCESSED).add(status);
 
                 if(!referenceMap.isEmpty()) {
                     referenceGame = new ReferenceGame<AnimalIdentificationResult>();
@@ -327,10 +329,9 @@ public class ExpertGameService {
         if(img == null)
             return null;
         ProcessedGame processedGame = processedGameRepository.findByImgAndGameMode(img.getId(), gameMode);
-        if(processedGame == null)
-            return null;
+        if(processedGame != null)
+            expertGame.setProcessedResult(processedGame.getProcessedGameResult());
         expertGame.setImg(img.getId());
-        expertGame.setProcessedResult(processedGame.getProcessedGameResult());
         log.debug("Created game : {}", expertGame);
         expertGameRepository.save(expertGame);
         return expertGame;

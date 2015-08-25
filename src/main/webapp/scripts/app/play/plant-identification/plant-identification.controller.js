@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .controller('PlantIdentificationController', function ($scope, Principal, MapService, GameService, RadioModel, PlantGameService) {
+    .controller('PlantIdentificationController', function ($scope, Principal, MapService, RadioModel, PlantGameService) {
         Principal.identity().then(function(account) {
             $scope.account = account;
             $scope.isAuthenticated = Principal.isAuthenticated;
@@ -10,24 +10,9 @@ angular.module('ludecolApp')
             var nbRows = 3;
             var nbCols = 3;
 
-            function initializePresenceGrid() {
-                var res = {
-                    Batis: [], Borrichia: [], Juncus: [],
-                    Limonium: [], Salicornia: [], Spartina: []
-                };
-                for(var i=0; i<nbCols*nbRows; i++) {
-                    for (var property in res) {
-                        if (res.hasOwnProperty(property)) {
-                            res[property].push(false);
-                        }
-                    }
-                }
-                return res;
-            }
-
             function errorCallback() {$scope.errorMsg = true; MapService.destroyMap();}
 
-            function loadGame(img,game,force) {
+            function loadGame(img,game) {
                 $scope.errorMsg = false;
 
                 $scope.radioModel = {selected: null};
@@ -46,12 +31,11 @@ angular.module('ludecolApp')
                     $scope['show'+value] = true;
                 });
 
-                MapService.initializeMap('map',force);
+                MapService.initializeMap('map');
                 MapService.setView(img);
                 MapService.addControl(controls);
                 MapService.addControl(options);
-                MapService.setupGame({cols:nbCols,rows:nbRows});
-                $scope.submit = function(){$scope.errorMsg = null; GameService.submitGame();};
+                $scope.submit = function(){$scope.errorMsg = null; PlantGameService.submitGame();};
 
                 $scope.jokerDisabled = true;
                 $scope.displayControls = true;
@@ -59,6 +43,6 @@ angular.module('ludecolApp')
 
             }
 
-            GameService.initializeGame($scope.account.login,'PlantIdentification',initializePresenceGrid,loadGame,errorCallback,true);
+            PlantGameService.initializeGame($scope.account.login,nbCols,nbRows,loadGame,errorCallback);
         });
     });

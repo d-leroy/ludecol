@@ -11,6 +11,8 @@ import java.util.List;
  */
 public interface TrainingGameRepository extends MongoRepository<TrainingGame, String> {
 
+    List<TrainingGame> findAllByImg(String img);
+
     List<TrainingGame> findAllByUsr(String usr);
 
     List<TrainingGame> findAllByUsrAndCompleted(String usr, boolean completed);

@@ -13,8 +13,8 @@ import com.irisa.ludecol.repository.UserRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
 import com.irisa.ludecol.service.ImageProviderService;
 import com.irisa.ludecol.service.TrainingGameService;
-import com.irisa.ludecol.web.rest.dto.GameModeStatisticsDTO;
-import com.irisa.ludecol.web.rest.dto.StatisticsDTO;
+import com.irisa.ludecol.service.UserService;
+import com.irisa.ludecol.web.rest.dto.UserStatisticsDTO;
 import com.irisa.ludecol.web.rest.dto.TrainingGameDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +62,9 @@ public class UserResource {
 
     @Inject
     private TrainingGameService trainingGameService;
+
+    @Inject
+    private UserService userService;
 
     /**
      * GET  /users -> get all users.
@@ -259,59 +262,7 @@ public class UserResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @RolesAllowed(AuthoritiesConstants.USER)
-    public ResponseEntity<StatisticsDTO> getUserStatistics(Principal principal) {
-        StatisticsDTO result = new StatisticsDTO();
-        List<GameModeStatisticsDTO> gameModeStatisticsDTOs = new ArrayList<>();
-        int totalEarnedPoints = 0;
-
-        List<Game> allStarsGames = gameRepository.findAllByUsrAndGameModeAndCompleted(principal.getName(), GameMode.AllStars, true);
-        int averageScore = 0;
-        int nbGames = 0;
-        for (Game allStarsGame : allStarsGames) {
-            if(allStarsGame.getScore() >= 0) {
-                averageScore += allStarsGame.getScore();
-                totalEarnedPoints += allStarsGame.getScore() - 50;
-                nbGames++;
-            }
-        }
-        averageScore = nbGames > 0 ? averageScore / nbGames : 0;
-        GameModeStatisticsDTO allStars = new GameModeStatisticsDTO(GameMode.AllStars,averageScore,nbGames);
-        gameModeStatisticsDTOs.add(allStars);
-
-        List<Game> plantIdentificationGames = gameRepository.findAllByUsrAndGameModeAndCompleted(principal.getName(), GameMode.PlantIdentification, true);
-        averageScore = 0;
-        nbGames = 0;
-        for (Game plantIdentificationGame : plantIdentificationGames) {
-            if(plantIdentificationGame.getScore() >= 0) {
-                averageScore += plantIdentificationGame.getScore();
-                totalEarnedPoints += plantIdentificationGame.getScore() - 50;
-                nbGames++;
-            }
-        }
-        averageScore = nbGames > 0 ? averageScore / nbGames : 0;
-        GameModeStatisticsDTO plantIdentification = new GameModeStatisticsDTO(GameMode.AnimalIdentification,averageScore,nbGames);
-        gameModeStatisticsDTOs.add(plantIdentification);
-
-        List<Game> animalIdentificationGames = gameRepository.findAllByUsrAndGameModeAndCompleted(principal.getName(), GameMode.AnimalIdentification, true);
-        averageScore = 0;
-        nbGames = 0;
-        for (Game animalIdentificationGame : animalIdentificationGames) {
-            if(animalIdentificationGame.getScore() >= 0) {
-                averageScore += animalIdentificationGame.getScore();
-                totalEarnedPoints += animalIdentificationGame.getScore() - 50;
-                nbGames++;
-            }
-        }
-        averageScore = nbGames > 0 ? averageScore / nbGames : 0;
-        GameModeStatisticsDTO animalIdentification = new GameModeStatisticsDTO(GameMode.AnimalIdentification,averageScore,nbGames);
-        gameModeStatisticsDTOs.add(animalIdentification);
-
-        result.setGameModeStatisticsDTOs(gameModeStatisticsDTOs);
-        result.setTotalEarnedPoints(totalEarnedPoints);
-
-        User player = userRepository.findOneByLogin(principal.getName()).get();
-        result.setBonusPoints(player.getBonusPoints());
-
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    public ResponseEntity<UserStatisticsDTO> getUserStatistics(Principal principal) {
+        return new ResponseEntity<>(userService.getUserStatistics(principal.getName()), HttpStatus.OK);
     }
 }

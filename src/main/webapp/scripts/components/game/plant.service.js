@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .factory('PlantGameService', function (RadioModel) {
+    .factory('PlantGameService', function (RadioModel, MapService, UserGame, Game, GameService) {
 
         var _cols, _rows, _width, _height;
         var _tagWidth, _rectWidth, _rectHeight;
-        var _vectorSource, _cells, _displayedFeatures;
-        var _initialized = false;
+        var _vectorSource, _tags, _displayedFeatures;
+        var _successCallback, _submitGame;
 
         var _speciesStyles = {
             Batis: new ol.style.Style({fill: new ol.style.Fill({color: '#40B12F'})}),
@@ -29,9 +29,9 @@ angular.module('ludecolApp')
         }
 
         function _setupCells() {
-            _cells = [];
+            _tags = [];
             for(var i=0; i<_cols*_rows; i++) {
-                _cells[i] = {length: 0};
+                _tags[i] = {};
             }
         }
 
@@ -52,107 +52,126 @@ angular.module('ludecolApp')
             return lineGridCoords;
         }
 
-        function _setCellGeometries(cell, baseCoords) {
-            var pos = [];
-            var n=0;
+        function _setCellGeometries(idx, baseCoords) {
+            var pos = []; var k = 0; var kmax = 0; var i = 0; var n = 0;
 
-            for(var kmax=0, i=0; i<cell.length; kmax++) {
-                for(var k=0; k<=kmax; k++) {
-                    pos[i]=[kmax-k,k];
-                    i++;
+            angular.forEach(_tags[idx],function() {
+                pos[i]=[kmax-k,k];
+                i++; k++;
+                if(k > kmax) {
+                    k = 0; kmax++;
                 }
-            }
+            });
 
-            for (var property in cell) {
-                if (cell.hasOwnProperty(property) && property !== 'length' && property !== '__proto__') {
-                    var xoffset = pos[n][0] * (_tagWidth + 5);
-                    var yoffset = pos[n][1] * (_tagWidth + 5);
-                    var coords =
-                    [[
-                        [baseCoords[0][0] + xoffset, baseCoords[0][1] + yoffset],
-                        [baseCoords[1][0] + xoffset, baseCoords[1][1] + yoffset],
-                        [baseCoords[2][0] + xoffset, baseCoords[2][1] + yoffset]
-                    ]];
-                    cell[property].getGeometry().setCoordinates(coords);
-                    n++;
-                }
-            }
+            angular.forEach(_tags[idx],function(feature) {
+                var xoffset = pos[n][0] * (_tagWidth + 5);
+                var yoffset = pos[n][1] * (_tagWidth + 5);
+                var coords =
+                [[
+                    [baseCoords[0][0] + xoffset, baseCoords[0][1] + yoffset],
+                    [baseCoords[1][0] + xoffset, baseCoords[1][1] + yoffset],
+                    [baseCoords[2][0] + xoffset, baseCoords[2][1] + yoffset]
+                ]];
+                feature.getGeometry().setCoordinates(coords);
+                n++;
+            });
         }
 
-        //-------------------API
+        function _initializePresenceGrid() {
+            var res = {
+                Batis: [], Borrichia: [], Juncus: [],
+                Limonium: [], Salicornia: [], Spartina: []
+            };
+            for(var i=0; i<_cols*_rows; i++) {
+                for (var property in res) {
+                    if (res.hasOwnProperty(property)) {
+                        res[property].push(false);
+                    }
+                }
+            }
+            return res;
+        }
 
-        var initializeGame = function(width,height,cols,rows,map) {
+        function _getResult() {
+            var result = _initializePresenceGrid();
+            for(var i=0; i<_cols*_rows; i++) {
+                var tmp = _tags[i];
+                angular.forEach(tmp,function(value,key) {result[key][i] = true;});
+            }
+            return result;
+        }
+
+        var _setupGame = function(img,game) {
+            _displayedFeatures = {};
+            _successCallback(img,game);
+
             //Setting up numerical values.
-            _cols = cols; _rows = rows; _width = width; _height = height;
-            _rectWidth = width / cols; _rectHeight = height / rows;
+            _width = img.width; _height = img.height;
+            _rectWidth = _width / _cols; _rectHeight = _height / _rows;
             _tagWidth = (Math.min(_rectHeight,_rectWidth) - 20) / 6;
             //Creating vector layer, to which features will be added.
             _vectorSource = new ol.source.Vector({});
-            map.addLayer(new ol.layer.Vector({source: _vectorSource}));
+            MapService.addLayer(new ol.layer.Vector({source: _vectorSource}));
             //Setting up the grid and adding it to the vector layer.
             _vectorSource.addFeature(new ol.Feature({geometry: new ol.geom.MultiLineString(_setupLineGrid())}));
             //Initializing the array that will contain the 'tags'.
             _setupCells();
-            _displayedFeatures = {};
             //Adding the click listener.
-            if(!_initialized) {
-                map.on('singleclick', function(evt) {
-                    console.log("click");
-                    if(_isWithinBounds(evt.coordinate)) {
-                        var radioModel = RadioModel.data.selected;
-                        if(radioModel !== null) {
-                            var i = Math.floor(evt.coordinate[0] / _rectWidth);
-                            var j = Math.floor(evt.coordinate[1] / -_rectHeight);
-                            var idx = i + _cols * j;
-                            var cell = _cells[idx];
-                            var baseCoords = _getBaseCoordinates(i,j);
+            MapService.addListener('singleclick', function(evt) {
+                if(_isWithinBounds(evt.coordinate)) {
+                    var radioModel = RadioModel.data.selected;
+                    if(radioModel !== null) {
+                        var i = Math.floor(evt.coordinate[0] / _rectWidth);
+                        var j = Math.floor(evt.coordinate[1] / -_rectHeight);
+                        var idx = i + _cols * j;
+                        var tags = _tags[idx];
+                        var baseCoords = _getBaseCoordinates(i,j);
 
-                            if(cell[radioModel] !== undefined) {
-                                if(_displayedFeatures[radioModel]) {
-                                    _vectorSource.removeFeature(cell[radioModel]);
-                                }
-                                delete cell[radioModel];
-                                cell.length = cell.length - 1;
+                        if(tags[radioModel] !== undefined) {
+                            if(_displayedFeatures[radioModel]) {
+                                _vectorSource.removeFeature(tags[radioModel]);
                             }
-                            else {
-                                var feat = new ol.Feature({geometry: new ol.geom.Polygon(baseCoords)});
-                                feat.setStyle(_speciesStyles[radioModel]);
-                                //Should check if those features are currently displayed.
-                                if(_displayedFeatures[radioModel]) {
-                                    _vectorSource.addFeature(feat);
-                                }
-                                cell[radioModel] = feat;
-                                cell.length = cell.length + 1;
-                            }
-                            _setCellGeometries(cell, baseCoords);
-                        } else {
-                            //popup saying that you should select a species first.
+                            delete tags[radioModel];
                         }
+                        else {
+                            var feat = new ol.Feature({geometry: new ol.geom.Polygon(baseCoords)});
+                            feat.setStyle(_speciesStyles[radioModel]);
+                            //Should check if those features are currently displayed.
+                            if(_displayedFeatures[radioModel]) {
+                                _vectorSource.addFeature(feat);
+                            }
+                            tags[radioModel] = feat;
+                            console.log(_tags);
+                        }
+                        _setCellGeometries(idx, baseCoords);
+                    } else {
+                        //popup saying that you should select a species first.
                     }
-                });
-                _initialized = true;
-            }
+                }
+            });
         }
+
+        //-------------------API
+
+        var initializeGame = function(login,cols,rows,successCallback,errorCallback) {
+            MapService.destroyMap();
+            _successCallback = successCallback;
+            _cols = cols; _rows = rows;
+            _submitGame = GameService.initializeGame(login,'PlantIdentification',_initializePresenceGrid,
+                _getResult,_setupGame,errorCallback,UserGame.query,Game.update);
+        };
+
+        var submitGame = function(){
+            _submitGame();
+        };
 
         var toggleFeatures = function(property,show) {
             _displayedFeatures[property] = show;
             var features = [];
-            angular.forEach(_cells,function(value){if(value[property] !== undefined) {features.push(value[property]);}});
+            angular.forEach(_tags,function(value){if(value[property] !== undefined) {features.push(value[property]);}});
             if(show) {_vectorSource.addFeatures(features);}
             else {angular.forEach(features,function(value) {_vectorSource.removeFeature(value);});}
         }
 
-        var getResult = function(empty_result) {
-            for(var i=0; i<_cols*_rows; i++) {
-                var tmp = _cells[i];
-                for (var property in tmp) {
-                    if (tmp.hasOwnProperty(property) && property !== 'length') {
-                        empty_result[property][i] = true;
-                    }
-                }
-            }
-            return empty_result;
-        }
-
-        return {initializeGame: initializeGame, getResult: getResult, toggleFeatures: toggleFeatures};
+        return {initializeGame: initializeGame, toggleFeatures: toggleFeatures, submitGame: submitGame};
     });

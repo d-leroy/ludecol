@@ -28,6 +28,8 @@ public interface GameRepository extends MongoRepository<Game, String> {
 
     List<Game> findAllByUsrAndGameMode(String login, GameMode gameMode);
 
+    List<Game> findAllByUsrNotAndImgInAndGameMode(String usr, List<String> imgs, GameMode gameMode);
+
     List<Game> findFirst5ByUsrAndCompletedAndScoreGreaterThan(String login, boolean completed, int score, Sort sort);
 
     Page<Game> findByUsr(String usr, Pageable pageable);

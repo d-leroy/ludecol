@@ -1,18 +1,26 @@
 package com.irisa.ludecol.service;
 
-import com.irisa.ludecol.domain.*;
-import com.irisa.ludecol.domain.subdomain.AnimalIdentificationResult;
+import com.irisa.ludecol.domain.ExpertGame;
+import com.irisa.ludecol.domain.Game;
+import com.irisa.ludecol.domain.Image;
+import com.irisa.ludecol.domain.TrainingGame;
 import com.irisa.ludecol.domain.subdomain.GameMode;
-import com.irisa.ludecol.domain.subdomain.GameResult;
-import com.irisa.ludecol.domain.subdomain.PlantIdentificationResult;
+import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
+import com.irisa.ludecol.domain.subdomain.ImageStatus;
 import com.irisa.ludecol.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 
 /**
  * Created by dorian on 07/05/15.
@@ -33,10 +41,14 @@ public class ImageProviderService {
     private MongoTemplate mongoTemplate;
 
     @Inject
+    private ImageService imageService;
+
+    @Inject
     private ImageRepository imageRepository;
 
     @Inject
     private GameRepository gameRepository;
+
     @Inject
     private ReferenceGameRepository referenceGameRepository;
 
@@ -50,8 +62,26 @@ public class ImageProviderService {
 
     private Random rand = new Random();
 
+    public List<String> findImagesToPlay(GameMode mode, String login) {
+
+        Map<String,Integer> imgs = imageService.getImagesNumberOfGames(
+            gameRepository.findAllByGameMode(mode).stream()
+                //Remove images that were already played by the current user.
+                .filter(g->!g.getUsr().equals(login)).collect(Collectors.toList()));
+        return imgs.entrySet().stream()
+            //Remove images that have been sufficiently played to be processed.
+            .filter(e->e.getValue()<3)
+            //Sort images by the number of times they have been played
+            .sorted(Map.Entry.comparingByValue())
+            //Extracts the list of images
+            .map(Map.Entry::getKey)
+            .collect(Collectors.toList());
+    }
+
     /**
-     * Retrieves all images that have been played on the {@code mode} game mode by the {@code login} user.
+     * Retrieves all images that have been played on the {@code mode} game mode by the {@code login} user
+     * or other players depending on the game mode.
+     * TODO: prevent an expert player to play on an image he already played in normal mode.
      * @param mode
      * @param login
      * @return
@@ -69,6 +99,7 @@ public class ImageProviderService {
             case ExpertPlantIdentification: {
                 List<ExpertGame> list = expertGameRepository.findAllByUsrAndGameMode(login,mode);
                 list.forEach(game -> tmp.add(game.getImg()));
+
             }
             break;
             default: {
@@ -77,7 +108,7 @@ public class ImageProviderService {
                 list.stream()
                     .forEach(game -> {
                         String k = game.getImg();
-                        int nb = game.getUsr() != login ? 1 : 3;
+                        int nb = game.getUsr().equals(login) ? 3 : 1;
                         if(imgMap.containsKey(k)) {
                             imgMap.put(k,imgMap.get(k)+nb);
                         }
@@ -88,33 +119,24 @@ public class ImageProviderService {
                 imgMap.forEach((k,v) -> {if(v >= 3) tmp.add(k);});
             }
         }
-//        Aggregation agg = Aggregation.newAggregation(
-//            Aggregation.match(Criteria.where("game_mode").is(mode).andOperator(Criteria.where("usr").is(login))),
-//            Aggregation.project("img", "game_mode").andExclude("_id"),
-//            Aggregation.group("game_mode").push("img").as("played_image"),
-//            Aggregation.unwind("played_image")
-//        );
-//        String doc;
-//        switch(GameMode.valueOf(mode)) {
-//            case TrainingAnimalIdentification:
-//            case TrainingPlantIdentification:
-//                doc = "T_TRAINING_GAME";
-//                break;
-//            case ExpertAnimalIdentification:
-//            case ExpertPlantIdentification:
-//                doc = "T_EXPERT_GAME";
-//                break;
-//            default:
-//                doc = "T_GAME";
-//        }
-//        AggregationResults<PlayedImage> results = mongoTemplate.aggregate(agg, doc, PlayedImage.class);
-//        List<PlayedImage> mappedResult = results.getMappedResults();
-//        List<String> res = new ArrayList<>();
-//        mappedResult.forEach((s) -> res.add(s.played_image));
-        log.debug("Images available to game mode {} : {}", mode, tmp);
+
+        log.debug("Images already played in game mode {} : {}", mode, tmp);
         List<String> res = new ArrayList<>();
         res.addAll(tmp);
         return res;
+    }
+
+    private List<Image> filterPlayedImage(List<Image> images, GameMode mode, String login) {
+        return images.stream()
+            .filter(i -> !gameRepository.findAllByUsrAndGameMode(login, mode).stream().map(Game::getImg).collect(Collectors.toList()).contains(i.getId()))
+            .collect(Collectors.toList());
+    }
+
+    private List<Image> filterImageList(List<Image> images, GameMode mode, ImageStatus status) {
+        int maxPlayed = images.get(0).getModeStatus().get(status).stream().filter(s -> s.getMode().equals(mode)).findFirst().get().getGameNumber();
+        return images.stream()
+            .filter(i->i.getModeStatus().get(status).stream().filter(s -> s.getMode().equals(mode)).findFirst().get().getGameNumber() == maxPlayed)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -124,46 +146,30 @@ public class ImageProviderService {
      * @return
      */
     public Image findOne(GameMode mode, String login) {
-        List<Image> images = imageRepository.findByGameModesContaining(mode);
+        List<Image> images = mongoTemplate.find(query(where("mode_status.NOT_PROCESSED").elemMatch(where("mode").is(mode.toString()))), Image.class);
+        images = filterPlayedImage(images, mode, login);
+        images = images.stream()
+            .sorted(Comparator.comparingInt(i -> i.getModeStatus().get(ImageStatus.NOT_PROCESSED).stream().filter(s -> s.getMode().equals(mode)).findFirst().get().getGameNumber()))
+            .collect(Collectors.toList());
         if(images.isEmpty()) {
-            log.debug("No image were found");
-            return null;
+            images = mongoTemplate.find(query(where("mode_status.IN_PROCESSING").elemMatch(where("mode").is(mode.toString()))), Image.class);
+            images = filterPlayedImage(images, mode, login);
+            images = images.stream()
+                .sorted(Comparator.comparingInt(i->i.getModeStatus().get(ImageStatus.IN_PROCESSING).stream().filter(s->s.getMode().equals(mode)).findFirst().get().getGameNumber()))
+                .collect(Collectors.toList());
+            if(images.isEmpty()) {
+                images = mongoTemplate.find(query(where("mode_status.PROCESSED").elemMatch(where("mode").is(mode.toString()))), Image.class);
+                images = filterPlayedImage(images, mode, login);
+                if(images.isEmpty()) {
+                    log.debug("No eligible image was found");
+                    return null;
+                }
+            }
+            else images = filterImageList(images, mode, ImageStatus.IN_PROCESSING);
         }
-        List<String> played_images = findPlayedImages(mode, login);
-        images.removeIf(image -> played_images.contains(image.getId()));
+        else images = filterImageList(images, mode, ImageStatus.NOT_PROCESSED);
+        Collections.shuffle(images);
         log.debug("Total number of eligible images : {}", images.size());
-        if(images.isEmpty()) return null;
-        if(mode.equals(GameMode.TrainingAnimalIdentification) || mode.equals(GameMode.TrainingPlantIdentification)) {
-            images.sort((o1, o2) -> {
-                ReferenceGame referenceGame1 = referenceGameRepository.findByImgAndGameMode(o1.getId(),mode);
-                ReferenceGame referenceGame2 = referenceGameRepository.findByImgAndGameMode(o2.getId(),mode);
-                if(mode.equals(GameMode.TrainingAnimalIdentification)) {
-                    AnimalIdentificationResult animalIdentificationResult1 = (AnimalIdentificationResult) referenceGame1.getGameResult();
-                    AnimalIdentificationResult animalIdentificationResult2 = (AnimalIdentificationResult) referenceGame2.getGameResult();
-                    List<double[]> tmp = new ArrayList<>();
-                    animalIdentificationResult1.getSpeciesMap().values().stream().forEach(doubles -> tmp.addAll(doubles));
-                    int nb1 = tmp.size();
-                    tmp.clear();
-                    animalIdentificationResult2.getSpeciesMap().values().stream().forEach(doubles -> tmp.addAll(doubles));
-                    int nb2 = tmp.size();
-                    return nb1 - nb2;
-                }
-                else {
-                    PlantIdentificationResult plantIdentificationResult1 = (PlantIdentificationResult) referenceGame1.getGameResult();
-                    PlantIdentificationResult plantIdentificationResult2 = (PlantIdentificationResult) referenceGame2.getGameResult();
-                    List<Boolean> tmp = new ArrayList<>();
-                    plantIdentificationResult1.getSpeciesMap().values().stream().forEach(booleans -> tmp.addAll(booleans));
-                    tmp.removeIf(aBoolean -> !aBoolean);
-                    int nb1 = tmp.size();
-                    tmp.clear();
-                    plantIdentificationResult2.getSpeciesMap().values().stream().forEach(booleans -> tmp.addAll(booleans));
-                    tmp.removeIf(aBoolean -> !aBoolean);
-                    int nb2 = tmp.size();
-                    return nb1 - nb2;
-                }
-            });
-        }
         return images.get(0);
-//        return images.get(rand.nextInt(images.size()));
     }
 }

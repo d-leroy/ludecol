@@ -16,7 +16,6 @@
         <!-- endbuild -->
         <!-- build:css assets/styles/main.css -->
         <link rel="stylesheet" href="assets/styles/main.css">
-        <link type="text/css" rel="stylesheet" href="bower_components/annotorious/css/annotorious.css" />
         <!-- endbuild -->
     </head>
     <body ng-app="ludecolApp">
@@ -60,8 +59,10 @@
         <!-- endbower -->
         <!-- endbuild -->
 
-        <script src="http://ol3js.org/en/master/build/ol.js"></script>
-        <link rel="stylesheet" href="http://ol3js.org/en/master/css/ol.css" />
+        <!--<script src="http://ol3js.org/en/master/build/ol.js"></script>-->
+        <!--<link rel="stylesheet" href="http://ol3js.org/en/master/css/ol.css" />-->
+        <link rel="stylesheet" href="http://openlayers.org/en/v3.8.2/css/ol.css" type="text/css">
+        <script src="http://openlayers.org/en/v3.8.2/build/ol.js"></script>
         <script src="http://www.parsecdn.com/js/parse-1.2.8.min.js"></script>
 
         <!-- build:js({.tmp,src/main/webapp}) scripts/app.js -->
@@ -95,6 +96,8 @@
         <script src="scripts/components/game/plant.service.js"></script>
         <script src="scripts/components/game/animal.service.js"></script>
         <script src="scripts/components/game/expert-animal.service.js"></script>
+        <script src="scripts/components/game/expert-plant.service.js"></script>
+        <script src="scripts/components/game/training-animal.service.js"></script>
         <script src="scripts/components/game/allstars.service.js"></script>
         <script src="scripts/app/account/account.js"></script>
         <script src="scripts/app/account/activate/activate.js"></script>
@@ -135,7 +138,7 @@
         <script src="scripts/app/admin/image-manager/image-manager.js"></script>
         <script src="scripts/app/admin/image-manager/image-manager.controller.js"></script>
         <script src="scripts/app/admin/image-manager/image-manager-detail.controller.js"></script>
-        <script src="scripts/app/entities/entity.js"></script>
+        <!--<script src="scripts/app/entities/entity.js"></script>-->
         <script src="scripts/app/error/error.js"></script>
         <script src="scripts/app/feedback/feedback.js"></script>
         <script src="scripts/app/feedback/feedback.controller.js"></script>
@@ -171,9 +174,9 @@
         <script src="scripts/components/auth/provider/auth.session.service.js"></script>
         <script src="scripts/app/account/sessions/sessions.js"></script>
         <script src="scripts/app/account/sessions/sessions.controller.js"></script>
-        <script src="scripts/app/entities/image/image.js"></script>
-        <script src="scripts/app/entities/image/image.controller.js"></script>
-        <script src="scripts/app/entities/image/image-detail.controller.js"></script>
+        <!--<script src="scripts/app/entities/image/image.js"></script>-->
+        <!--<script src="scripts/app/entities/image/image.controller.js"></script>-->
+        <!--<script src="scripts/app/entities/image/image-detail.controller.js"></script>-->
         <script src="scripts/components/entities/image/image.service.js"></script>
         <script src="scripts/components/entities/image-set/image-set.service.js"></script>
         <script src="scripts/components/entities/notification/notification.service.js"></script>

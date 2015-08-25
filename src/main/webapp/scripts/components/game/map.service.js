@@ -1,9 +1,10 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .factory('MapService', function (PlantGameService, AnimalGameService, ExpertAnimalGameService, GameService) {
+    .factory('MapService', function () {
 
         var _imgWidth, _imgHeight, _imgCenter, _map, _view;
+        var _listenerKeys = [];
         var _initialized = false;
 
         //-------------------API
@@ -35,14 +36,15 @@ angular.module('ludecolApp')
                     maxZoom: 4,
                     minZoom: 0,
                     extent: [0, -_imgHeight, _imgWidth, 0]
-                })
+                });
 
                 _map.setView(_view);
             }
         }
 
-        var initializeMap = function(target,force) {
-            if(!_initialized || force) {
+        var initializeMap = function(target) {
+            angular.forEach(_listenerKeys,function(key) {_map.unByKey(key);});
+            if(!_initialized) {
                 _map = new ol.Map({
                     controls: ol.control.defaults().extend([
                         new ol.control.FullScreen()
@@ -57,6 +59,8 @@ angular.module('ludecolApp')
 
         var destroyMap = function() {
             if(_initialized) {
+                angular.forEach(_listenerKeys,function(key) {_map.unByKey(key);});
+                _listenerKeys = [];
                 _map.setTarget(null);
                 _imgWidth = 0;
                 _imgHeight = 0;
@@ -79,15 +83,9 @@ angular.module('ludecolApp')
             }
         }
 
-        var setupGame = function(options) {
+        var addListener = function(event,listener) {
             if(_initialized) {
-                switch(GameService.getMode()) {
-                    case 'AnimalIdentification': AnimalGameService.initializeGame(_imgWidth,_imgHeight,_map); break;
-                    case 'PlantIdentification': PlantGameService.initializeGame(_imgWidth,_imgHeight,options.cols,options.rows,_map); break;
-                    case 'ExpertAnimalIdentification': ExpertAnimalGameService.initializeGame(_imgWidth,_imgHeight,_map,options.species_map); break;
-                    default: break;
-                }
-
+                _listenerKeys.push(_map.on(event,listener));
             }
         }
 
@@ -106,7 +104,8 @@ angular.module('ludecolApp')
             setView: setView,
             addControl: addControl,
             addLayer: addLayer,
-            setupGame: setupGame,
+            addListener: addListener,
+//            setupGame: setupGame,
             panTo: panTo
         };
     });

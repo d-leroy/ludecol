@@ -7,10 +7,10 @@ angular.module('ludecolApp')
     })
 
     .factory('FeatureCollection', function () {
-        return {Burrow: null, Crab: null, Mussel: null, Snail: null};
+        return {Burrow: [], Crab: [], Mussel: [], Snail: []};
     })
 
-    .controller('AnimalIdentificationController', function ($scope, Principal, MapService, GameService, RadioModel, FeatureCollection, AnimalGameService) {
+    .controller('AnimalIdentificationController', function ($scope, Principal, MapService, RadioModel, FeatureCollection, AnimalGameService) {
 
         Principal.identity().then(function(account) {
             $scope.account = account;
@@ -19,16 +19,7 @@ angular.module('ludecolApp')
 
             function errorCallback() {$scope.errorMsg = true; MapService.destroyMap();}
 
-            function initializeFeatureCollection() {
-                return {
-                    Burrow: [],
-                    Crab: [],
-                    Mussel: [],
-                    Snail: []
-                }
-            }
-
-            function loadGame(img,game,force) {
+            function loadGame(img,game) {
                 $scope.errorMsg = false;
 
                 FeatureCollection.Burrow = undefined;
@@ -45,12 +36,11 @@ angular.module('ludecolApp')
                 $scope.radioModel = {selected: null};
                 RadioModel.data = $scope.radioModel;
 
-                MapService.initializeMap('map',force);
+                MapService.initializeMap('map');
                 MapService.setView(img);
                 MapService.addControl(controls);
                 MapService.addControl(options);
-                MapService.setupGame();
-                $scope.submit = function(){$scope.errorMsg = null; GameService.submitGame();};
+                $scope.submit = function(){$scope.errorMsg = null; AnimalGameService.submitGame();};
 
                 $scope.burrows = FeatureCollection.Burrow;
                 $scope.crabs = FeatureCollection.Crab;
@@ -64,6 +54,6 @@ angular.module('ludecolApp')
                 $scope.panToFeature = function(property,idx) {MapService.panTo(FeatureCollection[property][idx].getGeometry().getCoordinates());}
             }
 
-            GameService.initializeGame($scope.account.login,'AnimalIdentification',initializeFeatureCollection,loadGame,errorCallback,true);
+            AnimalGameService.initializeGame($scope.account.login,loadGame,errorCallback);
         });
     });

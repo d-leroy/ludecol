@@ -20,6 +20,7 @@ angular.module('ludecolApp')
         Principal.identity().then(function(account) {
             $scope.account = account;
             $scope.isAuthenticated = Principal.isAuthenticated;
+            $scope.currentPage = 1;
 
             $scope.$watchCollection('files',function(n,o) {
                     angular.forEach(n,function(file){
@@ -146,7 +147,7 @@ angular.module('ludecolApp')
             $scope.showPreview = function(show) {
                 $scope.previewing = show;
                 if(show) {
-                    MapService.initializeMap('preview',true);
+                    MapService.initializeMap('preview');
                     MapService.setView($scope.currentImage);
                 }
                 else {
@@ -162,9 +163,15 @@ angular.module('ludecolApp')
 
             $scope.submit = function() {
                 $scope.currentImage.game_modes = $scope.availableModes;
+                angular.forEach($scope.availableModes,function(v) {
+                    console.dir($scope.currentImage.mode_status[v]);
+                    if($scope.currentImage.mode_status[v].status === "UNAVAILABLE")
+                        $scope.currentImage.mode_status[v].status = "NOT_PROCESSED";
+                });
                 $scope.currentImage.flora_species = $scope.presentFlora;
                 $scope.currentImage.fauna_species = $scope.presentFauna;
-                Image.update($scope.currentImage,function() {
+                Image.update($scope.currentImage,function(i) {
+                    console.dir(i);
                     $('#editImageModal').modal('hide');
                 })
             }

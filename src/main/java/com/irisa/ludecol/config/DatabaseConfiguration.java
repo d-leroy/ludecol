@@ -1,6 +1,8 @@
 package com.irisa.ludecol.config;
 
 
+import com.irisa.ludecol.domain.Image;
+import com.irisa.ludecol.domain.subdomain.ImageStatus;
 import com.mongodb.Mongo;
 import org.mongeez.Mongeez;
 import org.slf4j.Logger;
@@ -12,14 +14,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 
 @Configuration
 @Profile("!cloud")
@@ -71,6 +76,10 @@ public class DatabaseConfiguration extends AbstractMongoConfiguration  {
     @Bean
     public MongoTemplate mongoTemplate() throws Exception {
         MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory());
+
+        Arrays.asList(ImageStatus.values()).stream()
+            .forEach(v->mongoTemplate.indexOps(Image.class).ensureIndex(new Index().on("mode_status."+v.toString()+".mode", Sort.Direction.ASC)));
+//        mongoTemplate.indexOps(Image.class).ensureIndex(new Index().on("mode_status."++"mode", Sort.Direction.ASC));
         return mongoTemplate;
     }
 }

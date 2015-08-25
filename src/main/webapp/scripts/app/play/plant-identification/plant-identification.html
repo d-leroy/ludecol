@@ -11,12 +11,9 @@
     </div>
 
     <div id="controls" class="ol-control control-panel" ng-show="errorMsg === false">
-        <button type="button" ng-show="displayControls" ng-click="toggleControls()">
-            <span class="glyphicon glyphicon-triangle-top"></span>
-        </button>
-        <button type="button" ng-hide="displayControls" ng-click="toggleControls()">
-            <span class="glyphicon glyphicon-triangle-bottom"></span>
-        </button>
+        <button type="button" ng-show="displayControls" ng-click="displayControls = !displayControls">&#x25B2;</button>
+        <button type="button" ng-hide="displayControls" ng-click="displayControls = !displayControls">&#x25BC;</button>
+
         <div ng-show="displayControls">
             <div class="btn-group btn-group-justified" style="width: 350px;">
                 <label class="btn color1" ng-model="radioModel.selected"

@@ -18,6 +18,8 @@ public class ImageSet {
     @JsonProperty("image_count")
     private Integer imageCount;
 
+    private Integer priority;
+
     public String getId() {
         return id;
     }
@@ -42,12 +44,21 @@ public class ImageSet {
         this.imageCount = imageCount;
     }
 
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
     @Override
     public String toString() {
         return "ImageSet{" +
             "id='" + id + '\'' +
             ", name='" + name + '\'' +
             ", imageCount=" + imageCount +
+            ", priority=" + priority +
             '}';
     }
 }

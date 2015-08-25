@@ -3,10 +3,12 @@ package com.irisa.ludecol.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.domain.Image;
+import com.irisa.ludecol.domain.ImageSet;
 import com.irisa.ludecol.domain.ReferenceGame;
 import com.irisa.ludecol.domain.subdomain.GameMode;
 import com.irisa.ludecol.repository.GameRepository;
 import com.irisa.ludecol.repository.ImageRepository;
+import com.irisa.ludecol.repository.ImageSetRepository;
 import com.irisa.ludecol.repository.ReferenceGameRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
 import com.irisa.ludecol.service.ImageProviderService;
@@ -51,6 +53,9 @@ public class ImageResource {
     private ImageRepository imageRepository;
 
     @Inject
+    private ImageSetRepository imageSetRepository;
+
+    @Inject
     private ImageService imageService;
 
     @Inject
@@ -83,10 +88,11 @@ public class ImageResource {
                     new BufferedOutputStream(new FileOutputStream(res));
                 stream.write(bytes);
                 stream.close();
+                ImageSet imageSet = imageSetRepository.findByName(set);
                 imageService.splitImage(cols, rows, set, res).stream().forEach(f -> {
                     imageService.thumbnailize(f,set);
                     imageService.zoomifyImage(f,set);
-                    imageService.insertImage(f,set);
+                    imageService.insertImage(f,imageSet);
                     f.delete();
                 });
                 res.delete();
@@ -221,7 +227,30 @@ public class ImageResource {
     @RolesAllowed(AuthoritiesConstants.ADMIN)
     public void delete(@PathVariable String id) {
         log.debug("REST request to delete Image : {}", id);
+        gameRepository.findAllByImg(id).stream().forEach(g->g.setImg("-1"));
+
         imageRepository.delete(id);
 
     }
+
+//    /**
+//     * GET  /images/statistics -> get statistics on all images.
+//     */
+//    @RequestMapping(value = "/images/statistics",
+//        method = RequestMethod.GET,
+//        produces = MediaType.APPLICATION_JSON_VALUE)
+//    @Timed
+//    @RolesAllowed(AuthoritiesConstants.ADMIN)
+//    ResponseEntity<List<ReferenceGame>> getImageReferenceGames(HttpServletRequest request, @PathVariable String id) {
+//        log.debug("REST request to get User : {}", id);
+//        String mode = request.getParameter("mode");
+//        List result = new ArrayList<>();
+//        if(mode != null) {
+//            result.add(referenceGameRepository.findByImgAndGameMode(id,GameMode.valueOf(mode)));
+//        }
+//        else {
+//            result.addAll(referenceGameRepository.findAllByImg(id));
+//        }
+//        return new ResponseEntity<>(result, HttpStatus.OK);
+//    }
 }

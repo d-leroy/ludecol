@@ -11,6 +11,8 @@ import java.util.List;
  */
 public interface ExpertGameRepository extends MongoRepository<ExpertGame, String> {
 
+    List<ExpertGame> findAllByImg(String img);
+
     List<ExpertGame> findAllByUsr(String usr);
 
     List<ExpertGame> findAllByUsrAndCompleted(String usr, boolean completed);

@@ -1,7 +1,7 @@
 <div ng-cloak>
     <h1 class="text-center">Expert Animal identification</h1>
 
-    <div ng-hide="errorMsg === false">
+    <div ng-show="errorMsg === true">
         <p class="text-center">
             Sorry, no image is available to you in this game mode at this time.
         </p>
@@ -57,7 +57,7 @@
                            ng-mouseleave="highlightFeature('Burrow',$index,false)"
                            ng-click="panToFeature('Burrow',$index)">
                             Burrow-{{$index}}
-                            <label ng-hide="burrow.validated" class="btn btn-xs btn-danger pull-right tag" ng-click="removeFeature('Burrow',$index)">
+                            <label class="btn btn-xs btn-danger pull-right tag" ng-click="removeFeature('Burrow',$index)">
                                 <span class="glyphicon glyphicon-remove-sign"></span>
                             </label>
                         </a>
@@ -66,7 +66,7 @@
                            ng-mouseleave="highlightFeature('Crab',$index,false)"
                            ng-click="panToFeature('Crab',$index)">
                             Crab-{{$index}}
-                            <label ng-hide="crab.validated" class="btn btn-xs btn-danger pull-right tag" ng-click="removeFeature('Crab',$index)">
+                            <label class="btn btn-xs btn-danger pull-right tag" ng-click="removeFeature('Crab',$index)">
                                 <span class="glyphicon glyphicon-remove-sign"></span>
                             </label>
                         </a>
@@ -75,7 +75,7 @@
                            ng-mouseleave="highlightFeature('Mussel',$index,false)"
                            ng-click="panToFeature('Mussel',$index)">
                             Mussel-{{$index}}
-                            <label ng-hide="mussel.validated" class="btn btn-xs btn-danger pull-right tag" ng-click="removeFeature('Mussel',$index)">
+                            <label class="btn btn-xs btn-danger pull-right tag" ng-click="removeFeature('Mussel',$index)">
                                 <span class="glyphicon glyphicon-remove-sign"></span>
                             </label>
                         </a>
@@ -84,7 +84,7 @@
                            ng-mouseleave="highlightFeature('Snail',$index,false)"
                            ng-click="panToFeature('Snail',$index)">
                             Snail-{{$index}}
-                            <label ng-hide="snail.validated" class="btn btn-xs btn-danger pull-right tag" ng-click="removeFeature('Snail',$index)">
+                            <label class="btn btn-xs btn-danger pull-right tag" ng-click="removeFeature('Snail',$index)">
                                 <span class="glyphicon glyphicon-remove-sign"></span>
                             </label>
                         </a>

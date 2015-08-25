@@ -22,17 +22,24 @@ public class RankingService {
         LinkedList<User> users = new LinkedList<>();
         users.addAll(userRepository.findAll(new Sort(Sort.Direction.DESC, "score")));
 
-        int nbUserPerRank = users.size() / 50;
+        int nbUserPerRank = Math.max(users.size() / 50,1);
 
         for(int i=1; i<50; i++) {
             for(int j=0; j<nbUserPerRank; j++) {
                 User user = users.poll();
+                int userWeeks = user.getWeeks();
+                user.setBestRank(Math.min(i, user.getBestRank()));
                 user.setRank(i);
+                user.setMeanRank((i + user.getMeanRank() * userWeeks) / (userWeeks + 1.f));
+                user.setWeeks(userWeeks+1);
                 user.setScore((50-i)*1000);
             }
         }
         for(User user : users) {
             user.setRank(50);
+            int userWeeks = user.getWeeks();
+            user.setMeanRank((50 + user.getMeanRank() * userWeeks) / (userWeeks + 1.f));
+            user.setWeeks(userWeeks+1);
             user.setScore(0);
         }
 

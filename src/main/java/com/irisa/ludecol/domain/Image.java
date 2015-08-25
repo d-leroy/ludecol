@@ -1,19 +1,14 @@
 package com.irisa.ludecol.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.irisa.ludecol.domain.subdomain.AnimalSpecies;
-import com.irisa.ludecol.domain.subdomain.GameMode;
-import com.irisa.ludecol.domain.subdomain.PlantSpecies;
+import com.irisa.ludecol.domain.subdomain.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.validation.constraints.NotNull;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by dorian on 04/05/15.
@@ -41,6 +36,11 @@ public class Image {
     @JsonProperty("game_modes")
     private EnumSet<GameMode> gameModes = EnumSet.noneOf(GameMode.class);
 
+    @Indexed
+    @Field("mode_status")
+    @JsonProperty("mode_status")
+    private EnumMap<ImageStatus,List<ImageModeStatus>> modeStatus = new EnumMap(ImageStatus.class);
+
     @Field("fauna_species")
     @JsonProperty("fauna_species")
     private Set<AnimalSpecies> faunaSpecies = new HashSet<>();
@@ -53,6 +53,10 @@ public class Image {
     @Field("image_set")
     @JsonProperty("image_set")
     private String imageSet;
+
+    @Field("set_priority")
+    @JsonProperty("set_priority")
+    private Integer setPriority;
 
     public void setId(String id) {
         this.id = id;
@@ -103,6 +107,14 @@ public class Image {
         this.gameModes.addAll(gameModes);
     }
 
+    public EnumMap<ImageStatus, List<ImageModeStatus>> getModeStatus() {
+        return modeStatus;
+    }
+
+    public void setModeStatus(EnumMap<ImageStatus, List<ImageModeStatus>> modeStatus) {
+        this.modeStatus = modeStatus;
+    }
+
     public Set<AnimalSpecies> getFaunaSpecies() {
         return faunaSpecies;
     }
@@ -125,6 +137,14 @@ public class Image {
 
     public void setImageSet(String imageSet) {
         this.imageSet = imageSet;
+    }
+
+    public Integer getSetPriority() {
+        return setPriority;
+    }
+
+    public void setSetPriority(Integer setPriority) {
+        this.setPriority = setPriority;
     }
 
     @Override
@@ -157,8 +177,11 @@ public class Image {
             ", width=" + width +
             ", height=" + height +
             ", gameModes=" + gameModes +
+            ", modeStatus=" + modeStatus +
             ", faunaSpecies=" + faunaSpecies +
             ", floraSpecies=" + floraSpecies +
+            ", imageSet='" + imageSet + '\'' +
+            ", setPriority=" + setPriority +
             '}';
     }
 }

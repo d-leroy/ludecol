@@ -193,15 +193,19 @@ public class TrainingGameService {
         switch(game.getGameMode()) {
             case TrainingAnimalIdentification: {
                 refGame = (ReferenceGame<AnimalIdentificationResult>) (referenceGameRepository.findByImgAndGameMode(img.getId(), mode));
-                if(refGame == null)
+                if(refGame == null) {
+                    log.debug("====================refGame is null====================");
                     return null;
+                }
                 trainingGame = new TrainingGame<AnimalIdentificationResult>();
             }
             break;
             case TrainingPlantIdentification: {
                 refGame = (ReferenceGame<PlantIdentificationResult>) (referenceGameRepository.findByImgAndGameMode(img.getId(), mode));
-                if(refGame == null)
+                if(refGame == null) {
+                    log.debug("====================refGame is null====================");
                     return null;
+                }
                 trainingGame = new TrainingGame<PlantIdentificationResult>();
             }
             break;

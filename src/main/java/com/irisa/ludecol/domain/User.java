@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -12,9 +11,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -55,6 +52,18 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Field("rank")
     @JsonProperty("rank")
     private Integer rank = 50;
+
+    @Field("best_rank")
+    @JsonProperty("best_rank")
+    private Integer bestRank = 50;
+
+    @Field("mean_rank")
+    @JsonProperty("mean_rank")
+    private Float meanRank = 50.f;
+
+    @Field("weeks")
+    @JsonProperty("weeks")
+    private Integer weeks = 0;
 
     private Integer bonusPoints = 0;
 
@@ -165,6 +174,30 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setRank(Integer rank) {
         this.rank = rank;
+    }
+
+    public Integer getBestRank() {
+        return bestRank;
+    }
+
+    public void setBestRank(Integer bestRank) {
+        this.bestRank = bestRank;
+    }
+
+    public Float getMeanRank() {
+        return meanRank;
+    }
+
+    public void setMeanRank(Float meanRank) {
+        this.meanRank = meanRank;
+    }
+
+    public Integer getWeeks() {
+        return weeks;
+    }
+
+    public void setWeeks(Integer weeks) {
+        this.weeks = weeks;
     }
 
     public Integer getBonusPoints() {

@@ -1,7 +1,7 @@
 <div ng-cloak>
     <h1 class="text-center">Animal Identification Practice</h1>
 
-    <div ng-hide="img !== undefined">
+    <div ng-show="errorMsg === true">
         <p class="text-center">
             Sorry, no image is available to you in this game mode at this time.
         </p>
@@ -10,37 +10,37 @@
         </div>
     </div>
 
-    <div id="controls" class="ol-control control-panel" ng-show="img !== undefined">
+    <div id="controls" class="ol-control control-panel" ng-show="errorMsg === false">
         <button type="button" ng-show="displayControls" ng-click="displayControls = !displayControls">&#x25B2;</button>
         <button type="button" ng-hide="displayControls" ng-click="displayControls = !displayControls">&#x25BC;</button>
 
         <div ng-show="displayControls">
             <div style="width: 300px;">
                 <div class="btn-group btn-group-justified">
-                    <label class="btn blue" style="border-bottom-left-radius: 0px;" ng-model="radioModel" btn-radio="'Snail'" uncheckable ng-disabled="animals.Snail === undefined">
-                        <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Snail'"></span>
+                    <label class="btn blue" style="border-bottom-left-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Snail'" uncheckable ng-disabled="scoreboard.animals.Snail === undefined">
+                        <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Snail'"></span>
                         <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Snail')"></span>
-                        <span class="glyphicon glyphicon-lock" ng-show="isDisabled('Snail')"></span>
+                        <span class="glyphicon glyphicon-lock" ng-show="scoreboard.animals.Snail === undefined"></span>
                         Snail
                     </label>
-                    <label class="btn green" style="border-bottom-right-radius: 0px;" ng-model="radioModel" btn-radio="'Mussel'" uncheckable ng-disabled="animals.Mussel === undefined">
-                        <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Mussel'"></span>
+                    <label class="btn green" style="border-bottom-right-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Mussel'" uncheckable ng-disabled="scoreboard.animals.Mussel === undefined">
+                        <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Mussel'"></span>
                         <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Mussel')"></span>
-                        <span class="glyphicon glyphicon-lock" ng-show="isDisabled('Mussel')"></span>
+                        <span class="glyphicon glyphicon-lock" ng-show="scoreboard.animals.Mussel === undefined"></span>
                         Mussel
                     </label>
                 </div>
                 <div class="btn-group btn-group-justified">
-                    <label class="btn yellow" style="border-top-left-radius: 0px;" ng-model="radioModel" btn-radio="'Crab'" uncheckable ng-disabled="animals.Crab === undefined">
-                        <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Crab'"></span>
+                    <label class="btn yellow" style="border-top-left-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Crab'" uncheckable ng-disabled="scoreboard.animals.Crab === undefined">
+                        <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Crab'"></span>
                         <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Crab')"></span>
-                        <span class="glyphicon glyphicon-lock" ng-show="isDisabled('Crab')"></span>
+                        <span class="glyphicon glyphicon-lock" ng-show="scoreboard.animals.Crab === undefined"></span>
                         Crab
                     </label>
-                    <label class="btn purple" style="border-top-right-radius: 0px;" ng-model="radioModel" btn-radio="'Burrow'" uncheckable ng-disabled="animals.Burrow === undefined">
-                        <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Burrow'"></span>
+                    <label class="btn purple" style="border-top-right-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Burrow'" uncheckable ng-disabled="scoreboard.animals.Burrow === undefined">
+                        <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Burrow'"></span>
                         <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Burrow')"></span>
-                        <span class="glyphicon glyphicon-lock" ng-show="isDisabled('Burrow')"></span>
+                        <span class="glyphicon glyphicon-lock" ng-show="scoreboard.animals.Burrow === undefined"></span>
                         Burrow
                     </label>
                 </div>
@@ -49,7 +49,7 @@
             <hr/>
 
             <div style="margin: 0 auto; width: 128px; height: 128px; background-color: lightgrey;">
-                <img ng-show="radioModel !== null" ng-src="images/animals/{{radioModel}}.jpg" />
+                <img ng-show="radioModel.selected !== null" ng-src="images/animals/{{radioModel.selected}}.jpg" />
             </div>
 
             <hr/>
@@ -57,42 +57,46 @@
             <accordion>
                 <accordion-group is-open="true">
                     <accordion-heading>
-                        Features<span class="badge pull-right">{{species.Snail.length + species.Mussel.length + species.Crab.length + species.Burrow.length}}</span>
+                        Features<span class="badge pull-right">{{snails.length + mussels.length + crabs.length + burrows.length}}</span>
                     </accordion-heading>
                     <div class="list-group" style="overflow: auto; height: 175px;">
-                        <a ng-repeat="snail in species.Snail" class="list-group-item"
-                           ng-mouseenter="highlightFeature('Snail',$index,true)"
-                           ng-mouseleave="highlightFeature('Snail',$index,false)"
-                           ng-click="panToSnail($index)">
-                            Snail-{{$index}}
-                            <label ng-hide="snail.validated" class="btn btn-xs btn-danger pull-right tag" ng-click="removeSnail($index)">
-                                <span class="glyphicon glyphicon-remove-sign"></span>
-                            </label>
-                        </a>
-                        <a ng-repeat="mussel in species.Mussel" class="list-group-item"
-                           ng-mouseenter="highlightFeature('Mussel',$index,true)"
-                           ng-mouseleave="highlightFeature('Mussel',$index,false)"
-                           ng-click="panToMussel($index)">
-                            Mussel-{{$index}}
-                            <label ng-hide="mussel.validated" class="btn btn-xs btn-danger pull-right tag" ng-click="removeMussel($index)">
-                                <span class="glyphicon glyphicon-remove-sign"></span>
-                            </label>
-                        </a>
-                        <a ng-repeat="crab in species.Crab" class="list-group-item"
-                           ng-mouseenter="highlightFeature('Crab',$index,true)"
-                           ng-mouseleave="highlightFeature('Crab',$index,false)"
-                           ng-click="panToCrab($index)">
-                            Crab-{{$index}}
-                            <label ng-hide="crab.validated" class="btn btn-xs btn-danger pull-right tag" ng-click="removeCrab($index)">
-                                <span class="glyphicon glyphicon-remove-sign"></span>
-                            </label>
-                        </a>
-                        <a ng-repeat="burrow in species.Burrow" class="list-group-item"
+                        <a ng-repeat="burrow in burrows" class="list-group-item"
                            ng-mouseenter="highlightFeature('Burrow',$index,true)"
                            ng-mouseleave="highlightFeature('Burrow',$index,false)"
-                           ng-click="panToBurrow($index)">
+                           ng-click="panToFeature('Burrow',$index)"
+                           ng-hide="burrow.validated">
                             Burrow-{{$index}}
-                            <label ng-hide="burrow.validated" class="btn btn-xs btn-danger pull-right tag" ng-click="removeBurrow($index)">
+                            <label class="btn btn-xs btn-danger pull-right tag" ng-click="removeFeature('Burrow',$index)">
+                                <span class="glyphicon glyphicon-remove-sign"></span>
+                            </label>
+                        </a>
+                        <a ng-repeat="crab in crabs" class="list-group-item"
+                           ng-mouseenter="highlightFeature('Crab',$index,true)"
+                           ng-mouseleave="highlightFeature('Crab',$index,false)"
+                           ng-click="panToFeature('Crab',$index)"
+                           ng-hide="crab.validated">
+                            Crab-{{$index}}
+                            <label class="btn btn-xs btn-danger pull-right tag" ng-click="removeFeature('Crab',$index)">
+                                <span class="glyphicon glyphicon-remove-sign"></span>
+                            </label>
+                        </a>
+                        <a ng-repeat="mussel in mussels" class="list-group-item"
+                           ng-mouseenter="highlightFeature('Mussel',$index,true)"
+                           ng-mouseleave="highlightFeature('Mussel',$index,false)"
+                           ng-click="panToFeature('Mussel',$index)"
+                           ng-hide="mussel.validated">
+                            Mussel-{{$index}}
+                            <label class="btn btn-xs btn-danger pull-right tag" ng-click="removeFeature('Mussel',$index)">
+                                <span class="glyphicon glyphicon-remove-sign"></span>
+                            </label>
+                        </a>
+                        <a ng-repeat="snail in snails" class="list-group-item"
+                           ng-mouseenter="highlightFeature('Snail',$index,true)"
+                           ng-mouseleave="highlightFeature('Snail',$index,false)"
+                           ng-click="panToFeature('Snail',$index)"
+                           ng-hide="snail.validated">
+                            Snail-{{$index}}
+                            <label class="btn btn-xs btn-danger pull-right tag" ng-click="removeFeature('Snail',$index)">
                                 <span class="glyphicon glyphicon-remove-sign"></span>
                             </label>
                         </a>
@@ -108,7 +112,7 @@
         </div>
     </div>
 
-    <div id="scoreboard" class="ol-control scoreboard-panel" ng-show="img !== undefined">
+    <div id="scoreboard" class="ol-control scoreboard-panel" ng-show="errorMsg === false">
         <button type="button" ng-show="displayScoreboard" ng-click="displayScoreboard = !displayScoreboard" style="float: right;">
             <span class="glyphicon glyphicon-triangle-top"></span>
         </button>
@@ -117,9 +121,9 @@
         </button>
         <div ng-show="displayScoreboard">
             <div style="width: 300px;">
-                <h4>Score : {{score}}</h4>
+                <h4>Score : {{scoreboard.score}}</h4>
                 <ul class="list-unstyled">
-                    <li ng-repeat="(key,animal) in animals">
+                    <li ng-repeat="(key,animal) in scoreboard.animals">
                         <progress max="animal.max" animate="true">
                             <bar value="animal.nbConfirmed">
                                 <span style="color:white; white-space:nowrap; font-size: medium;">{{animal.name}} : {{animal.nbConfirmed + animal.nbToSubmit}} / {{animal.max}}</span>

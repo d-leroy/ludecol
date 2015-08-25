@@ -143,6 +143,7 @@ public class Game<T extends GameResult> {
             ", img='" + img + '\'' +
             ", gameMode=" + gameMode +
             ", gameResult=" + gameResult +
+            ", correctedGameResult=" + correctedGameResult +
             ", completed=" + completed +
             ", lastModified=" + lastModified +
             ", score=" + score +

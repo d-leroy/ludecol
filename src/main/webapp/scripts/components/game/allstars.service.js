@@ -1,13 +1,25 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .factory('AllStarsGameService', function (RadioModel) {
+    .factory('AllStarsGameService', function (RadioModel, UserGame, Game, MapService, GameService) {
 
-        //-------------------API
+        var _submitGame;
 
-        var getResult = function() {
+        function _getResult() {
             return RadioModel.data;
         }
 
-        return {getResult: getResult};
+        //-------------------API
+
+        var initializeGame = function(login,successCallback,errorCallback) {
+            MapService.destroyMap();
+            _submitGame = GameService.initializeGame(login,'AllStars',function(){return {};},
+                _getResult,successCallback,errorCallback,UserGame.query,Game.update);
+        };
+
+        var submitGame = function(){
+            _submitGame();
+        };
+
+        return {initializeGame: initializeGame, submitGame: submitGame};
     });

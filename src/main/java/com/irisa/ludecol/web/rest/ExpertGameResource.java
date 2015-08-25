@@ -63,7 +63,7 @@ public class ExpertGameResource {
         if (result == null)
             return ResponseEntity.badRequest().header("Failure", "No available image were found").build();
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setLocation(new URI("/api/traingames/" + result.getId()));
+        responseHeaders.setLocation(new URI("/api/expertgames/" + result.getId()));
         return new ResponseEntity<>(result, responseHeaders, HttpStatus.CREATED);
     }
 
