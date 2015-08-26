@@ -148,8 +148,11 @@ public class GameProcessingService {
                 processedGameRepository.save(processedGame);
                 if(processedGame.getProcessedGameResult().getNbResults() >= MIN_RESULT) {
                     Image img = imageRepository.findOne(game.getImg());
-                    if(img.getGameModes().add(GameMode.ExpertPlantIdentification))
+                    ImageModeStatus modeStatus = img.getModeStatus().get(GameMode.PlantIdentification);
+                    if(modeStatus.getStatus().equals(ImageStatus.NOT_PROCESSED)) {
+                        modeStatus.setStatus(ImageStatus.IN_PROCESSING);
                         imageRepository.save(img);
+                    }
                 }
             }
             break;
@@ -165,8 +168,11 @@ public class GameProcessingService {
                 processedGameRepository.save(processedGame);
                 if(processedGame.getProcessedGameResult().getNbResults() >= MIN_RESULT) {
                     Image img = imageRepository.findOne(game.getImg());
-                    if(img.getGameModes().add(GameMode.ExpertAnimalIdentification))
+                    ImageModeStatus modeStatus = img.getModeStatus().get(GameMode.AnimalIdentification);
+                    if(modeStatus.getStatus().equals(ImageStatus.NOT_PROCESSED)) {
+                        modeStatus.setStatus(ImageStatus.IN_PROCESSING);
                         imageRepository.save(img);
+                    }
                 }
             }
             break;
@@ -182,8 +188,11 @@ public class GameProcessingService {
                 processedGameRepository.save(processedGame);
                 if(processedGame.getProcessedGameResult().getNbResults() >= MIN_RESULT) {
                     Image img = imageRepository.findOne(game.getImg());
-                    if(img.getGameModes().add(GameMode.ExpertAllStars))
+                    ImageModeStatus modeStatus = img.getModeStatus().get(GameMode.AllStars);
+                    if(modeStatus.getStatus().equals(ImageStatus.NOT_PROCESSED)) {
+                        modeStatus.setStatus(ImageStatus.IN_PROCESSING);
                         imageRepository.save(img);
+                    }
                 }
             }
             break;

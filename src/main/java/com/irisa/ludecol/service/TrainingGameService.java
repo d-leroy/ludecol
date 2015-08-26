@@ -75,7 +75,7 @@ public class TrainingGameService {
     public void updateTrainingGame(final TrainingGame trainingGame, final Game game) {
         int errors = 0;
         switch (game.getGameMode()) {
-            case TrainingAnimalIdentification: {
+            case AnimalIdentification: {
                 Map<AnimalSpecies,List<double[]>> submittedMap = ((AnimalIdentificationResult) game.getGameResult()).getSpeciesMap();
                 Map<AnimalSpecies,List<double[]>> referenceMap = ((AnimalIdentificationResult) trainingGame.getReferenceResult()).getSpeciesMap();
                 Map<AnimalSpecies,List<double[]>> correctedMap = new HashMap<>();
@@ -92,7 +92,7 @@ public class TrainingGameService {
                 trainingGame.setSubmittedResult(animalIdentificationResult);
             }
             break;
-            case TrainingPlantIdentification: {
+            case PlantIdentification: {
                 Map<PlantSpecies,List<Boolean>> submittedMap = ((PlantIdentificationResult) game.getGameResult()).getSpeciesMap();
                 Map<PlantSpecies,List<Boolean>> referenceMap = ((PlantIdentificationResult) trainingGame.getReferenceResult()).getSpeciesMap();
                 Map<PlantSpecies,List<Boolean>> correctedMap = new HashMap<>();
@@ -130,7 +130,7 @@ public class TrainingGameService {
         TrainingGameDTO result = null;
         if(trainingGame != null)
             switch(trainingGame.getGameMode()) {
-                case TrainingAnimalIdentification: {
+                case AnimalIdentification: {
                     AnimalTrainingGameDTO wrapper = new AnimalTrainingGameDTO();
 
                     Map<AnimalSpecies,List<double[]>> submittedMap = ((AnimalIdentificationResult) trainingGame.getSubmittedResult()).getSpeciesMap();
@@ -148,7 +148,7 @@ public class TrainingGameService {
                     result = wrapper;
                 }
                 break;
-                case TrainingPlantIdentification: {
+                case PlantIdentification: {
                     PlantTrainingGameDTO wrapper = new PlantTrainingGameDTO();
 
                     Map<PlantSpecies,List<Boolean>> submittedMap = ((PlantIdentificationResult) trainingGame.getSubmittedResult()).getSpeciesMap();
@@ -185,13 +185,13 @@ public class TrainingGameService {
     public TrainingGameDTO createTrainingGame(Game game) {
         GameMode mode = game.getGameMode();
         String login = game.getUsr();
-        Image img = imageProviderService.findOne(mode, login);
+        Image img = imageProviderService.findTrainingImage(mode, login);
         if(img == null)
             return null;
         TrainingGame trainingGame;
         ReferenceGame refGame;
         switch(game.getGameMode()) {
-            case TrainingAnimalIdentification: {
+            case AnimalIdentification: {
                 refGame = (ReferenceGame<AnimalIdentificationResult>) (referenceGameRepository.findByImgAndGameMode(img.getId(), mode));
                 if(refGame == null) {
                     log.debug("====================refGame is null====================");
@@ -200,7 +200,7 @@ public class TrainingGameService {
                 trainingGame = new TrainingGame<AnimalIdentificationResult>();
             }
             break;
-            case TrainingPlantIdentification: {
+            case PlantIdentification: {
                 refGame = (ReferenceGame<PlantIdentificationResult>) (referenceGameRepository.findByImgAndGameMode(img.getId(), mode));
                 if(refGame == null) {
                     log.debug("====================refGame is null====================");

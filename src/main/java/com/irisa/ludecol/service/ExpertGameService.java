@@ -51,9 +51,6 @@ public class ExpertGameService {
     private UserRepository userRepository;
 
     @Inject
-    private GameNotificationResource gameNotificationResource;
-
-    @Inject
     private GameNotificationService gameNotificationService;
 
     @Inject
@@ -150,49 +147,23 @@ public class ExpertGameService {
         ReferenceGame referenceGame = null;
         List<Game> games = null;
         switch(expertGame.getGameMode()) {
-            case ExpertAllStars: {
+            case AllStars: {
                 games = gameRepository.findAllByImgAndGameModeAndCompleted(expertGame.getImg(),GameMode.AllStars,true);
                 Map<Species,Integer> referenceMap = ((AllStarsResult) expertGame.getSubmittedResult()).getSpeciesMap();
 
                 Set<AnimalSpecies> faunaSpecies = new HashSet<>();
                 Set<PlantSpecies> floraSpecies = new HashSet<>();
 
-                for(Species key : referenceMap.keySet()) {
-                    if (referenceMap.get(key) == 1) {
-                        switch (key) {
-                            case Batis:
-                                floraSpecies.add(PlantSpecies.Batis);
-                                break;
-                            case Borrichia:
-                                floraSpecies.add(PlantSpecies.Borrichia);
-                                break;
-                            case Juncus:
-                                floraSpecies.add(PlantSpecies.Juncus);
-                                break;
-                            case Limonium:
-                                floraSpecies.add(PlantSpecies.Limonium);
-                                break;
-                            case Salicornia:
-                                floraSpecies.add(PlantSpecies.Salicornia);
-                                break;
-                            case Spartina:
-                                floraSpecies.add(PlantSpecies.Spartina);
-                                break;
-                            case Burrow:
-                                faunaSpecies.add(AnimalSpecies.Burrow);
-                                break;
-                            case Crab:
-                                faunaSpecies.add(AnimalSpecies.Crab);
-                                break;
-                            case Mussel:
-                                faunaSpecies.add(AnimalSpecies.Mussel);
-                                break;
-                            case Snail:
-                                faunaSpecies.add(AnimalSpecies.Snail);
-                                break;
+                referenceMap.keySet().stream().filter(k->referenceMap.get(k) == 1).forEach(k->{
+                    try {floraSpecies.add(PlantSpecies.valueOf(k.toString()));}
+                    catch (IllegalArgumentException e1) {
+                        try {faunaSpecies.add(AnimalSpecies.valueOf(k.toString()));}
+                        catch (IllegalArgumentException e2) {
+                            e1.printStackTrace();
+                            e2.printStackTrace();
                         }
                     }
-                }
+                });
 
                 for(Game game : games) {
                     Map<Species,Integer> submittedMap = ((AllStarsResult) game.getGameResult()).getSpeciesMap();
@@ -216,19 +187,19 @@ public class ExpertGameService {
                     awardPoints(game, score);
                 }
                 Image image = imageRepository.findOne(expertGame.getImg());
-                image.getGameModes().remove(GameMode.ExpertAllStars);
+                image.getModeStatus().get(GameMode.AllStars).setStatus(ImageStatus.PROCESSED);
                 if(!faunaSpecies.isEmpty()) {
-                    image.getGameModes().add(GameMode.AnimalIdentification);
+                    image.getModeStatus().get(GameMode.AnimalIdentification).setStatus(ImageStatus.NOT_PROCESSED);
                     image.setFaunaSpecies(faunaSpecies);
                 }
                 if(!floraSpecies.isEmpty()) {
-                    image.getGameModes().add(GameMode.PlantIdentification);
+                    image.getModeStatus().get(GameMode.PlantIdentification).setStatus(ImageStatus.NOT_PROCESSED);
                     image.setFloraSpecies(floraSpecies);
                 }
                 imageRepository.save(image);
             }
             break;
-            case ExpertAnimalIdentification: {
+            case AnimalIdentification: {
                 games = gameRepository.findAllByImgAndGameModeAndCompleted(expertGame.getImg(),GameMode.AnimalIdentification,true);
                 Map<AnimalSpecies,List<double[]>> referenceMap = ((AnimalIdentificationResult) expertGame.getSubmittedResult()).getSpeciesMap();
                 for(Game game : games) {
@@ -256,23 +227,27 @@ public class ExpertGameService {
                     awardPoints(game,score);
                 }
                 Image image = imageRepository.findOne(expertGame.getImg());
-                ImageModeStatus status = image.getModeStatus().get(ImageStatus.IN_PROCESSING).stream().filter(s->s.getMode().equals(GameMode.ExpertAnimalIdentification)).findFirst().get();
-                image.getModeStatus().get(ImageStatus.IN_PROCESSING).remove(status);
-                image.getModeStatus().get(ImageStatus.PROCESSED).add(status);
+
+                image.getModeStatus().get(GameMode.AnimalIdentification).setStatus(ImageStatus.PROCESSED);
+                Set<AnimalSpecies> set = new HashSet<>();
+                referenceMap.entrySet().stream().forEach(e -> {
+                    if (!e.getValue().isEmpty())
+                        set.add(e.getKey());
+                });
+                image.setFaunaSpecies(set);
 
                 if(!referenceMap.isEmpty()) {
                     referenceGame = new ReferenceGame<AnimalIdentificationResult>();
                     referenceGame.setGameResult(expertGame.getSubmittedResult());
                     referenceGame.setImg(expertGame.getImg());
-                    referenceGame.setGameMode(GameMode.TrainingAnimalIdentification);
+                    referenceGame.setGameMode(GameMode.AnimalIdentification);
                     referenceGameRepository.save(referenceGame);
-                    image.getGameModes().add(referenceGame.getGameMode());
                 }
 
                 imageRepository.save(image);
             }
             break;
-            case ExpertPlantIdentification: {
+            case PlantIdentification: {
                 games = gameRepository.findAllByImgAndGameModeAndCompleted(expertGame.getImg(),GameMode.PlantIdentification,true);
                 Map<PlantSpecies,List<Boolean>> referenceMap = ((PlantIdentificationResult) expertGame.getSubmittedResult()).getSpeciesMap();
                 for(Game game : games) {
@@ -301,15 +276,21 @@ public class ExpertGameService {
                     awardPoints(game,score);
                 }
                 Image image = imageRepository.findOne(expertGame.getImg());
-                image.getGameModes().remove(GameMode.ExpertPlantIdentification);
+
+                image.getModeStatus().get(GameMode.PlantIdentification).setStatus(ImageStatus.PROCESSED);
+                Set<PlantSpecies> set = new HashSet<>();
+                referenceMap.entrySet().stream().forEach(e -> {
+                    if (!e.getValue().contains(true))
+                        set.add(e.getKey());
+                });
+                image.setFloraSpecies(set);
 
                 if(!referenceMap.isEmpty()) {
                     referenceGame = new ReferenceGame<PlantIdentificationResult>();
                     referenceGame.setGameResult(expertGame.getSubmittedResult());
                     referenceGame.setImg(expertGame.getImg());
-                    referenceGame.setGameMode(GameMode.TrainingPlantIdentification);
+                    referenceGame.setGameMode(GameMode.PlantIdentification);
                     referenceGameRepository.save(referenceGame);
-                    image.getGameModes().add(referenceGame.getGameMode());
                 }
 
                 imageRepository.save(image);
@@ -318,20 +299,20 @@ public class ExpertGameService {
         }
     }
 
-    private ExpertGame setupExpertGame(ExpertGame expertGame, Game game, GameMode gameMode) {
+    private ExpertGame setupExpertGame(ExpertGame expertGame, Game game) {
         GameMode mode = game.getGameMode();
         String login = game.getUsr();
         expertGame.setCompleted(false);
         expertGame.setGameMode(mode);
         expertGame.setUsr(login);
         expertGame.setSubmittedResult(game.getGameResult());
-        Image img = imageProviderService.findOne(mode, login);
-        if(img == null)
+        String img = imageProviderService.findExpertImage(mode, login).getId();
+        if (img == null)
             return null;
-        ProcessedGame processedGame = processedGameRepository.findByImgAndGameMode(img.getId(), gameMode);
+        ProcessedGame processedGame = processedGameRepository.findByImgAndGameMode(img, mode);
         if(processedGame != null)
             expertGame.setProcessedResult(processedGame.getProcessedGameResult());
-        expertGame.setImg(img.getId());
+        expertGame.setImg(img);
         log.debug("Created game : {}", expertGame);
         expertGameRepository.save(expertGame);
         return expertGame;
@@ -339,25 +320,34 @@ public class ExpertGameService {
 
     public ExpertGame createExpertGame(Game game) {
         ExpertGame result = null;
-        GameMode processedGameMode = null;
-        switch(game.getGameMode()) {
-            case ExpertAnimalIdentification: {
-                result = new ExpertGame<ProcessedAnimalIdentificationResult, AnimalIdentificationResult>();
-                processedGameMode = GameMode.AnimalIdentification;
+        if(game.getImg() != null) {
+            List<ExpertGame> games = expertGameRepository.findAllByImgAndUsrAndGameMode(game.getImg(), game.getUsr(), game.getGameMode());
+            if (!games.isEmpty()) {
+                result = games.get(0);
+                result.setCompleted(false);
+                result.setGameMode(game.getGameMode());
+                result.setUsr(game.getUsr());
+                result.setSubmittedResult(game.getGameResult());
+//                result.setProcessedResult(); TODO: convertir le reference result actuel de l'image en processed result.
             }
-            break;
-            case ExpertPlantIdentification: {
-                result = new ExpertGame<ProcessedPlantIdentificationResult, PlantIdentificationResult>();
-                processedGameMode = GameMode.PlantIdentification;
-            }
-            break;
-            case ExpertAllStars: {
-                result = new ExpertGame<ProcessedAllStarsResult,AllStarsResult>();
-                processedGameMode = GameMode.AllStars;
-            }
-            default:
         }
-        result = setupExpertGame(result,game,processedGameMode);
+        else {
+            switch (game.getGameMode()) {
+                case AnimalIdentification: {
+                    result = new ExpertGame<ProcessedAnimalIdentificationResult, AnimalIdentificationResult>();
+                }
+                break;
+                case PlantIdentification: {
+                    result = new ExpertGame<ProcessedPlantIdentificationResult, PlantIdentificationResult>();
+                }
+                break;
+                case AllStars: {
+                    result = new ExpertGame<ProcessedAllStarsResult, AllStarsResult>();
+                }
+                default:
+            }
+            result = setupExpertGame(result, game);
+        }
         return result;
     }
 }

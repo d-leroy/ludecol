@@ -31,15 +31,9 @@ public class Image {
     @NotNull
     private Integer height;
 
-    @Indexed
-    @Field("game_modes")
-    @JsonProperty("game_modes")
-    private EnumSet<GameMode> gameModes = EnumSet.noneOf(GameMode.class);
-
-    @Indexed
     @Field("mode_status")
     @JsonProperty("mode_status")
-    private EnumMap<ImageStatus,List<ImageModeStatus>> modeStatus = new EnumMap(ImageStatus.class);
+    private EnumMap<GameMode,ImageModeStatus> modeStatus = new EnumMap(GameMode.class);
 
     @Field("fauna_species")
     @JsonProperty("fauna_species")
@@ -98,20 +92,11 @@ public class Image {
         return height;
     }
 
-    public Set<GameMode> getGameModes() {
-        return gameModes;
-    }
-
-    public void setGameModes(Set<GameMode> gameModes) {
-        this.gameModes.clear();
-        this.gameModes.addAll(gameModes);
-    }
-
-    public EnumMap<ImageStatus, List<ImageModeStatus>> getModeStatus() {
+    public EnumMap<GameMode, ImageModeStatus> getModeStatus() {
         return modeStatus;
     }
 
-    public void setModeStatus(EnumMap<ImageStatus, List<ImageModeStatus>> modeStatus) {
+    public void setModeStatus(EnumMap<GameMode, ImageModeStatus> modeStatus) {
         this.modeStatus = modeStatus;
     }
 
@@ -176,7 +161,6 @@ public class Image {
             ", path='" + path + '\'' +
             ", width=" + width +
             ", height=" + height +
-            ", gameModes=" + gameModes +
             ", modeStatus=" + modeStatus +
             ", faunaSpecies=" + faunaSpecies +
             ", floraSpecies=" + floraSpecies +

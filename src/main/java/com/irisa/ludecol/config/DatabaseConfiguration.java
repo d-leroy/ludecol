@@ -2,6 +2,7 @@ package com.irisa.ludecol.config;
 
 
 import com.irisa.ludecol.domain.Image;
+import com.irisa.ludecol.domain.subdomain.GameMode;
 import com.irisa.ludecol.domain.subdomain.ImageStatus;
 import com.mongodb.Mongo;
 import org.mongeez.Mongeez;
@@ -77,9 +78,8 @@ public class DatabaseConfiguration extends AbstractMongoConfiguration  {
     public MongoTemplate mongoTemplate() throws Exception {
         MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory());
 
-        Arrays.asList(ImageStatus.values()).stream()
-            .forEach(v->mongoTemplate.indexOps(Image.class).ensureIndex(new Index().on("mode_status."+v.toString()+".mode", Sort.Direction.ASC)));
-//        mongoTemplate.indexOps(Image.class).ensureIndex(new Index().on("mode_status."++"mode", Sort.Direction.ASC));
+        Arrays.asList(GameMode.values()).stream()
+            .forEach(v->mongoTemplate.indexOps(Image.class).ensureIndex(new Index().on("mode_status."+v.toString()+".status", Sort.Direction.ASC)));
         return mongoTemplate;
     }
 }

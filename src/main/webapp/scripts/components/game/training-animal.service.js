@@ -85,7 +85,7 @@ angular.module('ludecolApp')
                             _vectorSource.addFeature(feat);
                         }
                     } else {
-                        console.log("radioModel is null");
+
                     }
                 }
             });
@@ -97,7 +97,7 @@ angular.module('ludecolApp')
             ScoreboardService.data.score = data.score;
             ScoreboardService.data.animals = {};
             _vectorSource.clear();
-            angular.forEach(FeatureCollection,function(value,key){while(value.length){value.pop()}});
+            angular.forEach(FeatureCollection,function(value,key){if (value !== undefined) while(value.length){value.pop()}});
 
             angular.forEach(data.partialResult, function(value,key) {
                 if(data.maxSpecies[key] > 0) {
@@ -118,7 +118,7 @@ angular.module('ludecolApp')
         var initializeGame = function(login,successCallback,errorCallback) {
             MapService.destroyMap();
             _successCallback = successCallback;
-            _submitGame = GameService.initializeGame(login,'TrainingAnimalIdentification',_initializeFeatureCollection,
+            _submitGame = GameService.initializeGame(login,'AnimalIdentification',_initializeFeatureCollection,
                 _getResult,_setupGame,errorCallback,UserTrainingGame.query,TrainingGame.update);
         };
 

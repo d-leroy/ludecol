@@ -56,7 +56,7 @@ public class GameResource {
         log.debug("REST request to save Game : {}", game);
         if (game.getId() != null)
             return ResponseEntity.badRequest().header("Failure", "A new game cannot already have an ID").build();
-        Image img = imageProviderService.findOne(game.getGameMode(), game.getUsr());
+        Image img = imageProviderService.findImage(game.getGameMode(), game.getUsr());
         if(img == null)
             return ResponseEntity.badRequest().header("Failure", "No available image were found").build();
         game.setImg(img.getId());

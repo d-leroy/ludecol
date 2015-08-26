@@ -114,22 +114,25 @@
 
                         <div class="form-group">
                             <label>Game modes</label>
-                            <div class="row">
-                                <div class="col-md-5 col-md-offset-1">
-                                    <label>Available modes</label>
-                                </div>
-                                <div class="col-md-5">
-                                    <label>Unavailable modes</label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="well col-md-5 col-md-offset-1">
-                                    <a class="btn btn-default" style="display: inline-block;"
-                                       ng-click="addToUnavailable($index)" ng-repeat="mode in availableModes">{{mode}}</a>
-                                </div>
-                                <div class="well col-md-5">
-                                    <a class="btn btn-default" style="display: inline-block;"
-                                       ng-click="addToAvailable($index)" ng-repeat="mode in unavailableModes">{{mode}}</a>
+                            <div ng-repeat="mode in modes" class="row">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <label>{{mode.name}}</label>
+                                    <div class="btn-group btn-group-justified" ng-hide="mode.state === 'PROCESSED'">
+                                        <label class="btn btn-default" ng-model="mode.state" btn-radio="'UNAVAILABLE'">
+                                            Unavailable
+                                        </label>
+                                        <label class="btn btn-default" ng-model="mode.state" btn-radio="'NOT_PROCESSED'">
+                                            Not processed
+                                        </label>
+                                        <label class="btn btn-default" ng-model="mode.state" btn-radio="'IN_PROCESSING'">
+                                            In processing
+                                        </label>
+                                    </div>
+                                    <div class="btn-group btn-group-justified" ng-show="mode.state === 'PROCESSED'">
+                                        <label class="btn btn-default" disabled>
+                                            Processed
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -137,21 +140,17 @@
                         <div class="form-group">
                             <label>Flora species</label>
                             <div class="row">
-                                <div class="col-md-5 col-md-offset-1">
-                                    <label>Present flora</label>
-                                </div>
-                                <div class="col-md-5">
-                                    <label>Absent flora</label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="well col-md-5 col-md-offset-1" style="height: auto;">
-                                    <a class="btn btn-default" style="display: inline-block;"
-                                       ng-click="addToAbsentFlora($index)" ng-repeat="flora in presentFlora">{{flora}}</a>
-                                </div>
-                                <div class="well col-md-5" style="height: auto;">
-                                    <a class="btn btn-default" style="display: inline-block;"
-                                       ng-click="addToPresentFlora($index)" ng-repeat="flora in absentFlora">{{flora}}</a>
+                                <div class="col-md-10 col-md-offset-1">
+                                    <div class="btn-group btn-group-justified">
+                                        <label ng-repeat="flora in flora_species | slice:0:3" class="btn btn-default" ng-model="mode.state" btn-radio="flora.name">
+                                            {{flora.name}}
+                                        </label>
+                                    </div>
+                                    <div class="btn-group btn-group-justified">
+                                        <label ng-repeat="flora in flora_species | slice:3:6" class="btn btn-default" ng-model="mode.state" btn-radio="flora.name">
+                                            {{flora.name}}
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -159,21 +158,12 @@
                         <div class="form-group">
                             <label>Fauna species</label>
                             <div class="row">
-                                <div class="col-md-5 col-md-offset-1">
-                                    <label>Present fauna</label>
-                                </div>
-                                <div class="col-md-5">
-                                    <label>Absent fauna</label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="well col-md-5 col-md-offset-1">
-                                    <a class="btn btn-default" style="display: inline-block;"
-                                       ng-click="addToAbsentFauna($index)" ng-repeat="fauna in presentFauna">{{fauna}}</a>
-                                </div>
-                                <div class="well col-md-5">
-                                    <a class="btn btn-default" style="display: inline-block;"
-                                       ng-click="addToPresentFauna($index)" ng-repeat="fauna in absentFauna">{{fauna}}</a>
+                                <div class="col-md-10 col-md-offset-1">
+                                    <div class="btn-group btn-group-justified">
+                                        <label ng-repeat="fauna in fauna_species" class="btn btn-default" ng-model="mode.state" btn-radio="fauna.name">
+                                            {{fauna.name}}
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

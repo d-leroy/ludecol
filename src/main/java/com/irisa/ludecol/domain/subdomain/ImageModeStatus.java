@@ -8,23 +8,23 @@ import java.util.List;
  */
 public class ImageModeStatus {
 
-    private GameMode mode;
+    private ImageStatus status = ImageStatus.UNAVAILABLE;
 
     private Integer gameNumber = 0;
 
-    public GameMode getMode() {
-        return mode;
-    }
-
     public ImageModeStatus() {}
 
-    public ImageModeStatus(GameMode mode, Integer gameNumber) {
-        this.mode = mode;
+    public ImageModeStatus(ImageStatus status, Integer gameNumber) {
+        this.status = status;
         this.gameNumber = gameNumber;
     }
 
-    public void setMode(GameMode mode) {
-        this.mode = mode;
+    public ImageStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ImageStatus status) {
+        this.status = status;
     }
 
     public Integer getGameNumber() {

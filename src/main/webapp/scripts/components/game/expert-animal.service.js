@@ -56,7 +56,6 @@ angular.module('ludecolApp')
         };
 
         function _setupGame(img,game) {
-        console.dir(game);
             _displayedFeatures = {};
             _successCallback(img,game);
 
@@ -90,7 +89,7 @@ angular.module('ludecolApp')
                             _vectorSource.addFeature(feat);
                         }
                     } else {
-                        console.log("radioModel is null");
+
                     }
                 }
             });
@@ -101,7 +100,7 @@ angular.module('ludecolApp')
         var initializeGame = function(login,successCallback,errorCallback) {
             MapService.destroyMap();
             _successCallback = successCallback;
-            _submitGame = GameService.initializeGame(login,'ExpertAnimalIdentification',_initializeFeatureCollection,
+            _submitGame = GameService.initializeGame(login,'AnimalIdentification',_initializeFeatureCollection,
                 _getResult,_setupGame,errorCallback,UserExpertGame.query,ExpertGame.update);
         };
 

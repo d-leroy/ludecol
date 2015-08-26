@@ -17,6 +17,15 @@ angular.module('ludecolApp')
             Spartina: new ol.style.Style({fill: new ol.style.Fill({color: '#DAB11B'})})
         }
 
+        var _validatedStyles = {
+            Batis: new ol.style.Style({fill: new ol.style.Fill({color: '#40B12F'}), stroke: new ol.style.Stroke({color: '#000000', width: 5})}),
+            Borrichia: new ol.style.Style({fill: new ol.style.Fill({color: '#59B4C0'}), stroke: new ol.style.Stroke({color: '#000000', width: 5})}),
+            Juncus: new ol.style.Style({fill: new ol.style.Fill({color: '#B958CA'}), stroke: new ol.style.Stroke({color: '#000000', width: 5})}),
+            Limonium: new ol.style.Style({fill: new ol.style.Fill({color: '#6C7DDA'}), stroke: new ol.style.Stroke({color: '#000000', width: 5})}),
+            Salicornia: new ol.style.Style({fill: new ol.style.Fill({color: '#CC6161'}), stroke: new ol.style.Stroke({color: '#000000', width: 5})}),
+            Spartina: new ol.style.Style({fill: new ol.style.Fill({color: '#DAB11B'}), stroke: new ol.style.Stroke({color: '#000000', width: 5})})
+        }
+
         function _isWithinBounds(coord) {
             return coord[0] >= 0 && coord[0] <= _width &&
              coord[1] <= 0 && coord[1] >= -_height;
@@ -148,7 +157,29 @@ angular.module('ludecolApp')
                     }
                 }
             });
+
+            _loadState(game);
         }
+
+        function _loadState(data) {
+            ScoreboardService.data.score = data.score;
+            ScoreboardService.data.plants = {};
+            _vectorSource.clear();
+            angular.forEach(FeatureCollection,function(value,key){if (value !== undefined) while(value.length){value.pop()}});
+
+            angular.forEach(data.partialResult, function(value,key) {
+                if(data.maxSpecies[key] > 0) {
+                    var features = _populateFeatures(key,value,_validatedStyles[key]);
+                    angular.forEach(features,function(feature){FeatureCollection[key].push(feature);});
+                    ScoreboardService.data.plants[key] = {
+                        name: ""+key,
+                        nbConfirmed: data.maxSpecies[key] - data.missingSpecies[key],
+                        nbToSubmit: 0,
+                        max: data.maxSpecies[key]
+                    };
+                }
+            });
+        };
 
         //-------------------API
 

@@ -62,7 +62,7 @@ angular.module('ludecolApp')
                             _vectorSource.addFeature(feat);
                         }
                     } else {
-                        console.log("radioModel is null");
+
                     }
                 }
             });

@@ -168,7 +168,6 @@ angular.module('ludecolApp')
                 var tmp = _tags[i];
                 angular.forEach(tmp,function(value,key) {result[key][i] = true;});
                 tmp = _hintTags[i];
-                console.dir(result);
                 angular.forEach(tmp,function(value,key) {result[key][i] = true;});
             }
             return result;
@@ -245,9 +244,17 @@ angular.module('ludecolApp')
             MapService.destroyMap();
             _successCallback = successCallback;
             _cols = cols; _rows = rows;
-            _submitGame = GameService.initializeGame(login,'ExpertPlantIdentification',_initializePresenceGrid,
+            _submitGame = GameService.initializeGame(login,'PlantIdentification',_initializePresenceGrid,
                 _getResult,_setupGame,errorCallback,UserExpertGame.query,ExpertGame.update);
         };
+
+        var defineReference = function(login,cols,rows,successCallback,errorCallback,img) {
+            MapService.destroyMap();
+            _successCallback = successCallback;
+            _cols = cols; _rows = rows;
+            _submitGame = GameService.initializeReferenceDefinition(login,'PlantIdentification',_initializePresenceGrid,
+                _getResult,_setupGame,errorCallback,ExpertGame.update,img);
+        }
 
         var submitGame = function(){
             _submitGame();

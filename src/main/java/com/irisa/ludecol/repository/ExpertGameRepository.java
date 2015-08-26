@@ -21,4 +21,6 @@ public interface ExpertGameRepository extends MongoRepository<ExpertGame, String
 
     List<ExpertGame> findAllByUsrAndGameModeAndCompleted(String usr, GameMode gameMode, boolean completed);
 
+    List<ExpertGame> findAllByImgAndUsrAndGameMode(String img, String usr, GameMode gameMode);
+
 }

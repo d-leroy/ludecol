@@ -17,11 +17,6 @@ import java.util.List;
  */
 public interface ImageRepository extends MongoRepository<Image,String> {
 
-    @Query(value="{ 'mode_status.?1.mode' : '?0' }")
-    List<Image> findByModeStatus(GameMode mode, ImageStatus status);
-
-    List<Image> findByGameModesContaining(GameMode gameMode);
-
     List<Image> findByImageSet(String imageSet);
 
     Page<Image> findByImageSet(String imageSet, Pageable pageable);

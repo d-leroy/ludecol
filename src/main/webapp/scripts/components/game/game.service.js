@@ -25,7 +25,6 @@ angular.module('ludecolApp')
             var res = _resultSupplier();
             _game.game_result = res;
             _game.completed = true;
-            console.dir(_game);
             _updateFunction(_game, function(updatedResult) {
                 if(inputSubmitCallback !== undefined) {
                     inputSubmitCallback(_startNewGame,updatedResult);
@@ -69,9 +68,39 @@ angular.module('ludecolApp')
                     _game = result[0];
                     _game.usr = _login;
                     _game.game_mode = _mode;
-                    Image.get({id: _game.img}, function(image) {successCallback(image,_game);});
+                    Image.get({id: _game.img}, function(image) {_successCallback(image,_game);});
                 }
             });
+
+            return _submitGame;
+        }
+
+        var initializeReferenceDefinition = function(login,mode,emptyResultSupplier,resultSupplier,successCallback,errorCallback,updateFunction,img) {
+            _login = login;
+            _mode = mode;
+            _emptyResultSupplier = emptyResultSupplier;
+            _resultSupplier = resultSupplier;
+            _errorCallback = errorCallback;
+            _successCallback = successCallback;
+            _queryFunction = queryFunction;
+            _updateFunction = updateFunction;
+
+            _game = {
+                usr: _login,
+                game_mode: _mode,
+                game_result: _emptyResultSupplier(),
+                completed: false,
+                img: img
+            }
+
+            _updateFunction(_game, function(updatedGame) {
+                Image.get({id: updatedGame.img}, function(image) {
+                    _game = updatedGame;
+                    _game.usr = _login;
+                    _game.game_mode = _mode;
+                    _successCallback(image,_game);
+                });
+            }, _errorCallback);
 
             return _submitGame;
         }

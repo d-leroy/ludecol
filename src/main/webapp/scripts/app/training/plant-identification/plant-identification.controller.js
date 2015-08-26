@@ -172,8 +172,6 @@ angular.module('ludecolApp')
 
             function loadGame(img, wrapper) {
 
-                console.dir(wrapper);
-
                 $scope.img = img;
 
                 imgWidth = $scope.img.width;

@@ -139,7 +139,6 @@ angular.module('ludecolApp')
 //                            nFeat.id = nId;
                     $scope.features.push(event.feature);
                     $scope.$apply();
-                    console.log($scope.features);
 //                            nFeat.on('change', function() {console.log("Feature "+nFeat.id+" changed.")})
 //                        });
 //                    });

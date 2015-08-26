@@ -42,8 +42,7 @@ public class CustomGameDeserializer extends JsonDeserializer<Game> {
             result.setGameMode(mode);
 
             switch (mode) {
-                case AllStars:
-                case ExpertAllStars: {
+                case AllStars: {
                     ObjectMapper mapper = new ObjectMapper();
                     JsonParser map = node.get("game_result").traverse();
                     HashMap<Species,Integer> tmp = mapper.readValue(map,mapType);
@@ -52,9 +51,7 @@ public class CustomGameDeserializer extends JsonDeserializer<Game> {
                     result.setGameResult(res);
                     break;
                 }
-                case AnimalIdentification:
-                case TrainingAnimalIdentification:
-                case ExpertAnimalIdentification: {
+                case AnimalIdentification: {
                     ObjectMapper mapper = new ObjectMapper();
                     JsonParser snailList = node.get("game_result").get("Snail").traverse();
                     List<double[]> tmp = mapper.readValue(snailList, listType);
@@ -72,9 +69,7 @@ public class CustomGameDeserializer extends JsonDeserializer<Game> {
                     result.setGameResult(animalIdentificationResult);
                     break;
                 }
-                case PlantIdentification:
-                case TrainingPlantIdentification:
-                case ExpertPlantIdentification: {
+                case PlantIdentification: {
                     ObjectMapper mapper = new ObjectMapper();
                     PlantIdentificationResult plantIdentificationResult = new PlantIdentificationResult();
                     JsonParser batisList = node.get("game_result").get("Batis").traverse();

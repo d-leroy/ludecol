@@ -1,6 +1,11 @@
 'use strict';
 
 angular.module('ludecolApp')
+    .filter('slice', function() {
+      return function(arr, start, end) {
+        return arr.slice(start, end);
+      };
+    })
     .directive('fileModel', function ($parse) {
         return {
             restrict: 'A',
@@ -21,6 +26,7 @@ angular.module('ludecolApp')
             $scope.account = account;
             $scope.isAuthenticated = Principal.isAuthenticated;
             $scope.currentPage = 1;
+            $scope.modes = [{name: 'AllStars', state: null}, {name:'AnimalIdentification', state: null}, {name:'PlantIdentification', state: null}];
 
             $scope.$watchCollection('files',function(n,o) {
                     angular.forEach(n,function(file){
@@ -66,82 +72,32 @@ angular.module('ludecolApp')
                 $scope.files = [];
                 $scope.cols = 3;
                 $scope.rows = 2;
-                $scope.unavailableModes = [
-                    'AllStars', 'ExpertAllStars', 'AnimalIdentification', 'ExpertAnimalIdentification', 'TrainingAnimalIdentification',
-                    'PlantIdentification', 'ExpertPlantIdentification', 'TrainingPlantIdentification'
-                ];
-                $scope.availableModes = [];
-                $scope.absentFlora = ['Batis', 'Borrichia', 'Juncus', 'Limonium', 'Salicornia', 'Spartina'];
-                $scope.presentFlora = [];
-                $scope.absentFauna = ['Burrow', 'Crab', 'Mussel', 'Snail'];
-                $scope.presentFauna = [];
+                $scope.flora_species = [{name: 'Batis', state: null}, {name: 'Borrichia', state: null},
+                                        {name: 'Juncus', state: null}, {name: 'Limonium', state: null},
+                                        {name: 'Salicornia', state: null}, {name: 'Spartina', state: null}];
+                $scope.fauna_species = [{name: 'Burrow', state: null}, {name: 'Crab', state: null},
+                                      {name: 'Mussel', state: null}, {name: 'Snail', state: null}];
                 $scope.loadPage();
             }
 
             $scope.clearUploaded = function() {
-                $scope.uploadedFiles = [];
+                $scope.uploadedFiles = {};
             }
 
             $scope.setCurrentImage = function(i) {
                 $scope.clear();
                 $scope.currentImage = $scope.images[i];
-                angular.forEach($scope.currentImage.game_modes,function(value){
-                    var i = $scope.unavailableModes.indexOf(value);
-                    if(i !== -1) {
-                        $scope.unavailableModes.splice(i,1);
-                        $scope.availableModes.push(value);
-                    }
+                angular.forEach($scope.modes,function(value){
+                    value.state = $scope.currentImage.mode_status[value.name].status;
                 });
-                angular.forEach($scope.currentImage.flora_species,function(value){
-                    var i = $scope.absentFlora.indexOf(value);
-                    if(i !== -1) {
-                        $scope.absentFlora.splice(i,1);
-                        $scope.presentFlora.push(value);
-                    }
+
+                angular.forEach($scope.flora_species,function(value){
+                    value.state = $scope.currentImage.flora_species.indexOf(value.name) !== -1;
                 });
-                angular.forEach($scope.currentImage.fauna_species,function(value){
-                    var i = $scope.absentFauna.indexOf(value);
-                    if(i !== -1) {
-                        $scope.absentFauna.splice(i,1);
-                        $scope.presentFauna.push(value);
-                    }
+
+                angular.forEach($scope.fauna_species,function(value){
+                    value.state = $scope.currentImage.fauna_species.indexOf(value.name) !== -1;
                 });
-            }
-
-            $scope.addToAvailable = function(i) {
-                var value = $scope.unavailableModes[i];
-                $scope.unavailableModes.splice(i,1);
-                $scope.availableModes.push(value);
-            }
-
-            $scope.addToUnavailable = function(i) {
-                var value = $scope.availableModes[i];
-                $scope.availableModes.splice(i,1);
-                $scope.unavailableModes.push(value);
-            }
-
-            $scope.addToPresentFlora = function(i) {
-                var value = $scope.absentFlora[i];
-                $scope.absentFlora.splice(i,1);
-                $scope.presentFlora.push(value);
-            }
-
-            $scope.addToAbsentFlora = function(i) {
-                var value = $scope.presentFlora[i];
-                $scope.presentFlora.splice(i,1);
-                $scope.absentFlora.push(value);
-            }
-
-            $scope.addToPresentFauna = function(i) {
-                var value = $scope.absentFauna[i];
-                $scope.absentFauna.splice(i,1);
-                $scope.presentFauna.push(value);
-            }
-
-            $scope.addToAbsentFauna = function(i) {
-                var value = $scope.presentFauna[i];
-                $scope.presentFauna.splice(i,1);
-                $scope.absentFauna.push(value);
             }
 
             $scope.showPreview = function(show) {
@@ -163,15 +119,10 @@ angular.module('ludecolApp')
 
             $scope.submit = function() {
                 $scope.currentImage.game_modes = $scope.availableModes;
-                angular.forEach($scope.availableModes,function(v) {
-                    console.dir($scope.currentImage.mode_status[v]);
-                    if($scope.currentImage.mode_status[v].status === "UNAVAILABLE")
-                        $scope.currentImage.mode_status[v].status = "NOT_PROCESSED";
-                });
+                angular.forEach($scope.modes,function(v) {$scope.currentImage.mode_status[v.name].status = v.state;});
                 $scope.currentImage.flora_species = $scope.presentFlora;
                 $scope.currentImage.fauna_species = $scope.presentFauna;
                 Image.update($scope.currentImage,function(i) {
-                    console.dir(i);
                     $('#editImageModal').modal('hide');
                 })
             }

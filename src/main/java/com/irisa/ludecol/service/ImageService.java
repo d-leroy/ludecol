@@ -68,18 +68,13 @@ public class ImageService {
                     image.setPath(path);
                     image.setWidth(img.getWidth());
                     image.setHeight(img.getHeight());
-                    EnumMap<ImageStatus,List<ImageModeStatus>> map = image.getModeStatus();
-                    image.setGameModes(EnumSet.of(GameMode.AllStars));
-                    ArrayList<ImageModeStatus> l1 = new ArrayList<>();
-                    ArrayList<ImageModeStatus> l2 = new ArrayList<>();
+                    EnumMap<GameMode,ImageModeStatus> map = image.getModeStatus();
                     Arrays.asList(GameMode.values()).stream().forEach(v -> {
-                        if (!(v.equals(GameMode.AllStars) || v.equals(GameMode.AnimalIdentification)))
-                            l1.add(new ImageModeStatus(v, 0));
+                        if (!v.equals(GameMode.AllStars))
+                            map.put(v,new ImageModeStatus());
                         else
-                            l2.add(new ImageModeStatus(v, 0));
+                            map.put(v,new ImageModeStatus(ImageStatus.NOT_PROCESSED, 0));
                     });
-                    map.put(ImageStatus.UNAVAILABLE, l1);
-                    map.put(ImageStatus.NOT_PROCESSED, l2);
                     image.setImageSet(imageSet.getName());
                     image.setSetPriority(imageSet.getPriority());
                     imageRepository.save(image);
@@ -89,7 +84,6 @@ public class ImageService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void zoomifyImage(File file, String imageSetName) {
@@ -191,153 +185,152 @@ public class ImageService {
         expertGameRepository.findAllByImg(id).stream().forEach(expertGameRepository::delete);
         referenceGameRepository.findAllByImg(id).stream().forEach(referenceGameRepository::delete);
         processedGameRepository.findAllByImg(id).stream().forEach(processedGameRepository::delete);
-        }
-
-    public ImageStatisticsDTO getImageStatistics(Image image) {
-        ImageStatisticsDTO result = new ImageStatisticsDTO();
-        List<ImageStatisticsDTO.GameModeStatistics> gameModeStatisticses = new ArrayList<>();
-        ImageStatus status;
-        int nbGames;
-
-        List<Game> games = gameRepository.findAllByImg(image.getId());
-
-        nbGames = (int) games.stream().filter(g -> g.getGameMode().equals(GameMode.AnimalIdentification)).count();
-        status = referenceGameRepository.findByImgAndGameMode(image.getId(), GameMode.TrainingAnimalIdentification) == null ?
-            nbGames >= 3 ? ImageStatus.IN_PROCESSING :
-                ImageStatus.NOT_PROCESSED :
-            ImageStatus.PROCESSED;
-        gameModeStatisticses.add(new ImageStatisticsDTO.GameModeStatistics(GameMode.AnimalIdentification, nbGames, status));
-
-        nbGames = (int) games.stream().filter(g -> g.getGameMode().equals(GameMode.PlantIdentification)).count();
-        status = referenceGameRepository.findByImgAndGameMode(image.getId(), GameMode.TrainingPlantIdentification) == null ?
-            nbGames >= 3 ? ImageStatus.IN_PROCESSING :
-                ImageStatus.NOT_PROCESSED :
-            ImageStatus.PROCESSED;
-        gameModeStatisticses.add(new ImageStatisticsDTO.GameModeStatistics(GameMode.PlantIdentification, nbGames, status));
-
-        result.setGameModeStatistics(gameModeStatisticses);
-
-        return result;
     }
 
-    public Map<String,Integer> getImagesNumberOfGames(List<Game> games) {
-        return games.stream().collect(Collectors.toMap(Game::getImg,g->g.getCompleted()?1:0,(i,j)->i+j));
-    }
 
-    public ImageSetStatisticsDTO getImageSetStatistics(String set) {
 
-        ImageSetStatisticsDTO result = new ImageSetStatisticsDTO();
-        List<ImageSetStatisticsDTO.GameModeStatistics> gameModeStatisticses = new ArrayList<>();
+//    private List<ImageStatisticsDTO.GameModeStatistics> getImageModeStatistics(Image image) {
+//        List<ImageStatisticsDTO.GameModeStatistics> result = new ArrayList<>();
+//        Arrays.asList(GameMode.values()).stream().forEach(m->
+//            image.getModeStatus().entrySet().stream().forEach(e-> {
+//                ImageStatus status = e.getKey();
+//                e.getValue().stream().forEach(s->
+//                    result.add(new ImageStatisticsDTO.GameModeStatistics(s.getMode(), s.getGameNumber(), status)));
+//            }));
+//        return result;
+//    }
+//
+//    public ImageStatisticsDTO getImageStatistics(Image image) {
+//        ImageStatisticsDTO result = new ImageStatisticsDTO();
+//        result.setGameModeStatistics(getImageModeStatistics(image));
+//        return result;
+//    }
 
-        List<String> images = imageRepository.findByImageSet(set).stream().map(i -> i.getId()).collect(Collectors.toList());
-        List<Game> games = gameRepository.findAll().stream().filter(g -> images.contains(g.getImg())).collect(Collectors.toList());
-        List<ReferenceGame> refGames = referenceGameRepository.findAll().stream().filter(g -> images.contains(g.getImg())).collect(Collectors.toList());
-        Map<String,Integer> imageMap = new HashMap<>();
-        EnumMap<ImageStatus,Integer> map = new EnumMap<>(ImageStatus.class);
+//    public ImageSetStatisticsDTO getImageSetStatistics(String set) {
+//
+//        ImageSetStatisticsDTO result = new ImageSetStatisticsDTO();
+//        List<ImageSetStatisticsDTO.GameModeStatistics> gameModeStatisticses = new ArrayList<>();
+//
+//        //how much images are in each status?
+//        List<Image> images = imageRepository.findByImageSet(set);
+//
+//        images.stream()
+//            .forEach(i->{
+//                i.getModeStatus().entrySet().stream()
+//                    .forEach(e->{
+//                    });
+//            });
+//
+//        List<String> images = imageRepository.findByImageSet(set).stream().map(i -> i.getId()).collect(Collectors.toList());
+//
+////        List<Game> games = gameRepository.findAll().stream().filter(g -> images.contains(g.getImg())).collect(Collectors.toList());
+////        List<ReferenceGame> refGames = referenceGameRepository.findAll().stream().filter(g -> images.contains(g.getImg())).collect(Collectors.toList());
+//        Map<String,Integer> imageMap = new HashMap<>();
+//        EnumMap<ImageStatus,Integer> map = new EnumMap<>(ImageStatus.class);
+//
+//        refGames.stream()
+//            .filter(g -> g.getGameMode().equals(GameMode.TrainingAnimalIdentification))
+//            .map(g -> g.getImg())
+//            .forEach(i -> imageMap.put(i,-1));
+//        games.stream()
+//            .filter(g -> g.getGameMode().equals(GameMode.AnimalIdentification))
+//            .map(g -> g.getImg())
+//            .filter(i -> imageMap.get(i) == -1)
+//            .forEach(i -> {
+//                if (imageMap.get(i) == null)
+//                    imageMap.put(i, 1);
+//                else
+//                    imageMap.put(i, imageMap.get(i) + 1);
+//            });
+//        imageMap.values().stream()
+//            .forEach(i -> {
+//                ImageStatus status;
+//                if (i == -1) status = ImageStatus.PROCESSED;
+//                else if (i >= 3) status = ImageStatus.IN_PROCESSING;
+//                else status = ImageStatus.NOT_PROCESSED;
+//                if (map.get(status) == null) map.put(status,1);
+//                else map.put(status,map.get(status)+1);
+//            });
+//        gameModeStatisticses.add(new ImageSetStatisticsDTO.GameModeStatistics(GameMode.AnimalIdentification, map));
+//
+//        imageMap.clear();
+//        map.clear();
+//        refGames.stream()
+//            .filter(g -> g.getGameMode().equals(GameMode.TrainingPlantIdentification))
+//            .map(g -> g.getImg())
+//            .forEach(i -> imageMap.put(i, -1));
+//        games.stream()
+//            .filter(g -> g.getGameMode().equals(GameMode.PlantIdentification))
+//            .map(g -> g.getImg())
+//            .filter(i -> imageMap.get(i) == -1)
+//            .forEach(i -> {
+//                if (imageMap.get(i) == null)
+//                    imageMap.put(i, 1);
+//                else
+//                    imageMap.put(i, imageMap.get(i) + 1);
+//            });
+//        imageMap.values().stream()
+//            .forEach(i -> {
+//                ImageStatus status;
+//                if (i == -1) status = ImageStatus.PROCESSED;
+//                else if (i >= 3) status = ImageStatus.IN_PROCESSING;
+//                else status = ImageStatus.NOT_PROCESSED;
+//                if (map.get(status) == null) map.put(status, 1);
+//                else map.put(status, map.get(status) + 1);
+//            });
+//        gameModeStatisticses.add(new ImageSetStatisticsDTO.GameModeStatistics(GameMode.PlantIdentification, map));
+//
+//        result.setGameModeStatistics(gameModeStatisticses);
+//
+//        return result;
+//    }
 
-        refGames.stream()
-            .filter(g -> g.getGameMode().equals(GameMode.TrainingAnimalIdentification))
-            .map(g -> g.getImg())
-            .forEach(i -> imageMap.put(i,-1));
-        games.stream()
-            .filter(g -> g.getGameMode().equals(GameMode.AnimalIdentification))
-            .map(g -> g.getImg())
-            .filter(i -> imageMap.get(i) == -1)
-            .forEach(i -> {
-                if (imageMap.get(i) == null)
-                    imageMap.put(i, 1);
-                else
-                    imageMap.put(i, imageMap.get(i) + 1);
-            });
-        imageMap.values().stream()
-            .forEach(i -> {
-                ImageStatus status;
-                if (i == -1) status = ImageStatus.PROCESSED;
-                else if (i >= 3) status = ImageStatus.IN_PROCESSING;
-                else status = ImageStatus.NOT_PROCESSED;
-                if (map.get(status) == null) map.put(status,1);
-                else map.put(status,map.get(status)+1);
-            });
-        gameModeStatisticses.add(new ImageSetStatisticsDTO.GameModeStatistics(GameMode.AnimalIdentification, map));
-
-        imageMap.clear();
-        map.clear();
-        refGames.stream()
-            .filter(g -> g.getGameMode().equals(GameMode.TrainingPlantIdentification))
-            .map(g -> g.getImg())
-            .forEach(i -> imageMap.put(i, -1));
-        games.stream()
-            .filter(g -> g.getGameMode().equals(GameMode.PlantIdentification))
-            .map(g -> g.getImg())
-            .filter(i -> imageMap.get(i) == -1)
-            .forEach(i -> {
-                if (imageMap.get(i) == null)
-                    imageMap.put(i, 1);
-                else
-                    imageMap.put(i, imageMap.get(i) + 1);
-            });
-        imageMap.values().stream()
-            .forEach(i -> {
-                ImageStatus status;
-                if (i == -1) status = ImageStatus.PROCESSED;
-                else if (i >= 3) status = ImageStatus.IN_PROCESSING;
-                else status = ImageStatus.NOT_PROCESSED;
-                if (map.get(status) == null) map.put(status, 1);
-                else map.put(status, map.get(status) + 1);
-            });
-        gameModeStatisticses.add(new ImageSetStatisticsDTO.GameModeStatistics(GameMode.PlantIdentification, map));
-
-        result.setGameModeStatistics(gameModeStatisticses);
-
-        return result;
-    }
-
-    public ImagesStatisticsDTO getImagesStatistics() {
-
-        ImagesStatisticsDTO result = new ImagesStatisticsDTO();
-        List<ImagesStatisticsDTO.GameModeStatistics> gameModeStatisticses = new ArrayList<>();
-
-        List<Game> games = gameRepository.findAll();
-        List<ReferenceGame> refGames = referenceGameRepository.findAll();
-
-        Map<String,Integer> map1 = refGames.stream()
-            .filter(g -> g.getGameMode().equals(GameMode.TrainingAnimalIdentification))
-            .map(g -> g.getImg())
-            .collect(Collectors.toMap(i -> i, i -> -1, (i, j) -> -1));
-        Map<String,Integer> map2 = games.stream()
-                .filter(g -> g.getGameMode().equals(GameMode.AnimalIdentification))
-                .map(g -> g.getImg())
-                .filter(i -> map1.get(i) == -1)
-                .collect(Collectors.toMap(i -> i, i -> 1, (i, j) -> i + j));
-        map2.putAll(map1);
-        map2.values().stream()
-            .collect(Collectors.toMap(i -> {
-                if (i == -1) return ImageStatus.PROCESSED;
-                else if (i >= 3) return ImageStatus.IN_PROCESSING;
-                else return ImageStatus.NOT_PROCESSED;
-            }, i -> 1, (i, j) -> i + j));
-        gameModeStatisticses.add(new ImagesStatisticsDTO.GameModeStatistics(GameMode.AnimalIdentification, map2));
-
-        Map<String,Integer> map3 = refGames.stream()
-            .filter(g -> g.getGameMode().equals(GameMode.TrainingPlantIdentification))
-            .map(g -> g.getImg())
-            .collect(Collectors.toMap(i -> i, i -> -1, (i, j) -> -1));
-        Map<String,Integer> map4 = games.stream()
-            .filter(g -> g.getGameMode().equals(GameMode.PlantIdentification))
-            .map(g -> g.getImg())
-            .filter(i -> map1.get(i) == -1)
-            .collect(Collectors.toMap(i -> i, i -> 1, (i, j) -> i + j));
-        map4.putAll(map3);
-        map4.values().stream()
-            .collect(Collectors.toMap(i -> {
-                if (i == -1) return ImageStatus.PROCESSED;
-                else if (i >= 3) return ImageStatus.IN_PROCESSING;
-                else return ImageStatus.NOT_PROCESSED;
-            }, i -> 1, (i, j) -> i + j));
-        gameModeStatisticses.add(new ImagesStatisticsDTO.GameModeStatistics(GameMode.PlantIdentification, map4));
-
-        result.setGameModeStatistics(gameModeStatisticses);
-
-        return result;
-    }
+//    public ImagesStatisticsDTO getImagesStatistics() {
+//
+//        ImagesStatisticsDTO result = new ImagesStatisticsDTO();
+//        List<ImagesStatisticsDTO.GameModeStatistics> gameModeStatisticses = new ArrayList<>();
+//
+//        List<Game> games = gameRepository.findAll();
+//        List<ReferenceGame> refGames = referenceGameRepository.findAll();
+//
+//        Map<String,Integer> map1 = refGames.stream()
+//            .filter(g -> g.getGameMode().equals(GameMode.TrainingAnimalIdentification))
+//            .map(g -> g.getImg())
+//            .collect(Collectors.toMap(i -> i, i -> -1, (i, j) -> -1));
+//        Map<String,Integer> map2 = games.stream()
+//                .filter(g -> g.getGameMode().equals(GameMode.AnimalIdentification))
+//                .map(g -> g.getImg())
+//                .filter(i -> map1.get(i) == -1)
+//                .collect(Collectors.toMap(i -> i, i -> 1, (i, j) -> i + j));
+//        map2.putAll(map1);
+//        map2.values().stream()
+//            .collect(Collectors.toMap(i -> {
+//                if (i == -1) return ImageStatus.PROCESSED;
+//                else if (i >= 3) return ImageStatus.IN_PROCESSING;
+//                else return ImageStatus.NOT_PROCESSED;
+//            }, i -> 1, (i, j) -> i + j));
+//        gameModeStatisticses.add(new ImagesStatisticsDTO.GameModeStatistics(GameMode.AnimalIdentification, map2));
+//
+//        Map<String,Integer> map3 = refGames.stream()
+//            .filter(g -> g.getGameMode().equals(GameMode.TrainingPlantIdentification))
+//            .map(g -> g.getImg())
+//            .collect(Collectors.toMap(i -> i, i -> -1, (i, j) -> -1));
+//        Map<String,Integer> map4 = games.stream()
+//            .filter(g -> g.getGameMode().equals(GameMode.PlantIdentification))
+//            .map(g -> g.getImg())
+//            .filter(i -> map1.get(i) == -1)
+//            .collect(Collectors.toMap(i -> i, i -> 1, (i, j) -> i + j));
+//        map4.putAll(map3);
+//        map4.values().stream()
+//            .collect(Collectors.toMap(i -> {
+//                if (i == -1) return ImageStatus.PROCESSED;
+//                else if (i >= 3) return ImageStatus.IN_PROCESSING;
+//                else return ImageStatus.NOT_PROCESSED;
+//            }, i -> 1, (i, j) -> i + j));
+//        gameModeStatisticses.add(new ImagesStatisticsDTO.GameModeStatistics(GameMode.PlantIdentification, map4));
+//
+//        result.setGameModeStatistics(gameModeStatisticses);
+//
+//        return result;
+//    }
 }
