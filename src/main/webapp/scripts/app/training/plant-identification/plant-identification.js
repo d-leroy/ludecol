@@ -3,7 +3,7 @@
 angular.module('ludecolApp')
     .config(function ($stateProvider) {
         $stateProvider
-            .state('training-plants', {
+            .state('training-plant-identification', {
                 parent: 'site',
                 url: '/',
                 data: {
@@ -11,8 +11,8 @@ angular.module('ludecolApp')
                 },
                 views: {
                     'content@': {
-                        templateUrl: 'scripts/app/training/plants/training-plants.html',
-                        controller: 'TrainingPlantsController'
+                        templateUrl: 'scripts/app/training/plant-identification/plant-identification.html',
+                        controller: 'TrainingPlantIdentificationController'
                     }
                 },
                 resolve: {

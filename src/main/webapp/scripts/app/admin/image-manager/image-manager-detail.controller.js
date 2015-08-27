@@ -72,11 +72,9 @@ angular.module('ludecolApp')
                 $scope.files = [];
                 $scope.cols = 3;
                 $scope.rows = 2;
-                $scope.flora_species = [{name: 'Batis', state: null}, {name: 'Borrichia', state: null},
-                                        {name: 'Juncus', state: null}, {name: 'Limonium', state: null},
-                                        {name: 'Salicornia', state: null}, {name: 'Spartina', state: null}];
-                $scope.fauna_species = [{name: 'Burrow', state: null}, {name: 'Crab', state: null},
-                                      {name: 'Mussel', state: null}, {name: 'Snail', state: null}];
+                $scope.floraModel = {Batis: false, Borrichia: false, Juncus: false, Limonium: false, Salicornia: false, Spartina: false};
+                $scope.faunaModel = {Burrow: false, Crab: false, Mussel: false, Snail: false};
+
                 $scope.loadPage();
             }
 
@@ -87,16 +85,35 @@ angular.module('ludecolApp')
             $scope.setCurrentImage = function(i) {
                 $scope.clear();
                 $scope.currentImage = $scope.images[i];
+
                 angular.forEach($scope.modes,function(value){
                     value.state = $scope.currentImage.mode_status[value.name].status;
                 });
 
-                angular.forEach($scope.flora_species,function(value){
-                    value.state = $scope.currentImage.flora_species.indexOf(value.name) !== -1;
+                angular.forEach($scope.floraModel,function(value,key){
+                    $scope.floraModel[key] = $scope.currentImage.flora_species.indexOf(key) !== -1;
                 });
 
-                angular.forEach($scope.fauna_species,function(value){
-                    value.state = $scope.currentImage.fauna_species.indexOf(value.name) !== -1;
+                angular.forEach($scope.faunaModel,function(value,key){
+                    $scope.faunaModel[key] = $scope.currentImage.fauna_species.indexOf(key) !== -1;
+                });
+
+                $scope.$watchCollection('floraModel', function () {
+                    $scope.currentImage.flora_species = [];
+                    angular.forEach($scope.floraModel, function (value, key) {
+                        if (value) {
+                            $scope.currentImage.flora_species.push(key);
+                        }
+                    });
+                });
+
+                $scope.$watchCollection('faunaModel', function () {
+                    $scope.currentImage.fauna_species = [];
+                    angular.forEach($scope.faunaModel, function (value, key) {
+                        if (value) {
+                            $scope.currentImage.fauna_species.push(key);
+                        }
+                    });
                 });
             }
 
@@ -115,17 +132,16 @@ angular.module('ludecolApp')
                 Image.delete({id: $scope.images[i].id},function(){$scope.clear();});
             }
 
-            $scope.clear();
-
             $scope.submit = function() {
                 $scope.currentImage.game_modes = $scope.availableModes;
                 angular.forEach($scope.modes,function(v) {$scope.currentImage.mode_status[v.name].status = v.state;});
-                $scope.currentImage.flora_species = $scope.presentFlora;
-                $scope.currentImage.fauna_species = $scope.presentFauna;
                 Image.update($scope.currentImage,function(i) {
+                    $scope.clear();
                     $('#editImageModal').modal('hide');
                 })
             }
+
+            $scope.clear();
 
         });
     });

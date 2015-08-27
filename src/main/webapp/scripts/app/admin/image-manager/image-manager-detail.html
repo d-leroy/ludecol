@@ -102,12 +102,12 @@
                     <div class="modal-body" style="height: 600px; overflow: auto;">
 
                         <div class="form-group">
-                            <label>Image preview</label>
+                            <!--<label>Image preview</label>-->
                             <button type="button" class="btn btn-default" ng-click="showPreview(true)" ng-show="!previewing">
-                                Show preview
+                                Show image preview
                             </button>
                             <button type="button" class="btn btn-default" ng-click="showPreview(false)" ng-show="previewing">
-                                Hide preview
+                                Hide image preview
                             </button>
                             <div id="preview" ng-class="previewing ? 'well' : ''"></div>
                         </div>
@@ -142,14 +142,14 @@
                             <div class="row">
                                 <div class="col-md-10 col-md-offset-1">
                                     <div class="btn-group btn-group-justified">
-                                        <label ng-repeat="flora in flora_species | slice:0:3" class="btn btn-default" ng-model="mode.state" btn-radio="flora.name">
-                                            {{flora.name}}
-                                        </label>
+                                        <label class="btn btn-default" ng-model="floraModel.Batis" btn-checkbox>Batis</label>
+                                        <label class="btn btn-default" ng-model="floraModel.Borrichia" btn-checkbox>Borrichia</label>
+                                        <label class="btn btn-default" ng-model="floraModel.Juncus" btn-checkbox>Juncus</label>
                                     </div>
                                     <div class="btn-group btn-group-justified">
-                                        <label ng-repeat="flora in flora_species | slice:3:6" class="btn btn-default" ng-model="mode.state" btn-radio="flora.name">
-                                            {{flora.name}}
-                                        </label>
+                                        <label class="btn btn-default" ng-model="floraModel.Limonium" btn-checkbox>Limonium</label>
+                                        <label class="btn btn-default" ng-model="floraModel.Salicornia" btn-checkbox>Salicornia</label>
+                                        <label class="btn btn-default" ng-model="floraModel.Spartina" btn-checkbox>Spartina</label>
                                     </div>
                                 </div>
                             </div>
@@ -160,9 +160,10 @@
                             <div class="row">
                                 <div class="col-md-10 col-md-offset-1">
                                     <div class="btn-group btn-group-justified">
-                                        <label ng-repeat="fauna in fauna_species" class="btn btn-default" ng-model="mode.state" btn-radio="fauna.name">
-                                            {{fauna.name}}
-                                        </label>
+                                        <label class="btn btn-default" ng-model="faunaModel.Burrow" btn-checkbox>Burrow</label>
+                                        <label class="btn btn-default" ng-model="faunaModel.Crab" btn-checkbox>Crab</label>
+                                        <label class="btn btn-default" ng-model="faunaModel.Mussel" btn-checkbox>Mussel</label>
+                                        <label class="btn btn-default" ng-model="faunaModel.Snail" btn-checkbox>Snail</label>
                                     </div>
                                 </div>
                             </div>

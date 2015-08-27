@@ -1,7 +1,7 @@
 <div ng-cloak>
     <h1 class="text-center">Plant Identification Practice</h1>
 
-    <div ng-hide="img !== undefined">
+    <div ng-show="errorMsg === true">
         <p class="text-center">
             Sorry, no image is available to you in this game mode at this time.
         </p>
@@ -10,63 +10,60 @@
         </div>
     </div>
 
-    <div id="controls" class="ol-control control-panel" ng-show="img !== undefined">
-        <button type="button" ng-show="displayControls" ng-click="toggleControls()">
-            <span class="glyphicon glyphicon-triangle-top"></span>
-        </button>
-        <button type="button" ng-hide="displayControls" ng-click="toggleControls()">
-            <span class="glyphicon glyphicon-triangle-bottom"></span>
-        </button>
+    <div id="controls" class="ol-control control-panel" ng-show="errorMsg === false">
+        <button type="button" ng-show="displayControls" ng-click="displayControls = !displayControls">&#x25B2;</button>
+        <button type="button" ng-hide="displayControls" ng-click="displayControls = !displayControls">&#x25BC;</button>
+
         <div ng-show="displayControls">
             <div class="btn-group btn-group-justified" style="width: 350px;">
-                <label class="btn color1" ng-model="radioModel" ng-disabled="isDisabled('Salicornia') || isCompleted('Salicornia')"
+                <label class="btn color1" ng-model="radioModel.selected" ng-disabled="isDisabled('Salicornia') || isCompleted('Salicornia')"
                        btn-radio="'Salicornia'" uncheckable style="border-bottom-left-radius: 0px;">
-                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Salicornia'"></span>
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Salicornia'"></span>
                     <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Salicornia')"></span>
-                    <span class="glyphicon glyphicon-lock" ng-show="isDisabled('Salicornia')"></span>
+                    <span class="glyphicon glyphicon-lock" ng-show="scoreboard.plants.Salicornia === undefined"></span>
                     Salicornia
                 </label>
-                <label class="btn color2" ng-model="radioModel" ng-disabled="isDisabled('Spartina') || isCompleted('Spartina')"
+                <label class="btn color2" ng-model="radioModel.selected" ng-disabled="isDisabled('Spartina') || isCompleted('Spartina')"
                        btn-radio="'Spartina'" uncheckable>
-                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Spartina'"></span>
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Spartina'"></span>
                     <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Spartina')"></span>
-                    <span class="glyphicon glyphicon-lock" ng-show="isDisabled('Spartina')"></span>
+                    <span class="glyphicon glyphicon-lock" ng-show="scoreboard.plants.Spartina === undefined"></span>
                     Spartina
                 </label>
-                <label class="btn color3" ng-model="radioModel" ng-disabled="isDisabled('Batis') || isCompleted('Batis')"
+                <label class="btn color3" ng-model="radioModel.selected" ng-disabled="isDisabled('Batis') || isCompleted('Batis')"
                        btn-radio="'Batis'" uncheckable style="border-bottom-right-radius: 0px;">
-                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Batis'"></span>
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Batis'"></span>
                     <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Batis')"></span>
-                    <span class="glyphicon glyphicon-lock" ng-show="isDisabled('Batis')"></span>
+                    <span class="glyphicon glyphicon-lock" ng-show="scoreboard.plants.Batis === undefined"></span>
                     Batis
                 </label>
             </div>
             <div class="btn-group btn-group-justified" style="width: 350px;">
-                <label class="btn color4" ng-model="radioModel" ng-disabled="isDisabled('Borrichia') || isCompleted('Borrichia')"
+                <label class="btn color4" ng-model="radioModel.selected" ng-disabled="isDisabled('Borrichia') || isCompleted('Borrichia')"
                        btn-radio="'Borrichia'" uncheckable style="border-top-left-radius: 0px;">
-                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Borrichia'"></span>
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Borrichia'"></span>
                     <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Borrichia')"></span>
-                    <span class="glyphicon glyphicon-lock" ng-show="isDisabled('Borrichia')"></span>
+                    <span class="glyphicon glyphicon-lock" ng-show="scoreboard.plants.Borrichia === undefined"></span>
                     Borrichia
                 </label>
-                <label class="btn color5" ng-model="radioModel" ng-disabled="isDisabled('Limonium') || isCompleted('Limonium')"
+                <label class="btn color5" ng-model="radioModel.selected" ng-disabled="isDisabled('Limonium') || isCompleted('Limonium')"
                        btn-radio="'Limonium'" uncheckable>
-                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Limonium'"></span>
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Limonium'"></span>
                     <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Limonium')"></span>
-                    <span class="glyphicon glyphicon-lock" ng-show="isDisabled('Limonium')"></span>
+                    <span class="glyphicon glyphicon-lock" ng-show="scoreboard.plants.Limonium === undefined"></span>
                     Limonium
                 </label>
-                <label class="btn color6" ng-model="radioModel" ng-disabled="isDisabled('Juncus') || isCompleted('Juncus')"
+                <label class="btn color6" ng-model="radioModel.selected" ng-disabled="isDisabled('Juncus') || isCompleted('Juncus')"
                        btn-radio="'Juncus'" uncheckable style="border-top-right-radius: 0px;">
-                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel === 'Juncus'"></span>
+                    <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Juncus'"></span>
                     <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Juncus')"></span>
-                    <span class="glyphicon glyphicon-lock" ng-show="isDisabled('Juncus')"></span>
+                    <span class="glyphicon glyphicon-lock" ng-show="scoreboard.plants.Juncus === undefined"></span>
                     Juncus
                 </label>
             </div>
             <hr/>
             <div style="margin: 0 auto; width: 128px; height: 128px; background-color: lightgrey;">
-                <img ng-show="radioModel !== null" ng-src="images/plants/{{radioModel}}.jpg" />
+                <img ng-show="radioModel.selected !== null" ng-src="images/plants/{{radioModel.selected}}.jpg" />
             </div>
             <hr/>
             <div>
@@ -76,18 +73,15 @@
         </div>
     </div>
 
-    <div id="scoreboard" class="ol-control scoreboard-panel" ng-show="img !== undefined">
-        <button type="button" ng-show="displayScoreboard" ng-click="toggleScoreboard()" style="float: right;">
-            <span class="glyphicon glyphicon-triangle-top"></span>
-        </button>
-        <button type="button" ng-hide="displayScoreboard" ng-click="toggleScoreboard()" style="float: right;">
-            <span class="glyphicon glyphicon-triangle-bottom"></span>
-        </button>
+    <div id="scoreboard" class="ol-control scoreboard-panel" ng-show="errorMsg === false">
+        <button type="button" ng-show="displayScoreboard" ng-click="displayScoreboard = !displayScoreboard" style="float: right;">&#x25B2;</button>
+        <button type="button" ng-hide="displayScoreboard" ng-click="displayScoreboard = !displayScoreboard" style="float: right;">&#x25B2;</button>
+
         <div ng-show="displayScoreboard" style="clear: both;">
             <div style="width: 300px;">
-            <h4>Score : {{score}}</h4>
+            <h4>Score : {{scoreboard.score}}</h4>
                 <ul class="list-unstyled">
-                    <li ng-repeat="(key,plant) in plants">
+                    <li ng-repeat="(key,plant) in scoreboard.plants">
                         <progress max="plant.max" animate="true">
                             <bar value="plant.nbConfirmed">
                                 <span style="color:white; white-space:nowrap; font-size: medium;">{{plant.name}} : {{plant.nbConfirmed + plant.nbToSubmit}} / {{plant.max}}</span>
@@ -99,6 +93,34 @@
                     </li>
                 </ul>
             </div>
+        </div>
+    </div>
+
+    <div id="options" class="ol-control options-panel" ng-show="errorMsg === false">
+        <button type="button" ng-show="displayOptions" ng-click="displayOptions = !displayOptions" style="float: right;">&#x25B2;</button>
+        <button type="button" ng-hide="displayOptions" ng-click="displayOptions = !displayOptions" style="float: right;">&#x25B2;</button>
+
+        <div ng-show="displayOptions" style="clear: both;">
+            <ul class="list-unstyled">
+                <li ng-show="Batis !== undefined">
+                    <input type="checkbox" id="batisCheckbox" ng-model="showBatis"><label for="batisCheckbox">Show batis</label>
+                </li>
+                <li ng-show="Borrichia !== undefined">
+                    <input type="checkbox" id="borrichiaCheckbox" ng-model="showBorrichia"><label for="borrichiaCheckbox">Show borrichia</label>
+                </li>
+                <li ng-show="Juncus !== undefined">
+                    <input type="checkbox" id="juncusCheckbox" ng-model="showJuncus"><label for="juncusCheckbox">Show juncus</label>
+                </li>
+                <li ng-show="Limonium !== undefined">
+                    <input type="checkbox" id="limoniumCheckbox" ng-model="showLimonium"><label for="limoniumCheckbox">Show limonium</label>
+                </li>
+                <li ng-show="Salicornia !== undefined">
+                    <input type="checkbox" id="salicorniaCheckbox" ng-model="showSalicornia"><label for="salicorniaCheckbox">Show salicornia</label>
+                </li>
+                <li ng-show="Spartina !== undefined">
+                    <input type="checkbox" id="spartinaCheckbox" ng-model="showSpartina"><label for="spartinaCheckbox">Show spartina</label>
+                </li>
+            </ul>
         </div>
     </div>
 

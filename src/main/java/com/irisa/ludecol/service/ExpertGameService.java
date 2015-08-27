@@ -306,13 +306,13 @@ public class ExpertGameService {
         expertGame.setGameMode(mode);
         expertGame.setUsr(login);
         expertGame.setSubmittedResult(game.getGameResult());
-        String img = imageProviderService.findExpertImage(mode, login).getId();
+        Image img = imageProviderService.findExpertImage(mode, login);
         if (img == null)
             return null;
-        ProcessedGame processedGame = processedGameRepository.findByImgAndGameMode(img, mode);
+        ProcessedGame processedGame = processedGameRepository.findByImgAndGameMode(img.getId(), mode);
         if(processedGame != null)
             expertGame.setProcessedResult(processedGame.getProcessedGameResult());
-        expertGame.setImg(img);
+        expertGame.setImg(img.getId());
         log.debug("Created game : {}", expertGame);
         expertGameRepository.save(expertGame);
         return expertGame;

@@ -33,7 +33,7 @@ angular.module('ludecolApp')
             return res;
         }
 
-        function _populateFeatures(property,coordinates,style) {
+        function _populateFeatures(coordinates,style) {
             var result = [];
             for(var i=0, ii=coordinates.length;i<ii;i++) {
                 var feat = new ol.Feature({
@@ -63,6 +63,11 @@ angular.module('ludecolApp')
             return result;
         };
 
+        function _isReadyToSubmit(key) {
+            var entry = ScoreboardService.data.animals[key];
+            return entry.nbToSubmit + entry.nbConfirmed === entry.max;
+        }
+
         function _setupGame(img,game) {
             _displayedFeatures = {};
             _successCallback(img,game);
@@ -76,13 +81,18 @@ angular.module('ludecolApp')
                 if(_isWithinBounds(evt.coordinate)) {
                     var radioModel = RadioModel.data.selected;
                     if(radioModel !== null) {
-                        var feat = new ol.Feature({geometry: new ol.geom.Point([evt.coordinate[0],evt.coordinate[1]])});
-                        feat.setStyle(_speciesStyles[radioModel]);
-                        FeatureCollection[radioModel].push(feat);
-                        ScoreboardService.data.animals[radioModel].nbToSubmit++;
-                        $rootScope.$apply();
-                        if(_displayedFeatures[radioModel]) {
-                            _vectorSource.addFeature(feat);
+                        if(!_isReadyToSubmit(radioModel)) {
+                            var feat = new ol.Feature({geometry: new ol.geom.Point([evt.coordinate[0],evt.coordinate[1]])});
+                            feat.setStyle(_speciesStyles[radioModel]);
+                            FeatureCollection[radioModel].push(feat);
+                            ScoreboardService.data.animals[radioModel].nbToSubmit++;
+                            $rootScope.$apply();
+                            if(_displayedFeatures[radioModel]) {
+                                _vectorSource.addFeature(feat);
+                            }
+                        }
+                        else {
+                                //popup saying that you cannot add more occurences of the selected species.
                         }
                     } else {
 
@@ -101,7 +111,7 @@ angular.module('ludecolApp')
 
             angular.forEach(data.partialResult, function(value,key) {
                 if(data.maxSpecies[key] > 0) {
-                    var features = _populateFeatures(key,value,_validatedStyles[key]);
+                    var features = _populateFeatures(value,_validatedStyles[key]);
                     angular.forEach(features,function(feature){FeatureCollection[key].push(feature);});
                     ScoreboardService.data.animals[key] = {
                         name: ""+key,
@@ -122,7 +132,7 @@ angular.module('ludecolApp')
                 _getResult,_setupGame,errorCallback,UserTrainingGame.query,TrainingGame.update);
         };
 
-        var submit = function(){
+        var submitGame = function(){
             _submitGame(function(cb, res) {
                 TrainingGame.get({id: res.id}, function(updatedWrapper) {
                     _loadState(updatedWrapper);
@@ -155,7 +165,7 @@ angular.module('ludecolApp')
 
         return {
             initializeGame: initializeGame,
-            submit: submit,
+            submitGame: submitGame,
             toggleFeatures: toggleFeatures,
             highlightFeature: highlightFeature,
             removeFeature: removeFeature

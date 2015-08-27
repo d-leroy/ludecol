@@ -6,7 +6,7 @@ angular.module('ludecolApp')
         return {data: {}};
     })
 
-    .controller('TrainingAnimalIdentificationController', function ($scope, Principal, ScoreboardService, TrainingAnimalGameService, FeatureCollection, RadioModel, MapService, TrainingGame) {
+    .controller('TrainingAnimalIdentificationController', function ($scope, Principal, ScoreboardService, TrainingAnimalGameService, FeatureCollection, RadioModel, MapService) {
 
         Principal.identity().then(function(account) {
             $scope.account = account;
@@ -36,7 +36,7 @@ angular.module('ludecolApp')
                 MapService.setView(img);
                 MapService.addControl(controls);
                 MapService.addControl(scoreboard);
-                $scope.submit = TrainingAnimalGameService.submit;
+                $scope.submit = TrainingAnimalGameService.submitGame;
 
                 $scope.isCompleted = function(key) {
                     var entry = ScoreboardService.data.animals[key];

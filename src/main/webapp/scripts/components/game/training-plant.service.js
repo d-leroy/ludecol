@@ -1,12 +1,13 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .factory('PlantGameService', function (RadioModel, MapService, UserGame, Game, GameService) {
+    .factory('TrainingPlantGameService', function ($rootScope, RadioModel, ScoreboardService, MapService, GameService, UserTrainingGame, TrainingGame) {
 
         var _cols, _rows, _width, _height;
         var _tagWidth, _rectWidth, _rectHeight;
         var _vectorSource, _tags, _displayedFeatures;
         var _successCallback, _submitGame;
+        var _lineGrid;
 
         var _speciesStyles = {
             Batis: new ol.style.Style({fill: new ol.style.Fill({color: '#40B12F'})}),
@@ -17,13 +18,15 @@ angular.module('ludecolApp')
             Spartina: new ol.style.Style({fill: new ol.style.Fill({color: '#DAB11B'})})
         }
 
+        var _blackStroke = new ol.style.Stroke({color: '#000000', width: 5});
+
         var _validatedStyles = {
-            Batis: new ol.style.Style({fill: new ol.style.Fill({color: '#40B12F'}), stroke: new ol.style.Stroke({color: '#000000', width: 5})}),
-            Borrichia: new ol.style.Style({fill: new ol.style.Fill({color: '#59B4C0'}), stroke: new ol.style.Stroke({color: '#000000', width: 5})}),
-            Juncus: new ol.style.Style({fill: new ol.style.Fill({color: '#B958CA'}), stroke: new ol.style.Stroke({color: '#000000', width: 5})}),
-            Limonium: new ol.style.Style({fill: new ol.style.Fill({color: '#6C7DDA'}), stroke: new ol.style.Stroke({color: '#000000', width: 5})}),
-            Salicornia: new ol.style.Style({fill: new ol.style.Fill({color: '#CC6161'}), stroke: new ol.style.Stroke({color: '#000000', width: 5})}),
-            Spartina: new ol.style.Style({fill: new ol.style.Fill({color: '#DAB11B'}), stroke: new ol.style.Stroke({color: '#000000', width: 5})})
+            Batis: new ol.style.Style({fill: new ol.style.Fill({color: '#40B12F'}), stroke: _blackStroke}),
+            Borrichia: new ol.style.Style({fill: new ol.style.Fill({color: '#59B4C0'}), stroke: _blackStroke}),
+            Juncus: new ol.style.Style({fill: new ol.style.Fill({color: '#B958CA'}), stroke: _blackStroke}),
+            Limonium: new ol.style.Style({fill: new ol.style.Fill({color: '#6C7DDA'}), stroke: _blackStroke}),
+            Salicornia: new ol.style.Style({fill: new ol.style.Fill({color: '#CC6161'}), stroke: _blackStroke}),
+            Spartina: new ol.style.Style({fill: new ol.style.Fill({color: '#DAB11B'}), stroke: _blackStroke})
         }
 
         function _isWithinBounds(coord) {
@@ -86,6 +89,17 @@ angular.module('ludecolApp')
             });
         }
 
+        function _populateFeatures(key,presence_grid,style) {
+            angular.forEach(presence_grid,function(presence,index) {
+                if(presence) {
+                    var feat = new ol.Feature({geometry: new ol.geom.Polygon([[0,0],[0,0],[0,0]])});
+                    feat.setStyle(style);
+                    feat.validated = true;
+                    _tags[index][key] = feat;
+                }
+            });
+        }
+
         function _initializePresenceGrid() {
             var res = {
                 Batis: [], Borrichia: [], Juncus: [],
@@ -110,7 +124,12 @@ angular.module('ludecolApp')
             return result;
         }
 
-        var _setupGame = function(img,game) {
+        function _isReadyToSubmit(key) {
+            var entry = ScoreboardService.data.plants[key];
+            return entry.nbToSubmit + entry.nbConfirmed === entry.max;
+        }
+
+        function _setupGame(img,game) {
             _displayedFeatures = {};
             _successCallback(img,game);
 
@@ -122,7 +141,8 @@ angular.module('ludecolApp')
             _vectorSource = new ol.source.Vector({});
             MapService.addLayer(new ol.layer.Vector({source: _vectorSource}));
             //Setting up the grid and adding it to the vector layer.
-            _vectorSource.addFeature(new ol.Feature({geometry: new ol.geom.MultiLineString(_setupLineGrid())}));
+            _lineGrid = new ol.Feature({geometry: new ol.geom.MultiLineString(_setupLineGrid())});
+            _vectorSource.addFeature(_lineGrid);
             //Initializing the array that will contain the 'tags'.
             _setupCells();
             //Adding the click listener.
@@ -137,19 +157,30 @@ angular.module('ludecolApp')
                         var baseCoords = _getBaseCoordinates(i,j);
 
                         if(tags[radioModel] !== undefined) {
-                            if(_displayedFeatures[radioModel]) {
-                                _vectorSource.removeFeature(tags[radioModel]);
+                            if(!tags[radioModel].validated) {
+                                if(_displayedFeatures[radioModel]) {
+                                    _vectorSource.removeFeature(tags[radioModel]);
+                                }
+                                delete tags[radioModel];
+                                ScoreboardService.data.plants[radioModel].nbToSubmit--;
+                                $rootScope.$apply();
                             }
-                            delete tags[radioModel];
                         }
                         else {
-                            var feat = new ol.Feature({geometry: new ol.geom.Polygon(baseCoords)});
-                            feat.setStyle(_speciesStyles[radioModel]);
-                            //Should check if those features are currently displayed.
-                            if(_displayedFeatures[radioModel]) {
-                                _vectorSource.addFeature(feat);
+                            if(!_isReadyToSubmit(radioModel)) {
+                                var feat = new ol.Feature({geometry: new ol.geom.Polygon(baseCoords)});
+                                feat.setStyle(_speciesStyles[radioModel]);
+                                feat.validated = false;
+                                if(_displayedFeatures[radioModel]) {
+                                    _vectorSource.addFeature(feat);
+                                }
+                                tags[radioModel] = feat;
+                                ScoreboardService.data.plants[radioModel].nbToSubmit++;
+                                $rootScope.$apply();
                             }
-                            tags[radioModel] = feat;
+                            else {
+                                //popup saying that you cannot add more occurences of the selected species.
+                            }
                         }
                         _setCellGeometries(idx, baseCoords);
                     } else {
@@ -164,13 +195,18 @@ angular.module('ludecolApp')
         function _loadState(data) {
             ScoreboardService.data.score = data.score;
             ScoreboardService.data.plants = {};
-            _vectorSource.clear();
-            angular.forEach(FeatureCollection,function(value,key){if (value !== undefined) while(value.length){value.pop()}});
+
+            for(var i=0; i<_cols*_rows; i++) {
+                angular.forEach(_tags[i],function(value,key){
+                    _vectorSource.removeFeature(value);
+                });
+            }
+
+            _setupCells();
 
             angular.forEach(data.partialResult, function(value,key) {
                 if(data.maxSpecies[key] > 0) {
-                    var features = _populateFeatures(key,value,_validatedStyles[key]);
-                    angular.forEach(features,function(feature){FeatureCollection[key].push(feature);});
+                    _populateFeatures(key,value,_validatedStyles[key]);
                     ScoreboardService.data.plants[key] = {
                         name: ""+key,
                         nbConfirmed: data.maxSpecies[key] - data.missingSpecies[key],
@@ -179,6 +215,16 @@ angular.module('ludecolApp')
                     };
                 }
             });
+
+            for(var i=0; i<_cols*_rows; i++) {
+                var x = i % _cols;
+                var y = Math.floor(i / _cols);
+                var baseCoords = _getBaseCoordinates(x,y);
+                _setCellGeometries(i,baseCoords);
+                angular.forEach(_tags[i],function(value,key){
+                    _vectorSource.addFeature(value);
+                });
+            }
         };
 
         //-------------------API
@@ -188,11 +234,18 @@ angular.module('ludecolApp')
             _successCallback = successCallback;
             _cols = cols; _rows = rows;
             _submitGame = GameService.initializeGame(login,'PlantIdentification',_initializePresenceGrid,
-                _getResult,_setupGame,errorCallback,UserGame.query,Game.update);
+                _getResult,_setupGame,errorCallback,UserTrainingGame.query,TrainingGame.update);
         };
 
         var submitGame = function(){
-            _submitGame();
+            _submitGame(function(cb, res) {
+                TrainingGame.get({id: res.id}, function(updatedWrapper) {
+                    _loadState(updatedWrapper);
+                    if(updatedWrapper.completed) {
+                        cb();
+                    }
+                });
+            });
         };
 
         var toggleFeatures = function(property,show) {

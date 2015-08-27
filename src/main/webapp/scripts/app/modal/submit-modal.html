@@ -2,9 +2,11 @@
     <h3 class="modal-title">Game submitted!</h3>
 </div>
 <div class="modal-body">
-    What do you wish to do next?
+    <p><label>Did you know?</label></p>
+    <p>{{fact.response}}</p>
 </div>
 <div class="modal-footer">
+    <p><label>What do you wish to do next?</label></p>
     <button class="btn btn-primary" ng-click="ok()">Keep playing</button>
     <button class="btn btn-warning" ng-click="cancel()">Back to main menu</button>
 </div>

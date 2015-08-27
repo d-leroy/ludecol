@@ -1,14 +1,16 @@
 'use strict';
 
 angular.module('ludecolApp')
-.controller('SubmitModalInstanceCtrl', function ($scope, $modalInstance) {
+.controller('SubmitModalInstanceCtrl', function ($scope, $modalInstance, Fact) {
 
-  $scope.ok = function () {
-    $modalInstance.close(true);
-  };
+    $scope.fact = Fact.get();
 
-  $scope.cancel = function () {
-    $modalInstance.close(false);
-  };
+    $scope.ok = function () {
+        $modalInstance.close(true);
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.close(false);
+    };
 
 });
