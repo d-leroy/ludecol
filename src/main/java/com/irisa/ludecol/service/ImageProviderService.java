@@ -82,13 +82,13 @@ public class ImageProviderService {
             .sorted(Comparator.comparingInt(i -> i.getModeStatus().get(mode).getGameNumber()))
             .collect(Collectors.toList());
         if(images.isEmpty()) {
-            images = mongoTemplate.find(query(where("mode_status."+mode).elemMatch(where("mode").is(ImageStatus.IN_PROCESSING))), Image.class);
+            images = mongoTemplate.find(query(where("mode_status." + mode + ".status").is(ImageStatus.IN_PROCESSING.toString())), Image.class);
             images = filterPlayedImage(images, mode, login);
             images = images.stream()
-                .sorted(Comparator.comparingInt(i->i.getModeStatus().get(ImageStatus.IN_PROCESSING).getGameNumber()))
+                .sorted(Comparator.comparingInt(i->i.getModeStatus().get(mode).getGameNumber()))
                 .collect(Collectors.toList());
             if(images.isEmpty()) {
-                images = mongoTemplate.find(query(where("mode_status."+mode).elemMatch(where("mode").is(ImageStatus.PROCESSED))), Image.class);
+                images = mongoTemplate.find(query(where("mode_status." + mode + ".status").is(ImageStatus.PROCESSED.toString())), Image.class);
                 images = filterPlayedImage(images, mode, login);
                 if(images.isEmpty()) {
                     log.debug("No eligible image was found");
