@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .factory('ExpertPlantGameService', function (RadioModel, MapService, GameService, UserExpertGame, ExpertGame) {
+    .factory('ExpertPlantGameService', function (RadioModel, ImageService, GameService, UserExpertGame, ExpertGame) {
 
         var _cols, _rows, _width, _height, _speciesMap;
         var _tagWidth, _rectWidth, _rectHeight;
@@ -183,7 +183,7 @@ angular.module('ludecolApp')
             _tagWidth = (Math.min(_rectHeight,_rectWidth) - 20) / 6;
             //Creating vector layer, to which features will be added.
             _vectorSource = new ol.source.Vector({});
-            MapService.addLayer(new ol.layer.Vector({source: _vectorSource}));
+            ImageService.addLayer(new ol.layer.Vector({source: _vectorSource}));
             //Setting up the grid and adding it to the vector layer.
             _vectorSource.addFeature(new ol.Feature({geometry: new ol.geom.MultiLineString(_setupLineGrid())}));
             //Initializing the array that will contain the 'tags'.
@@ -192,7 +192,7 @@ angular.module('ludecolApp')
                 _setupHintTags(game.processed_result.species_map);
             }
             //Adding the click listener.
-            MapService.addListener('singleclick', function(evt) {
+            ImageService.addListener('singleclick', function(evt) {
                 if(_isWithinBounds(evt.coordinate)) {
                     var radioModel = RadioModel.data.selected;
                     if(radioModel !== null) {
@@ -241,19 +241,19 @@ angular.module('ludecolApp')
         //-------------------API
 
         var initializeGame = function(login,cols,rows,successCallback,errorCallback) {
-            MapService.destroyMap();
+            ImageService.destroyMap();
             _successCallback = successCallback;
             _cols = cols; _rows = rows;
             _submitGame = GameService.initializeGame(login,'PlantIdentification',_initializePresenceGrid,
                 _getResult,_setupGame,errorCallback,UserExpertGame.query,ExpertGame.update);
         };
 
-        var defineReference = function(login,cols,rows,successCallback,errorCallback,img) {
-            MapService.destroyMap();
+        var initializeReferenceDefinition = function(login,cols,rows,successCallback,errorCallback,img,submitCallback) {
+            ImageService.destroyMap();
             _successCallback = successCallback;
             _cols = cols; _rows = rows;
             _submitGame = GameService.initializeReferenceDefinition(login,'PlantIdentification',_initializePresenceGrid,
-                _getResult,_setupGame,errorCallback,ExpertGame.update,img);
+                _getResult,_setupGame,errorCallback,ExpertGame.update,img,submitCallback);
         }
 
         var submitGame = function(){

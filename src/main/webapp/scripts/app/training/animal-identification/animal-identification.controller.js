@@ -6,14 +6,14 @@ angular.module('ludecolApp')
         return {data: {}};
     })
 
-    .controller('TrainingAnimalIdentificationController', function ($scope, Principal, ScoreboardService, TrainingAnimalGameService, FeatureCollection, RadioModel, MapService) {
+    .controller('TrainingAnimalIdentificationController', function ($scope, Principal, ScoreboardService, TrainingAnimalGameService, FeatureCollection, RadioModel, ImageService) {
 
         Principal.identity().then(function(account) {
             $scope.account = account;
             $scope.isAuthenticated = Principal.isAuthenticated;
             $scope.errorMsg = null;
 
-            function errorCallback() {$scope.errorMsg = true; MapService.destroyMap();}
+            function errorCallback() {$scope.errorMsg = true; ImageService.destroyMap();}
 
             function loadGame(img,game) {
                 $scope.errorMsg = false;
@@ -32,10 +32,10 @@ angular.module('ludecolApp')
                 $scope.radioModel = {selected: null};
                 RadioModel.data = $scope.radioModel;
 
-                MapService.initializeMap('map');
-                MapService.setView(img);
-                MapService.addControl(controls);
-                MapService.addControl(scoreboard);
+                ImageService.initializeMap('map');
+                ImageService.setView(img);
+                ImageService.addControl(controls);
+                ImageService.addControl(scoreboard);
                 $scope.submit = TrainingAnimalGameService.submitGame;
 
                 $scope.isCompleted = function(key) {
@@ -53,7 +53,7 @@ angular.module('ludecolApp')
 
                 $scope.highlightFeature = TrainingAnimalGameService.highlightFeature;
                 $scope.removeFeature = TrainingAnimalGameService.removeFeature;
-                $scope.panToFeature = function(property,idx) {MapService.panTo(FeatureCollection[property][idx].getGeometry().getCoordinates());}
+                $scope.panToFeature = function(property,idx) {ImageService.panTo(FeatureCollection[property][idx].getGeometry().getCoordinates());}
             }
 
             TrainingAnimalGameService.initializeGame($scope.account.login,loadGame,errorCallback);

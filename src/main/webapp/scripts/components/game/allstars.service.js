@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .factory('AllStarsGameService', function (RadioModel, UserGame, Game, MapService, GameService) {
+    .factory('AllStarsGameService', function (RadioModel, UserGame, Game, ImageService, GameService) {
 
         var _submitGame;
 
@@ -12,7 +12,7 @@ angular.module('ludecolApp')
         //-------------------API
 
         var initializeGame = function(login,successCallback,errorCallback) {
-            MapService.destroyMap();
+            ImageService.destroyMap();
             _submitGame = GameService.initializeGame(login,'AllStars',function(){return {};},
                 _getResult,successCallback,errorCallback,UserGame.query,Game.update);
         };

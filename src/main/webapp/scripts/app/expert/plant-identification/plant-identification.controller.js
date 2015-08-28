@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .controller('ExpertPlantIdentificationController', function ($scope, Principal, MapService, RadioModel, ExpertPlantGameService) {
+    .controller('ExpertPlantIdentificationController', function ($scope, Principal, ImageService, RadioModel, ExpertPlantGameService) {
         Principal.identity().then(function(account) {
             $scope.account = account;
             $scope.isAuthenticated = Principal.isAuthenticated;
@@ -10,7 +10,7 @@ angular.module('ludecolApp')
             var nbRows = 3;
             var nbCols = 3;
 
-            function errorCallback() {$scope.errorMsg = true; MapService.destroyMap();}
+            function errorCallback() {$scope.errorMsg = true; ImageService.destroyMap();}
 
             function loadGame(img,game) {
                 $scope.errorMsg = false;
@@ -31,10 +31,10 @@ angular.module('ludecolApp')
                     $scope['show'+value] = true;
                 });
 
-                MapService.initializeMap('map');
-                MapService.setView(img);
-                MapService.addControl(controls);
-                MapService.addControl(options);
+                ImageService.initializeMap('map');
+                ImageService.setView(img);
+                ImageService.addControl(controls);
+                ImageService.addControl(options);
                 $scope.submit = function(){$scope.errorMsg = null; ExpertPlantGameService.submitGame();};
 
                 $scope.jokerDisabled = true;

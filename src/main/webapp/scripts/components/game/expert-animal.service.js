@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .factory('ExpertAnimalGameService', function ($rootScope, FeatureCollection, RadioModel, MapService, GameService, UserExpertGame, ExpertGame) {
+    .factory('ExpertAnimalGameService', function ($rootScope, FeatureCollection, RadioModel, ImageService, GameService, UserExpertGame, ExpertGame) {
 
         var _width, _height, _successCallback, _submitGame;
         var _vectorSource, _displayedFeatures;
@@ -62,7 +62,7 @@ angular.module('ludecolApp')
             _width = img.width; _height = img.height;
             //Creating vector layer, to which features will be added.
             _vectorSource = new ol.source.Vector({});
-            MapService.addLayer(new ol.layer.Vector({source: _vectorSource}));
+            ImageService.addLayer(new ol.layer.Vector({source: _vectorSource}));
 
             if(game.processed_result !== null) {
                 angular.forEach(game.processed_result.species_map,function(species,property) {
@@ -77,7 +77,7 @@ angular.module('ludecolApp')
             }
 
             //Adding the click listener.
-            MapService.addListener('singleclick', function(evt) {
+            ImageService.addListener('singleclick', function(evt) {
                 if(_isWithinBounds(evt.coordinate)) {
                     var radioModel = RadioModel.data.selected;
                     if(radioModel !== null) {
@@ -98,10 +98,17 @@ angular.module('ludecolApp')
         //-------------------API
 
         var initializeGame = function(login,successCallback,errorCallback) {
-            MapService.destroyMap();
+            ImageService.destroyMap();
             _successCallback = successCallback;
             _submitGame = GameService.initializeGame(login,'AnimalIdentification',_initializeFeatureCollection,
                 _getResult,_setupGame,errorCallback,UserExpertGame.query,ExpertGame.update);
+        };
+
+        var initializeReferenceDefinition = function(login,successCallback,errorCallback,img,submitCallback) {
+            ImageService.destroyMap();
+            _successCallback = successCallback;
+            _submitGame = GameService.initializeReferenceDefinition(login,'AnimalIdentification',_initializeFeatureCollection,
+                _getResult,_setupGame,errorCallback,ExpertGame.update,img,submitCallback);
         };
 
         var submitGame = function(){
@@ -132,6 +139,7 @@ angular.module('ludecolApp')
 
         return {
             initializeGame: initializeGame,
+            initializeReferenceDefinition: initializeReferenceDefinition,
             submitGame: submitGame,
             toggleFeatures: toggleFeatures,
             highlightFeature: highlightFeature,

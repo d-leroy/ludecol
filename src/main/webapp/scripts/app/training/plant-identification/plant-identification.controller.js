@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .controller('TrainingPlantIdentificationController', function ($scope, Principal, ScoreboardService, TrainingPlantGameService, RadioModel, MapService) {
+    .controller('TrainingPlantIdentificationController', function ($scope, Principal, ScoreboardService, TrainingPlantGameService, RadioModel, ImageService) {
         Principal.identity().then(function(account) {
             $scope.account = account;
             $scope.isAuthenticated = Principal.isAuthenticated;
@@ -10,7 +10,7 @@ angular.module('ludecolApp')
             var nbRows = 3;
             var nbCols = 3;
 
-            function errorCallback() {$scope.errorMsg = true; MapService.destroyMap();}
+            function errorCallback() {$scope.errorMsg = true; ImageService.destroyMap();}
 
             function loadGame(img,game) {
                 $scope.errorMsg = false;
@@ -31,11 +31,11 @@ angular.module('ludecolApp')
                     $scope['show'+value] = true;
                 });
 
-                MapService.initializeMap('map');
-                MapService.setView(img);
-                MapService.addControl(controls);
-                MapService.addControl(options);
-                MapService.addControl(scoreboard);
+                ImageService.initializeMap('map');
+                ImageService.setView(img);
+                ImageService.addControl(controls);
+                ImageService.addControl(options);
+                ImageService.addControl(scoreboard);
                 $scope.submit = TrainingPlantGameService.submitGame;
 
                 $scope.isCompleted = function(key) {

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .factory('TrainingAnimalGameService', function ($rootScope, FeatureCollection, RadioModel, ScoreboardService, MapService, GameService, UserTrainingGame, TrainingGame) {
+    .factory('TrainingAnimalGameService', function ($rootScope, FeatureCollection, RadioModel, ScoreboardService, ImageService, GameService, UserTrainingGame, TrainingGame) {
 
         var _width, _height, _successCallback, _submitGame;
         var _vectorSource, _displayedFeatures;
@@ -75,9 +75,9 @@ angular.module('ludecolApp')
             _width = img.width; _height = img.height;
             //Creating vector layer, to which features will be added.
             _vectorSource = new ol.source.Vector({});
-            MapService.addLayer(new ol.layer.Vector({source: _vectorSource}));
+            ImageService.addLayer(new ol.layer.Vector({source: _vectorSource}));
             //Adding the click listener.
-            MapService.addListener('singleclick', function(evt) {
+            ImageService.addListener('singleclick', function(evt) {
                 if(_isWithinBounds(evt.coordinate)) {
                     var radioModel = RadioModel.data.selected;
                     if(radioModel !== null) {
@@ -126,7 +126,7 @@ angular.module('ludecolApp')
         //-------------------API
 
         var initializeGame = function(login,successCallback,errorCallback) {
-            MapService.destroyMap();
+            ImageService.destroyMap();
             _successCallback = successCallback;
             _submitGame = GameService.initializeGame(login,'AnimalIdentification',_initializeFeatureCollection,
                 _getResult,_setupGame,errorCallback,UserTrainingGame.query,TrainingGame.update);

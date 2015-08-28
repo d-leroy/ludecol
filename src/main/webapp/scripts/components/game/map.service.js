@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .factory('MapService', function () {
+    .factory('ImageService', function () {
 
-        var _imgWidth, _imgHeight, _imgCenter, _map, _view;
+        var _imgWidth, _imgHeight, _imgCenter, _image, _view;
         var _listenerKeys = [];
         var _initialized = false;
 
@@ -22,8 +22,8 @@ angular.module('ludecolApp')
                 });
                 var tileLayer = new ol.layer.Tile({source: tileSource});
 
-                _map.getLayers().clear();
-                _map.addLayer(tileLayer);
+                _image.getLayers().clear();
+                _image.addLayer(tileLayer);
 
                 _view = new ol.View({
                     projection: new ol.proj.Projection({
@@ -38,14 +38,14 @@ angular.module('ludecolApp')
                     extent: [0, -_imgHeight, _imgWidth, 0]
                 });
 
-                _map.setView(_view);
+                _image.setView(_view);
             }
         }
 
         var initializeMap = function(target) {
-            angular.forEach(_listenerKeys,function(key) {_map.unByKey(key);});
+            angular.forEach(_listenerKeys,function(key) {_image.unByKey(key);});
             if(!_initialized) {
-                _map = new ol.Map({
+                _image = new ol.Map({
                     controls: ol.control.defaults().extend([
                         new ol.control.FullScreen()
                     ]),
@@ -54,18 +54,18 @@ angular.module('ludecolApp')
                 });
                 _initialized = true;
             }
-            return _map;
+            return _image;
         }
 
         var destroyMap = function() {
             if(_initialized) {
-                angular.forEach(_listenerKeys,function(key) {_map.unByKey(key);});
+                angular.forEach(_listenerKeys,function(key) {_image.unByKey(key);});
                 _listenerKeys = [];
-                _map.setTarget(null);
+                _image.setTarget(null);
                 _imgWidth = 0;
                 _imgHeight = 0;
                 _imgCenter = null;
-                _map = null;
+                _image = null;
                 _view = null;
                 _initialized = false;
             }
@@ -73,19 +73,19 @@ angular.module('ludecolApp')
 
         var addControl = function(element) {
             if(_initialized) {
-                _map.addControl(new ol.control.Control({element: element}));
+                _image.addControl(new ol.control.Control({element: element}));
             }
         }
 
         var addLayer = function(layer) {
             if(_initialized) {
-                _map.addLayer(layer);
+                _image.addLayer(layer);
             }
         }
 
         var addListener = function(event,listener) {
             if(_initialized) {
-                _listenerKeys.push(_map.on(event,listener));
+                _listenerKeys.push(_image.on(event,listener));
             }
         }
 
@@ -94,7 +94,7 @@ angular.module('ludecolApp')
                 duration: 500,
                 source: (_view.getCenter())
             });
-            _map.beforeRender(pan);
+            _image.beforeRender(pan);
             _view.setCenter(coordinate);
         }
 

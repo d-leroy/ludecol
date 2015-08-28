@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .factory('GameService', function ($state, Image, SubmitModalService, MapService) {
+    .factory('GameService', function ($state, Image, SubmitModalService, ImageService) {
 
-        var _mode, _login, _successCallback, _errorCallback, _game, _queryFunction, _updateFunction;
+        var _mode, _login, _successCallback, _errorCallback, _game, _queryFunction, _updateFunction, _submitCallback;
 
         function _emptyResultSupplier() {return {};}
 
@@ -33,6 +33,13 @@ angular.module('ludecolApp')
                     _startNewGame();
                 }
             });
+        }
+
+        var _submitReference = function() {
+            var res = _resultSupplier();
+            _game.game_result = res;
+            _game.completed = true;
+            _updateFunction(_game,_submitCallback);
         }
 
         //-------------------API
@@ -75,15 +82,15 @@ angular.module('ludecolApp')
             return _submitGame;
         }
 
-        var initializeReferenceDefinition = function(login,mode,emptyResultSupplier,resultSupplier,successCallback,errorCallback,updateFunction,img) {
+        var initializeReferenceDefinition = function(login,mode,emptyResultSupplier,resultSupplier,successCallback,errorCallback,updateFunction,img,submitCallback) {
             _login = login;
             _mode = mode;
             _emptyResultSupplier = emptyResultSupplier;
             _resultSupplier = resultSupplier;
             _errorCallback = errorCallback;
             _successCallback = successCallback;
-            _queryFunction = queryFunction;
             _updateFunction = updateFunction;
+            _submitCallback = submitCallback;
 
             _game = {
                 usr: _login,
@@ -102,8 +109,8 @@ angular.module('ludecolApp')
                 });
             }, _errorCallback);
 
-            return _submitGame;
+            return _submitReference;
         }
 
-        return {initializeGame: initializeGame};
+        return {initializeGame: initializeGame, initializeReferenceDefinition: initializeReferenceDefinition};
     });

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .controller('PlantIdentificationController', function ($scope, Principal, ImageService, RadioModel, PlantGameService) {
+    .controller('ReferenceDefinitionPlantIdentificationController', function ($scope, $state, $stateParams, Principal, ImageService, RadioModel, ExpertPlantGameService) {
         Principal.identity().then(function(account) {
             $scope.account = account;
             $scope.isAuthenticated = Principal.isAuthenticated;
@@ -27,7 +27,7 @@ angular.module('ludecolApp')
 
                 angular.forEach(img.flora_species,function(value) {
                     $scope[value] = true;
-                    $scope.$watch('show'+value,function(n) {PlantGameService.toggleFeatures(value,n);});
+                    $scope.$watch('show'+value,function(n) {ExpertPlantGameService.toggleFeatures(value,n);});
                     $scope['show'+value] = true;
                 });
 
@@ -35,7 +35,7 @@ angular.module('ludecolApp')
                 ImageService.setView(img);
                 ImageService.addControl(controls);
                 ImageService.addControl(options);
-                $scope.submit = function(){$scope.errorMsg = null; PlantGameService.submitGame();};
+                $scope.submit = function(){$scope.errorMsg = null; ExpertPlantGameService.submitGame();};
 
                 $scope.jokerDisabled = true;
                 $scope.displayControls = true;
@@ -43,6 +43,6 @@ angular.module('ludecolApp')
 
             }
 
-            PlantGameService.initializeGame($scope.account.login,nbCols,nbRows,loadGame,errorCallback);
+            ExpertPlantGameService.initializeReferenceDefinition($scope.account.login,nbCols,nbRows,loadGame,errorCallback,$stateParams.img,function(){$state.go('image-manager',{set:$stateParams.set})});
         });
     });

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .controller('ExpertAllStarsController', function ($scope, Principal, ImageService, ExpertAllStarsGameService, RadioModel) {
+    .controller('ReferenceDefinitionAllStarsController', function ($scope, $stateParams, $state, Principal, ImageService, ExpertAllStarsGameService, RadioModel) {
         Principal.identity().then(function(account) {
 
             $scope.account = account;
@@ -42,17 +42,19 @@ angular.module('ludecolApp')
                 $scope.submit = function(){$scope.errorMsg = null; ExpertAllStarsGameService.submitGame();};
                 $scope.displayControls = true;
 
-                angular.forEach(game.processed_result.species_map,function(v,k){
-                    var x = v.x;
-                    var y = v.y;
-                    if(x+y !== 0) {
-                        var width = (x / (x+y)) * 165;
-                        $scope.speciesStyles[k].width = width.toString() + "px";
-                    }
-                });
+                if(game.processed_result !== null) {
+                    angular.forEach(game.processed_result.species_map,function(v,k){
+                        var x = v.x;
+                        var y = v.y;
+                        if(x+y !== 0) {
+                            var width = (x / (x+y)) * 165;
+                            $scope.speciesStyles[k].width = width.toString() + "px";
+                        }
+                    });
+                }
             }
 
-            ExpertAllStarsGameService.initializeGame($scope.account.login,loadGame,errorCallback);
+            ExpertAllStarsGameService.initializeReferenceDefinition($scope.account.login,loadGame,errorCallback,$stateParams.img,function(){$state.go('image-manager',{set:$stateParams.set})});
 
         });
     });

@@ -2,11 +2,13 @@ package com.irisa.ludecol.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  * Created by dorian on 21/07/15.
  */
+@Document(collection = "T_IMAGESET")
 public class ImageSet {
 
     @Id

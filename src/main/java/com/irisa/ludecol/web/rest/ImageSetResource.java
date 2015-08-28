@@ -30,6 +30,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing Image.
@@ -42,6 +43,9 @@ public class ImageSetResource {
 
     @Inject
     private ImageSetRepository imageSetRepository;
+
+    @Inject
+    private ImageRepository imageRepository;
 
     /**
      * POST  /images -> Create a new image set.
@@ -76,6 +80,14 @@ public class ImageSetResource {
         if (imageSet.getId() == null) {
             return create(imageSet);
         }
+        ImageSet set = imageSetRepository.findOne(imageSet.getId());
+        List<Image> images = imageRepository.findByImageSet(set.getName());
+        images.stream()
+            .forEach(image -> {
+                image.setSetPriority(imageSet.getPriority());
+                image.setImageSet(imageSet.getName());
+            });
+        imageRepository.save(images);
         imageSetRepository.save(imageSet);
         return ResponseEntity.ok().build();
     }

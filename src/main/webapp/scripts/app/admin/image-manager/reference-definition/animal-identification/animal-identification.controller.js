@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .controller('ExpertAnimalIdentificationController', function ($scope, Principal, ImageService, RadioModel, FeatureCollection, ExpertAnimalGameService) {
+    .controller('ReferenceDefinitionAnimalIdentificationController', function ($scope, $state, $stateParams, Principal, ImageService, RadioModel, FeatureCollection, ExpertAnimalGameService) {
         Principal.identity().then(function(account) {
             $scope.account = account;
             $scope.isAuthenticated = Principal.isAuthenticated;
@@ -54,6 +54,6 @@ angular.module('ludecolApp')
                 $scope.panToFeature = function(property,idx) {ImageService.panTo(FeatureCollection[property][idx].getGeometry().getCoordinates());}
             }
 
-            ExpertAnimalGameService.initializeGame($scope.account.login,loadGame,errorCallback);
+            ExpertAnimalGameService.initializeReferenceDefinition($scope.account.login,loadGame,errorCallback,$stateParams.img,function(){$state.go('image-manager',{set:$stateParams.set})});
         });
     });

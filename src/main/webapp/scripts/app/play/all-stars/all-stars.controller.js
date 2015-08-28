@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .controller('AllStarsController', function ($scope, Principal, MapService, AllStarsGameService, RadioModel) {
+    .controller('AllStarsController', function ($scope, Principal, ImageService, AllStarsGameService, RadioModel) {
 
         Principal.identity().then(function(account) {
             $scope.account = account;
@@ -11,7 +11,7 @@ angular.module('ludecolApp')
             $scope.plantSpecies = ['Batis','Borrichia','Juncus','Limonium','Salicornia','Spartina'];
             $scope.animalSpecies = ['Snail','Mussel','Crab','Burrow'];
 
-            function errorCallback() {$scope.errorMsg = true; MapService.destroyMap();}
+            function errorCallback() {$scope.errorMsg = true; ImageService.destroyMap();}
 
             function loadGame(img, game) {
                 $scope.errorMsg = false;
@@ -21,9 +21,9 @@ angular.module('ludecolApp')
                 angular.forEach($scope.animalSpecies,function(species) {$scope.radioModels[species] = 0;});
                 RadioModel.data = $scope.radioModels;
 
-                MapService.initializeMap('map');
-                MapService.setView(img);
-                MapService.addControl(controls);
+                ImageService.initializeMap('map');
+                ImageService.setView(img);
+                ImageService.addControl(controls);
                 $scope.submit = function(){$scope.errorMsg = null; AllStarsGameService.submitGame();};
                 $scope.displayControls = true;
             }

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .factory('PlantGameService', function (RadioModel, MapService, UserGame, Game, GameService) {
+    .factory('PlantGameService', function (RadioModel, ImageService, UserGame, Game, GameService) {
 
         var _cols, _rows, _width, _height;
         var _tagWidth, _rectWidth, _rectHeight;
@@ -111,13 +111,13 @@ angular.module('ludecolApp')
             _tagWidth = (Math.min(_rectHeight,_rectWidth) - 20) / 6;
             //Creating vector layer, to which features will be added.
             _vectorSource = new ol.source.Vector({});
-            MapService.addLayer(new ol.layer.Vector({source: _vectorSource}));
+            ImageService.addLayer(new ol.layer.Vector({source: _vectorSource}));
             //Setting up the grid and adding it to the vector layer.
             _vectorSource.addFeature(new ol.Feature({geometry: new ol.geom.MultiLineString(_setupLineGrid())}));
             //Initializing the array that will contain the 'tags'.
             _setupCells();
             //Adding the click listener.
-            MapService.addListener('singleclick', function(evt) {
+            ImageService.addListener('singleclick', function(evt) {
                 if(_isWithinBounds(evt.coordinate)) {
                     var radioModel = RadioModel.data.selected;
                     if(radioModel !== null) {
@@ -153,7 +153,7 @@ angular.module('ludecolApp')
         //-------------------API
 
         var initializeGame = function(login,cols,rows,successCallback,errorCallback) {
-            MapService.destroyMap();
+            ImageService.destroyMap();
             _successCallback = successCallback;
             _cols = cols; _rows = rows;
             _submitGame = GameService.initializeGame(login,'PlantIdentification',_initializePresenceGrid,

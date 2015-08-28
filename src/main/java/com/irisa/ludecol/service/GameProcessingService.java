@@ -1,14 +1,9 @@
 package com.irisa.ludecol.service;
 
-import com.irisa.ludecol.domain.Game;
-import com.irisa.ludecol.domain.Image;
-import com.irisa.ludecol.domain.ProcessedGame;
-import com.irisa.ludecol.domain.User;
+import com.irisa.ludecol.domain.*;
 import com.irisa.ludecol.domain.subdomain.*;
-import com.irisa.ludecol.repository.ImageRepository;
-import com.irisa.ludecol.repository.ObjectiveRepository;
-import com.irisa.ludecol.repository.ProcessedGameRepository;
-import com.irisa.ludecol.repository.UserRepository;
+import com.irisa.ludecol.repository.*;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,6 +12,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by dorian on 26/05/15.
@@ -28,11 +24,22 @@ public class GameProcessingService {
 
     private final int MIN_RESULT = 1;
 
+    private final int MAX_DISTANCE = 64;
+
     @Inject
     private ProcessedGameRepository processedGameRepository;
 
     @Inject
     private ImageRepository imageRepository;
+
+    @Inject
+    private GameRepository gameRepository;
+
+    @Inject
+    private GameNotificationRepository gameNotificationRepository;
+
+    @Inject
+    private GameNotificationService gameNotificationService;
 
     @Inject
     private UserRepository userRepository;
@@ -42,6 +49,9 @@ public class GameProcessingService {
 
     @Inject
     private ObjectiveService objectiveService;
+
+    @Inject
+    private ReferenceGameRepository referenceGameRepository;
 
 
     private void processPresenceGrid(final List<Boolean> inputData, final List<Double> processedData, int n) {
@@ -120,17 +130,176 @@ public class GameProcessingService {
         processedGame.setProcessedGameResult(result);
     }
 
+    private List<double[]> matchPointSets(final List<double[]> a, final List<double[]> b) {
+        List<double[]> matchedPoints = new ArrayList<>();
+        if(a != null && b != null && !a.isEmpty() && !b.isEmpty()) {
+            List<double[]> referencePoints = new ArrayList<>(b);
+            for (double[] p : a) {
+                double d = MAX_DISTANCE*MAX_DISTANCE;
+                double[] r = null;
+                for (double[] q : referencePoints) {
+                    Double dist = Math.pow(p[0] - q[0], 2) + Math.pow(p[1] - q[1], 2);
+                    if (dist < d) {
+                        log.debug("--------------Distance : {}-------------",dist);
+                        d = dist;
+                        r = q;
+                    }
+                }
+                if (r != null) {
+                    matchedPoints.add(new double[]{p[0],p[1]});
+                    referencePoints.remove(r);
+                }
+            }
+        }
+        return matchedPoints;
+    }
+
+    private void awardPoints(Game game, int score) {
+        Optional<User> playerRes = userRepository.findOneByLogin(game.getUsr());
+        if(playerRes.get() != null) {
+            User player = playerRes.get();
+            int scoreGain = score - 50;
+            if(scoreGain > 0 && player.getBonusPoints() > 0) {
+                int bonusScore = Math.min(scoreGain,player.getBonusPoints());
+                scoreGain += bonusScore;
+                player.setBonusPoints(player.getBonusPoints() - bonusScore);
+            }
+            int newScore = player.getScore() + scoreGain;
+            int newRank = player.getRank();
+            if(newScore >= 100) {
+                if(newRank == 1) {newScore = 100;}
+                else {newScore-=100;newRank--;}
+            }
+            else if (newScore <= 0) {
+                if(newRank == 50) {newScore = 0;}
+                else {newScore+=100;newRank++;}
+            }
+            player.setScore(newScore);
+            player.setRank(newRank);
+
+            String gameId = game.getId();
+            GameNotification gameNotification = new GameNotification();
+            gameNotification.setTitle("Game reviewed!");
+            gameNotification.setContent("You scored a " + score + "!");
+            gameNotification.setUsr(player.getLogin());
+            gameNotification.setGameId(gameId);
+            gameNotificationRepository.save(gameNotification);
+
+            objectiveRepository.findAllByUsr(player.getLogin()).stream().forEach(objective -> {
+                List<String> pendingGames = objective.getPendingGames();
+                if (pendingGames.contains(gameId)) {
+                    pendingGames.remove(gameId);
+                    objective.setBonusPoints(objective.getBonusPoints() + Math.max(score - 50, 0));
+                    //Remove objectives when they do not contain any pending game and they have the required number of completed games.
+                    if (objective.getNbGamesToComplete() == objective.getNbCompletedGames() && pendingGames.isEmpty()) {
+                        player.setBonusPoints(player.getBonusPoints() + objective.getBonusPoints());
+                        //Objective is completed, remove it from the database.
+                        objectiveRepository.delete(objective);
+                        //Add a notification informing the player he completed an objective.
+                        GameNotification objectiveNotification = new GameNotification();
+                        objectiveNotification.setTitle("Objective completed!");
+                        objectiveNotification.setContent("You gained " + objective.getBonusPoints() + " bonus points!");
+                        objectiveNotification.setUsr(player.getLogin());
+                        gameNotificationRepository.save(objectiveNotification);
+                    } else {
+                        objectiveRepository.save(objective);
+                    }
+                    objectiveService.handleObjectiveUpdate(player.getLogin());
+                }
+            });
+            userRepository.save(player);
+            game.setLastModified(new DateTime());
+            game.setScore(score);
+            gameRepository.save(game);
+            gameNotificationService.handleNewNotification(player.getLogin());
+        }
+    }
+
+    public void rateGame(Game game) {
+        switch(game.getGameMode()) {
+            case AllStars: {
+                Map<Species,Integer> referenceMap = ((AllStarsResult) game.getCorrectedGameResult()).getSpeciesMap();
+                Map<Species,Integer> submittedMap = ((AllStarsResult) game.getGameResult()).getSpeciesMap();
+
+                int mistakes = 0;
+                int correct = 0;
+                int total = 0;
+
+                for(Species key : referenceMap.keySet()) {
+                    int r = referenceMap.get(key);
+                    int s = submittedMap.get(key);
+                    mistakes += (s != 0 && r != s) ? 1 : 0;
+                    correct += r == s ? 1 : 0;
+                    total++;
+                }
+
+                int score = (int) Math.floor(100 * Math.max(correct - mistakes, 0) / (total*1.));
+                //Award points to users that played on the image and add a notification to their notification queue.
+                awardPoints(game, score);
+            }
+            break;
+            case AnimalIdentification: {
+                Map<AnimalSpecies,List<double[]>> referenceMap = ((AnimalIdentificationResult) game.getCorrectedGameResult()).getSpeciesMap();
+                Map<AnimalSpecies,List<double[]>> submittedMap = ((AnimalIdentificationResult) game.getGameResult()).getSpeciesMap();
+
+                int mistakes = 0;
+                int correct = 0;
+                int total = 0;
+
+                for(AnimalSpecies key : submittedMap.keySet()) {
+                    List<double[]> referenceList = referenceMap.get(key);
+                    List<double[]> submittedList = submittedMap.get(key);
+                    List<double[]> correctedList = matchPointSets(submittedList,referenceList);
+                    mistakes += submittedList.size() - correctedList.size();
+                    correct += correctedList.size();
+                    total += referenceList.size();
+                }
+
+                int score = (int) Math.floor(100 * Math.max(correct - mistakes, 0) / (total*1.));
+                //Award points to users that played on the image and add a notification to their notification queue.
+                awardPoints(game,score);
+            }
+            break;
+            case PlantIdentification: {
+                Map<PlantSpecies,List<Boolean>> referenceMap = ((PlantIdentificationResult) game.getCorrectedGameResult()).getSpeciesMap();
+                Map<PlantSpecies,List<Boolean>> submittedMap = ((PlantIdentificationResult) game.getGameResult()).getSpeciesMap();
+
+                int mistakes = 0;
+                int correct = 0;
+                int total = 0;
+
+                for(PlantSpecies key : submittedMap.keySet()) {
+                    List<Boolean> referenceList = referenceMap.get(key);
+                    List<Boolean> submittedList = submittedMap.get(key);
+                    for(int i = 0; i<referenceList.size(); i++) {
+                        mistakes += (referenceList.get(i) != submittedList.get(i)) ? 1 : 0;
+                        correct += (referenceList.get(i) && submittedList.get(i)) ? 1 : 0;
+                        total += referenceList.get(i) ? 1 : 0;
+                    }
+                }
+
+                int score = (int) Math.floor(100 * Math.max(correct - mistakes, 0) / (total*1.));
+                //Award points to users that played on the image and add a notification to their notification queue.
+                awardPoints(game,score);
+            }
+            break;
+        }
+    }
+
     public void processGame(Game game) {
         User player = userRepository.findOneByLogin(game.getUsr()).get();
         if(player == null) return;
+        Image img = imageRepository.findOne(game.getImg());
+        ImageModeStatus modeStatus = img.getModeStatus().get(game.getGameMode());
+        modeStatus.setGameNumber(modeStatus.getGameNumber() + 1);
         objectiveRepository.findAllByUsr(player.getLogin()).stream()
             .filter(o -> o.getGameMode() == game.getGameMode() && o.getNbCompletedGames() < o.getNbGamesToComplete())
             .sorted((o1, o2) -> (int) Math.signum(o1.getCreationDate().getMillis() - o2.getCreationDate().getMillis()))
             .findFirst().ifPresent(objective -> {
-                objective.getPendingGames().add(game.getId());
-                objective.setNbCompletedGames(objective.getNbCompletedGames() + 1);
-                objectiveRepository.save(objective);
-            });
+            objective.getPendingGames().add(game.getId());
+            objective.setNbCompletedGames(objective.getNbCompletedGames() + 1);
+            objectiveRepository.save(objective);
+        });
         userRepository.save(player);
         objectiveService.handleObjectiveUpdate(player.getLogin());
 
@@ -147,11 +316,8 @@ public class GameProcessingService {
                 log.debug("Processed game : {}", processedGame);
                 processedGameRepository.save(processedGame);
                 if(processedGame.getProcessedGameResult().getNbResults() >= MIN_RESULT) {
-                    Image img = imageRepository.findOne(game.getImg());
-                    ImageModeStatus modeStatus = img.getModeStatus().get(GameMode.PlantIdentification);
                     if(modeStatus.getStatus().equals(ImageStatus.NOT_PROCESSED)) {
                         modeStatus.setStatus(ImageStatus.IN_PROCESSING);
-                        imageRepository.save(img);
                     }
                 }
             }
@@ -167,11 +333,8 @@ public class GameProcessingService {
                 log.debug("Processed game : {}", processedGame);
                 processedGameRepository.save(processedGame);
                 if(processedGame.getProcessedGameResult().getNbResults() >= MIN_RESULT) {
-                    Image img = imageRepository.findOne(game.getImg());
-                    ImageModeStatus modeStatus = img.getModeStatus().get(GameMode.AnimalIdentification);
                     if(modeStatus.getStatus().equals(ImageStatus.NOT_PROCESSED)) {
                         modeStatus.setStatus(ImageStatus.IN_PROCESSING);
-                        imageRepository.save(img);
                     }
                 }
             }
@@ -187,15 +350,22 @@ public class GameProcessingService {
                 log.debug("Processed game : {}", processedGame);
                 processedGameRepository.save(processedGame);
                 if(processedGame.getProcessedGameResult().getNbResults() >= MIN_RESULT) {
-                    Image img = imageRepository.findOne(game.getImg());
-                    ImageModeStatus modeStatus = img.getModeStatus().get(GameMode.AllStars);
                     if(modeStatus.getStatus().equals(ImageStatus.NOT_PROCESSED)) {
                         modeStatus.setStatus(ImageStatus.IN_PROCESSING);
-                        imageRepository.save(img);
                     }
                 }
             }
             break;
+        }
+        imageRepository.save(img);
+
+        if(modeStatus.getStatus().equals(ImageStatus.PROCESSED)) {
+            ReferenceGame referenceGame = referenceGameRepository.findByImgAndGameMode(game.getImg(), game.getGameMode());
+            if(referenceGame != null) {
+                game.setCorrectedGameResult(referenceGame.getGameResult());
+                rateGame(game);
+            }
+
         }
     }
 }

@@ -41,32 +41,37 @@ public class ImageProviderService {
 
     private Random rand = new Random();
 
-    private List<Image> filterPlayedImage(List<Image> images, GameMode mode, String login) {
+    private List<Image> filterPlayedImages(List<Image> images, GameMode mode, String login) {
         List<String> games = gameRepository.findAllByUsrAndGameMode(login, mode).stream().map(Game::getImg).collect(Collectors.toList());
         return images.stream()
             .filter(i -> !games.contains(i.getId()))
             .collect(Collectors.toList());
     }
 
-    private List<Image> filterPlayedTrainingImage(List<Image> images, GameMode mode, String login) {
+    private List<Image> filterPlayedTrainingImages(List<Image> images, GameMode mode, String login) {
         List<String> games = trainingGameRepository.findAllByUsrAndGameMode(login, mode).stream().map(TrainingGame::getImg).collect(Collectors.toList());
         return images.stream()
             .filter(i -> !games.contains(i.getId()))
             .collect(Collectors.toList());
     }
 
-    private List<Image> filterPlayedExpertImage(List<Image> images, GameMode mode, String login) {
+    private List<Image> filterPlayedExpertImages(List<Image> images, GameMode mode, String login) {
         List<String> games = expertGameRepository.findAllByUsrAndGameMode(login, mode).stream().map(ExpertGame::getImg).collect(Collectors.toList());
         return images.stream()
             .filter(i -> !games.contains(i.getId()))
             .collect(Collectors.toList());
     }
 
-    private List<Image> filterImageList(List<Image> images, GameMode mode) {
+    private List<Image> filterImageListByGameNumber(List<Image> images, GameMode mode) {
         int maxPlayed = images.get(0).getModeStatus().get(mode).getGameNumber();
         return images.stream()
             .filter(i->i.getModeStatus().get(mode).getGameNumber() == maxPlayed)
             .collect(Collectors.toList());
+    }
+
+    private List<Image> filterImageListBySet(List<Image> images) {
+        int maxSetPriority = images.stream().collect(Collectors.maxBy(Comparator.comparingInt(Image::getSetPriority))).get().getSetPriority();
+        return images.stream().filter(i->i.getSetPriority() == maxSetPriority).collect(Collectors.toList());
     }
 
     /**
@@ -77,33 +82,44 @@ public class ImageProviderService {
      */
     public Image findImage(GameMode mode, String login) {
         List<Image> images = mongoTemplate.find(query(where("mode_status." + mode + ".status").is(ImageStatus.NOT_PROCESSED.toString())), Image.class);
-        images = filterPlayedImage(images, mode, login);
+        images = filterPlayedImages(images, mode, login);
         images = images.stream()
             .sorted(Comparator.comparingInt(i -> i.getModeStatus().get(mode).getGameNumber()))
             .collect(Collectors.toList());
         if(images.isEmpty()) {
             images = mongoTemplate.find(query(where("mode_status." + mode + ".status").is(ImageStatus.IN_PROCESSING.toString())), Image.class);
-            images = filterPlayedImage(images, mode, login);
+            images = filterPlayedImages(images, mode, login);
             images = images.stream()
                 .sorted(Comparator.comparingInt(i->i.getModeStatus().get(mode).getGameNumber()))
                 .collect(Collectors.toList());
             if(images.isEmpty()) {
                 images = mongoTemplate.find(query(where("mode_status." + mode + ".status").is(ImageStatus.PROCESSED.toString())), Image.class);
-                images = filterPlayedImage(images, mode, login);
+                images = filterPlayedImages(images, mode, login);
                 if(images.isEmpty()) {
                     log.debug("No eligible image was found");
                     return null;
                 }
             }
         }
-        images = filterImageList(images, mode);
+        images = filterImageListBySet(images);
+        images = filterImageListByGameNumber(images, mode);
         log.debug("Total number of eligible images : {}", images.size());
+        if(images.isEmpty())
+            return null;
         return images.get(rand.nextInt(images.size()));
     }
 
+    /**
+     * Finds one image among the images that have never been played by the {@code login} user on the {@code mode} training game mode.
+     * @param mode
+     * @param login
+     * @return
+     */
     public Image findTrainingImage(GameMode mode, String login) {
+        //Eligible images are in the PROCESSED status for the requested mode.
         List<Image> images = mongoTemplate.find(query(where("mode_status."+mode+".status").is(ImageStatus.PROCESSED.toString())), Image.class);
-        images = filterPlayedTrainingImage(images, mode, login);
+        //Eligible images have not already been played by the requesting player.
+        images = filterPlayedTrainingImages(images, mode, login);
         images = images.stream()
             .sorted(Comparator.comparingInt(i -> i.getModeStatus().get(mode).getGameNumber()))
             .collect(Collectors.toList());
@@ -113,15 +129,25 @@ public class ImageProviderService {
         return images.get(rand.nextInt(images.size()));
     }
 
+    /**
+     * Finds one image among the images that have never been played by the {@code login} user on the {@code mode} expert game mode.
+     * @param mode
+     * @param login
+     * @return
+     */
     public Image findExpertImage(GameMode mode, String login) {
+        //Eligible images are in the IN_PROCESSING status for the requested mode.
         List<Image> images = mongoTemplate.find(query(where("mode_status."+mode+".status").is(ImageStatus.IN_PROCESSING.toString())), Image.class);
-        images = filterPlayedImage(images, mode, login);
-        images = filterPlayedExpertImage(images, mode, login);
+        //Eligible images have not laready been played by the requesting player, on nomal as well as on expert level.
+        images = filterPlayedImages(images, mode, login);
+        images = filterPlayedExpertImages(images, mode, login);
         images = images.stream()
             .sorted(Comparator.comparingInt(i -> i.getModeStatus().get(mode).getGameNumber()))
             .collect(Collectors.toList());
         if(images.isEmpty())
             return null;
+        images = filterImageListBySet(images);
+        images = filterImageListByGameNumber(images, mode);
         log.debug("Total number of eligible images : {}", images.size());
         return images.get(rand.nextInt(images.size()));
     }

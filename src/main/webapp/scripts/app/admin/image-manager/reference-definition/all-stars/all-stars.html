@@ -1,0 +1,91 @@
+<div ng-cloak>
+    <h1 class="text-center">Expert All Stars</h1>
+
+    <div ng-show="errorMsg === true">
+        <p class="text-center">
+            Sorry, no image is available to you in this game mode at this time.
+        </p>
+        <div style="width: 25%; margin: 0 auto;">
+            <a class="btn btn-primary btn-lg" ui-sref="home" style="width: 100%;">Back to the menu</a>
+        </div>
+    </div>
+
+    <div id="controls" class="ol-control control-panel" ng-show="errorMsg === false">
+
+        <button type="button" ng-show="displayControls" ng-click="toggleControls()">&#x25B2;</button>
+        <button type="button" ng-hide="displayControls" ng-click="toggleControls()">&#x25BC;</button>
+
+        <div ng-show="displayControls" style="width: 164px">
+            <accordion close-others="true">
+                <accordion-group ng-repeat="group in plantSpecies">
+                <accordion-heading>
+                    <div style="position: relative; min-width: 128px; display: table-row; table-layout: fixed;">
+                        <div style="position: relative; z-index: 2; width: 300%; display: table-cell; background: transparent;">
+                            <span style="color: white;"><strong>{{group}}</strong></span>
+                        </div>
+                        <span style="position: relative; z-index: 2; display: table-cell;" class="glyphicon glyphicon-ok-sign tag success" ng-show="radioModels[group] === 1"></span>
+                        <span style="position: relative; z-index: 2; display: table-cell;" class="glyphicon glyphicon-remove-sign tag danger" ng-show="radioModels[group] === -1"></span>
+                        <span style="position: relative; z-index: 2; display: table-cell;" class="glyphicon glyphicon-question-sign tag warning" ng-show="radioModels[group] === 0"></span>
+                        <div ng-style="speciesStyles[group]"></div>
+                        <div style="position: absolute; top: -11px; left: -16px; width: 165px; height: 50px; background-color: #D9534F; z-index: 0; border-radius: 3px;"></div>
+                    </div>
+                </accordion-heading>
+                <div style="width: 128px; margin: 0 auto;">
+                    <div class="btn-group btn-group-justified" style="width: 128px;">
+                        <label class="btn btn-success" ng-model="radioModels[group]" btn-radio="1" style="border-bottom-left-radius: 0px;">
+                            <span class="glyphicon glyphicon-ok-sign"></span>
+                        </label>
+                        <label class="btn btn-danger" ng-model="radioModels[group]" btn-radio="-1">
+                            <span class="glyphicon glyphicon-remove-sign"></span>
+                        </label>
+                        <label class="btn btn-warning" ng-model="radioModels[group]" btn-radio="0" style="border-bottom-right-radius: 0px;">
+                            <span class="glyphicon glyphicon-question-sign"></span>
+                        </label>
+                    </div>
+                    <div style="width: 128px; height: 128px; background-color: lightgrey;">
+                        <img ng-src="images/plants/{{group}}.jpg"/>
+                    </div>
+                </div>
+                </accordion-group>
+
+                <accordion-group ng-repeat="group in animalSpecies">
+                    <accordion-heading>
+                        <div style="position: relative; display: table-row; table-layout: fixed;">
+                            <div style="position: relative; z-index: 2; width: 300%; display: table-cell;">
+                                <span style="color: white;"><strong>{{group}}</strong></span>
+                            </div>
+                            <span style="position: relative; z-index: 2; display: table-cell;" class="glyphicon glyphicon-ok-sign tag success" ng-show="radioModels[group] === 1"></span>
+                            <span style="position: relative; z-index: 2; display: table-cell;" class="glyphicon glyphicon-remove-sign tag danger" ng-show="radioModels[group] === -1"></span>
+                            <span style="position: relative; z-index: 2; display: table-cell;" class="glyphicon glyphicon-question-sign tag warning" ng-show="radioModels[group] === 0"></span>
+                            <div ng-style="speciesStyles[group]"></div>
+                            <div style="position: absolute; top: -11px; left: -16px; width: 165px; height: 50px; background-color: #D9534F; z-index: 0; border-radius: 3px;"></div>
+                        </div>
+                    </accordion-heading>
+                    <div style="width: 128px; margin: 0 auto;">
+                        <div class="btn-group btn-group-justified" style="width: 128px;">
+                            <label class="btn btn-success" ng-model="radioModels[group]" btn-radio="1" style="border-bottom-left-radius: 0px;">
+                                <span class="glyphicon glyphicon-ok-sign"></span>
+                            </label>
+                            <label class="btn btn-danger" ng-model="radioModels[group]" btn-radio="-1">
+                                <span class="glyphicon glyphicon-remove-sign"></span>
+                            </label>
+                            <label class="btn btn-warning" ng-model="radioModels[group]" btn-radio="0" style="border-bottom-right-radius: 0px;">
+                                <span class="glyphicon glyphicon-question-sign"></span>
+                            </label>
+                        </div>
+                        <div style="width: 128px; height: 128px; background-color: lightgrey;">
+                            <img ng-src="images/animals/{{group}}.jpg"/>
+                        </div>
+                    </div>
+                </accordion-group>
+            </accordion>
+            <div>
+                <a class="btn btn-default" ng-click="submit()">Submit</a>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div id="map" class="map" style="height: 75%; background-color: #9DA9A5;"></div>
+    </div>
+</div>

@@ -17,9 +17,10 @@ angular.module('ludecolApp')
             $scope.loadAll();
 
             $scope.clear = function () {
-                $scope.imageSet = {name: null, id: null};
+                $scope.imageSet = {name: null, id: null, priority: null};
                 $scope.editForm.$setPristine();
                 $scope.editForm.$setUntouched();
+                $scope.loadAll();
             };
 
             $scope.create = function () {
@@ -30,5 +31,18 @@ angular.module('ludecolApp')
                         $scope.clear();
                     });
             };
+
+            $scope.setImageSet = function(i) {
+                $scope.imageSet = $scope.folders[i];
+            }
+
+            $scope.delete = function() {
+                ImageSet.delete({id: $scope.imageSet.id},
+                    function(){
+                        $scope.loadAll();
+                        $('#deleteImageSetModal').modal('hide');
+                        $scope.clear();
+                    });
+            }
         });
     });
