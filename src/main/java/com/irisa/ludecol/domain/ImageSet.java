@@ -22,6 +22,10 @@ public class ImageSet {
 
     private Integer priority;
 
+    @Field("required_submissions")
+    @JsonProperty("required_submissions")
+    private Integer requiredSubmissions;
+
     public String getId() {
         return id;
     }
@@ -54,6 +58,14 @@ public class ImageSet {
         this.priority = priority;
     }
 
+    public Integer getRequiredSubmissions() {
+        return requiredSubmissions;
+    }
+
+    public void setRequiredSubmissions(Integer requiredSubmissions) {
+        this.requiredSubmissions = requiredSubmissions;
+    }
+
     @Override
     public String toString() {
         return "ImageSet{" +
@@ -61,6 +73,7 @@ public class ImageSet {
             ", name='" + name + '\'' +
             ", imageCount=" + imageCount +
             ", priority=" + priority +
+            ", requiredSubmissions=" + requiredSubmissions +
             '}';
     }
 }

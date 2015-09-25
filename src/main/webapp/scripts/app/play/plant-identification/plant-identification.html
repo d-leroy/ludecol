@@ -64,6 +64,7 @@
             <hr/>
             <div style="margin: 0 auto; width: 128px; height: 128px; background-color: lightgrey;">
                 <img ng-show="radioModel.selected !== null" ng-src="images/plants/{{radioModel.selected}}.jpg" />
+                <a class="btn btn-primary" type="button" ng-show="radioModel.selected !== null" ng-click="showModal()">More details</a>
             </div>
             <hr/>
             <div>
@@ -105,5 +106,89 @@
 
     <div>
         <div id="map" class="map" style="background-color: #9DA9A5;"></div>
+    </div>
+
+    <div class="modal fade" id="BatisModal" tabindex="-1" role="dialog" aria-labelledby="myBatisLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myBatisLabel">Batis</h4>
+                </div>
+                <div class="modal-body">
+                    <p>More details</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="BorrichiaModal" tabindex="-1" role="dialog" aria-labelledby="myBorrichiaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myBorrichiaLabel">Borrichia</h4>
+                </div>
+                <div class="modal-body">
+                    <p>More details</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="JuncusModal" tabindex="-1" role="dialog" aria-labelledby="myJuncusLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myJuncusLabel">Juncus</h4>
+                </div>
+                <div class="modal-body">
+                    <p>More details</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="LimoniumModal" tabindex="-1" role="dialog" aria-labelledby="myLimoniumLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myLimoniumLabel">Limonium</h4>
+                </div>
+                <div class="modal-body">
+                    <p>More details</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="SalicorniaModal" tabindex="-1" role="dialog" aria-labelledby="mySalicorniaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="mySalicorniaLabel">Salicornia</h4>
+                </div>
+                <div class="modal-body">
+                    <p>More details</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="SpartinaModal" tabindex="-1" role="dialog" aria-labelledby="mySpartinaLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="mySpartinaLabel">Spartina</h4>
+                </div>
+                <div class="modal-body">
+                    <p>More details</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

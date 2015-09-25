@@ -5,6 +5,8 @@ angular.module('ludecolApp')
 
         var _width, _height, _successCallback, _submitGame;
         var _vectorSource, _displayedFeatures;
+        var _rectWidth, _rectHeight;
+        var _cols = 3; var _rows = 3;
 
         var _speciesStyles = {
             Burrow: new ol.style.Style({image: new ol.style.Icon(({anchor: [0.5, 1],src: 'images/icon-purple.png'}))}),
@@ -19,6 +21,23 @@ angular.module('ludecolApp')
             return coord[0] >= 0 && coord[0] <= _width &&
              coord[1] <= 0 && coord[1] >= -_height;
         };
+
+        function _setupLineGrid() {
+            var lineGridCoords = [];
+            for(var i=1;i<_cols;i++) {
+                var startPoint = [_rectWidth * i,0];
+                var endPoint = [_rectWidth * i,-_height];
+                var line = [startPoint,endPoint];
+                lineGridCoords.push(line);
+            }
+            for(var i=1;i<_rows;i++) {
+                var startPoint = [0,-_rectHeight * i];
+                var endPoint = [_width,-_rectHeight * i];
+                var line = [startPoint,endPoint];
+                lineGridCoords.push(line);
+            }
+            return lineGridCoords;
+        }
 
         function _toLocation(features) {
             var res = [];
@@ -46,9 +65,12 @@ angular.module('ludecolApp')
             _successCallback(img,game);
 
             _width = img.width; _height = img.height;
+            _rectWidth = _width / _cols; _rectHeight = _height / _rows;
             //Creating vector layer, to which features will be added.
             _vectorSource = new ol.source.Vector({});
             ImageService.addLayer(new ol.layer.Vector({source: _vectorSource}));
+            //Setting up the grid and adding it to the vector layer.
+            _vectorSource.addFeature(new ol.Feature({geometry: new ol.geom.MultiLineString(_setupLineGrid())}));
             //Adding the click listener.
             ImageService.addListener('singleclick', function(evt) {
                 if(_isWithinBounds(evt.coordinate)) {

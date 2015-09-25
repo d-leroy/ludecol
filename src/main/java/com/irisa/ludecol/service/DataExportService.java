@@ -29,9 +29,9 @@ public class DataExportService {
 
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File("src/main/webapp/exported/"+date.getTime())), "utf-8"))) {
             for(ReferenceGame referenceGame : referenceGames) {
-                writer.write("Image : " + imageRepository.findOne(referenceGame.getImg()).getName() + "\n");
-                writer.write("  Mode : " + referenceGame.getGameMode().toString() + "\n");
-                writer.write("  Result : " + referenceGame.getGameResult().toString() + "\n");
+                writer.write("Image : " + imageRepository.findOne(referenceGame.getImg()).getName() + ";\n");
+                writer.write("  Mode : " + referenceGame.getGameMode().toString() + ";\n");
+                writer.write("  Result : " + referenceGame.getGameResult().toString() + ";\n");
                 writer.write("============" + "\n");
             }
         }

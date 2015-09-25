@@ -72,6 +72,28 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label translate="global.form.firstname">First name</label>
+                    <input type="text" class="form-control" name="firstname" placeholder="{{'global.form.firstname.placeholder' | translate}}"
+                           ng-model="registerAccount.firstname" required>
+                    <div ng-show="form.firstname.$dirty && form.firstname.$invalid">
+                        <p class="help-block"
+                           ng-show="form.firstname.$error.required" translate="register.messages.validate.firstname.required">
+                            Your first name is required.
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label translate="global.form.lastname">First name</label>
+                    <input type="text" class="form-control" name="lastname" placeholder="{{'global.form.lastname.placeholder' | translate}}"
+                           ng-model="registerAccount.lastname" required>
+                    <div ng-show="form.lastname.$dirty && form.lastname.$invalid">
+                        <p class="help-block"
+                           ng-show="form.lastname.$error.required" translate="register.messages.validate.lastname.required">
+                            Your first name is required.
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label translate="global.form.newpassword">New password</label>
                     <input type="password" class="form-control" name="password" placeholder="{{'global.form.newpassword.placeholder' | translate}}"
                            ng-model="registerAccount.password" ng-minlength=5 ng-maxlength=50 required>

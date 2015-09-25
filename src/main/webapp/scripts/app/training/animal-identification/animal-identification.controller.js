@@ -58,5 +58,9 @@ angular.module('ludecolApp')
 
             TrainingAnimalGameService.initializeGame($scope.account.login,loadGame,errorCallback);
 
+            $scope.showModal = function() {
+                $('#'+$scope.radioModel.selected+'Modal').modal('show');
+            }
+
         });
     });

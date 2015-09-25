@@ -44,5 +44,9 @@ angular.module('ludecolApp')
             }
 
             PlantGameService.initializeGame($scope.account.login,nbCols,nbRows,loadGame,errorCallback);
+
+            $scope.showModal = function() {
+                $('#'+$scope.radioModel.selected+'Modal').modal('show');
+            }
         });
     });

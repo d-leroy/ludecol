@@ -55,5 +55,9 @@ angular.module('ludecolApp')
             }
 
             AnimalGameService.initializeGame($scope.account.login,loadGame,errorCallback);
+
+            $scope.showModal = function() {
+                $('#'+$scope.radioModel.selected+'Modal').modal('show');
+            }
         });
     });

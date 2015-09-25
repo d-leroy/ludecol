@@ -78,7 +78,7 @@ public class ImageService {
                     image.setImageSet(imageSet.getName());
                     image.setSetPriority(imageSet.getPriority());
                     imageRepository.save(image);
-                    log.debug("Saved Image : {}", img);
+                    log.debug("Saved Image : {}", image);
                 }
             }
         } catch (IOException e) {

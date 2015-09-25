@@ -17,7 +17,7 @@ angular.module('ludecolApp')
             $scope.loadAll();
 
             $scope.clear = function () {
-                $scope.imageSet = {name: null, id: null, priority: null};
+                $scope.imageSet = {name: null, id: null, priority: 0, required_submissions: 3};
                 $scope.editForm.$setPristine();
                 $scope.editForm.$setUntouched();
                 $scope.loadAll();
@@ -25,8 +25,7 @@ angular.module('ludecolApp')
 
             $scope.create = function () {
                 ImageSet.update($scope.imageSet,
-                    function () {
-                        $scope.loadAll();
+                    function() {
                         $('#saveImageSetModal').modal('hide');
                         $scope.clear();
                     });
@@ -38,8 +37,7 @@ angular.module('ludecolApp')
 
             $scope.delete = function() {
                 ImageSet.delete({id: $scope.imageSet.id},
-                    function(){
-                        $scope.loadAll();
+                    function() {
                         $('#deleteImageSetModal').modal('hide');
                         $scope.clear();
                     });

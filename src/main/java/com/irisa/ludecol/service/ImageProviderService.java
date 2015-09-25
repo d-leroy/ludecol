@@ -5,6 +5,7 @@ import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.domain.Image;
 import com.irisa.ludecol.domain.TrainingGame;
 import com.irisa.ludecol.domain.subdomain.GameMode;
+import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
 import com.irisa.ludecol.domain.subdomain.ImageStatus;
 import com.irisa.ludecol.repository.*;
 import org.slf4j.Logger;
@@ -84,6 +85,42 @@ public class ImageProviderService {
         List<Image> images = mongoTemplate.find(query(where("mode_status." + mode + ".status").is(ImageStatus.NOT_PROCESSED.toString())), Image.class);
         images = filterPlayedImages(images, mode, login);
         images = images.stream()
+            .sorted(new Comparator<Image>() {
+                @Override
+                public int compare(Image i1, Image i2) {
+                    GameMode altMode;
+                    switch(mode) {
+                        case AnimalIdentification: altMode = GameMode.PlantIdentification; break;
+                        case PlantIdentification: altMode = GameMode.AnimalIdentification; break;
+                        default: altMode = null;
+                    }
+                    if(altMode != null) {
+                        ImageModeStatus a1 = i1.getModeStatus().get(altMode);
+                        ImageModeStatus a2 = i2.getModeStatus().get(altMode);
+                        switch(a1.getStatus()) {
+                            case IN_PROCESSING:
+                            case PROCESSED:
+                            case UNAVAILABLE:
+                                switch(a2.getStatus()) {
+                                    case NOT_PROCESSED:
+                                        return 1;
+                                }
+                                break;
+                            case NOT_PROCESSED:
+                                switch(a2.getStatus()) {
+                                    case IN_PROCESSING:
+                                    case PROCESSED:
+                                    case UNAVAILABLE:
+                                        return -1;
+                                }
+                                break;
+                        }
+                    }
+                    ImageModeStatus m1 = i1.getModeStatus().get(mode);
+                    ImageModeStatus m2 = i2.getModeStatus().get(mode);
+                    return Integer.compare(m1.getGameNumber(), m2.getGameNumber());
+                }
+            })
             .sorted(Comparator.comparingInt(i -> i.getModeStatus().get(mode).getGameNumber()))
             .collect(Collectors.toList());
         if(images.isEmpty()) {

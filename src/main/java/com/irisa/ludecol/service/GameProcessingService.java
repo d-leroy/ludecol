@@ -3,16 +3,24 @@ package com.irisa.ludecol.service;
 import com.irisa.ludecol.domain.*;
 import com.irisa.ludecol.domain.subdomain.*;
 import com.irisa.ludecol.repository.*;
+import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.jgrapht.WeightedGraph;
+import org.jgrapht.event.ConnectedComponentTraversalEvent;
+import org.jgrapht.event.EdgeTraversalEvent;
+import org.jgrapht.event.TraversalListener;
+import org.jgrapht.event.VertexTraversalEvent;
+import org.jgrapht.graph.*;
+import org.jgrapht.traverse.DepthFirstIterator;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Created by dorian on 26/05/15.
@@ -20,17 +28,19 @@ import java.util.Optional;
 @Service
 public class GameProcessingService {
 
+    private static final int MIN_PATH_LENGTH = 2;
+    private static final int MAX_DISTANCE = 64;
     private final Logger log = LoggerFactory.getLogger(GameProcessingService.class);
 
-    private final int MIN_RESULT = 1;
-
-    private final int MAX_DISTANCE = 64;
 
     @Inject
     private ProcessedGameRepository processedGameRepository;
 
     @Inject
     private ImageRepository imageRepository;
+
+    @Inject
+    private ImageSetRepository imageSetRepository;
 
     @Inject
     private GameRepository gameRepository;
@@ -105,7 +115,7 @@ public class GameProcessingService {
             }
         }
 
-        processedResult.setNbResults(n+1);
+        processedResult.setNbResults(n + 1);
     }
 
     private void processAnimalIdentification(final AnimalIdentificationResult gameResult, final ProcessedAnimalIdentificationResult processedResult) {
@@ -121,7 +131,7 @@ public class GameProcessingService {
             }
         });
 
-        processedResult.setNbResults(processedResult.getNbResults()+1);
+        processedResult.setNbResults(processedResult.getNbResults() + 1);
     }
 
     private void configureProcessedGame(ProcessedGame processedGame, ProcessedGameResult result, Game game) {
@@ -286,16 +296,142 @@ public class GameProcessingService {
         }
     }
 
+    /* The input map must satisfay the following condition:
+     * The list linked to a point from the layer 'n' can only contain points from the layers 'n+1' and up.
+     */
+    public List<double[]> createGraph(Map<double[],List<double[]>> points) {
+        DirectedWeightedMultigraph<double[],DefaultWeightedEdge> graph = new DirectedWeightedMultigraph(DefaultWeightedEdge.class);
+
+        //use builder maybe?
+
+        points.entrySet().stream().forEach(e -> {
+            double[] p = e.getKey();
+            graph.addVertex(p);
+            e.getValue().stream().forEach(q -> {
+                double x = p[0] - q[0];
+                double y = p[1] - q[1];
+                graph.addVertex(q);
+                graph.setEdgeWeight(graph.addEdge(p, q), Math.sqrt(x * x + y * y));
+            });
+        });
+
+        Set<double[]> set = new HashSet<>();
+        set.addAll(graph.vertexSet());
+        List<double[]> leafVertice = new ArrayList<>();
+        set.stream().forEach(p->{
+            if(graph.outDegreeOf(p) == 0) {
+                if(graph.inDegreeOf(p) == 0) {
+                    graph.removeVertex(p);
+                } else {
+                    leafVertice.add(p);
+                }
+            }
+        });
+
+        final List<List<DefaultWeightedEdge>> pathList = new ArrayList<>();
+        leafVertice.stream().forEach(p->pathList.addAll(getPaths(p,graph)));
+        final List<GraphPath<double[],DefaultWeightedEdge>> paths = new ArrayList<>();
+        pathList.stream().forEach(l -> {
+            if (l.size() >= MIN_PATH_LENGTH) {
+                final GraphPath<double[], DefaultWeightedEdge> path =
+                    new GraphPathImpl(graph, graph.getEdgeSource(l.get(0)),
+                        graph.getEdgeTarget(l.get(l.size() - 1)), l,
+                        l.stream().collect(Collectors.summingDouble(e -> graph.getEdgeWeight(e))));
+                paths.add(path);
+            }
+        });
+
+        final List<GraphPath<double[],DefaultWeightedEdge>> sortedPaths = paths.stream().sorted((p1,p2)->{
+            if(p1.getEdgeList().size() > p2.getEdgeList().size()) {
+                return 1;
+            } else if(p1.getEdgeList().size() < p2.getEdgeList().size()) {
+                return -1;
+            } else {
+                return (int)Math.signum(p1.getWeight() - p2.getWeight());
+            }
+        }).collect(Collectors.toList());
+
+        List<double[]> finalResult = new ArrayList<>();
+
+        while(!sortedPaths.isEmpty()) {
+            final GraphPath<double[],DefaultWeightedEdge> path = sortedPaths.get(0);
+            cleanupPaths(path, sortedPaths, graph);
+            finalResult.add(handlePath(path));
+        }
+
+        return finalResult;
+    }
+
+    private double[] handlePath(GraphPath<double[],DefaultWeightedEdge> path) {
+        Graph<double[],DefaultWeightedEdge> graph = path.getGraph();
+        List<double[]> points = new ArrayList<>();
+        path.getEdgeList().stream().forEach(e->points.add(graph.getEdgeTarget(e)));
+        points.add(path.getStartVertex());
+        double x = points.stream().collect(Collectors.averagingDouble(p->p[0]));
+        double y = points.stream().collect(Collectors.averagingDouble(p->p[1]));
+        return new double[]{x,y};
+    }
+
+    private List<GraphPath<double[],DefaultWeightedEdge>> cleanupPaths
+        (final GraphPath<double[],DefaultWeightedEdge> toRemove,
+         final List<GraphPath<double[],DefaultWeightedEdge>> paths,
+         final DirectedWeightedMultigraph<double[],DefaultWeightedEdge> graph) {
+
+        final Set<DefaultWeightedEdge> edges = new HashSet<>();
+        toRemove.getEdgeList().stream().forEach(e -> edges.addAll(graph.edgesOf(graph.getEdgeTarget(e))));
+        edges.addAll(graph.edgesOf(toRemove.getStartVertex()));
+
+        paths.remove(toRemove);
+
+        List<GraphPath<double[],DefaultWeightedEdge>> tmp = new ArrayList<>();
+        tmp.addAll(paths);
+        tmp.stream().forEach(p->{
+            if(p!=null && !Collections.disjoint(edges,p.getEdgeList())) {
+                paths.remove(p);
+            }
+        });
+
+        return paths;
+    }
+
+    private List<List<DefaultWeightedEdge>> getPaths(final double[] p, final DirectedWeightedMultigraph<double[],DefaultWeightedEdge> graph) {
+        final Set<DefaultWeightedEdge> edges = graph.incomingEdgesOf(p);
+        if(edges.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        } else {
+            final List<List<DefaultWeightedEdge>> res = new ArrayList();
+            edges.stream().forEach(e->{
+                final double[] q = graph.getEdgeSource(e);
+                final List<List<DefaultWeightedEdge>> paths = getPaths(q,graph);
+                if(paths.isEmpty()) {
+                    // The explored edge's source has not predecessor, we thus
+                    // just add the explored edge to the result as a new path.
+                    final List<DefaultWeightedEdge> path = new ArrayList();
+                    path.add(e);
+                    res.add(path);
+                } else {
+                    // The explored edge's source has several predecessors, we
+                    // thus add the explored edge to each resulting path.
+                    paths.stream().forEach(l->{
+                        l.add(e);
+                        res.add(l);
+                    });
+                }
+            });
+            return res;
+        }
+    }
+
     public void processGame(Game game) {
         User player = userRepository.findOneByLogin(game.getUsr()).get();
         if(player == null) return;
         Image img = imageRepository.findOne(game.getImg());
+        ImageSet imageSet = imageSetRepository.findByName(img.getImageSet());
         ImageModeStatus modeStatus = img.getModeStatus().get(game.getGameMode());
-        modeStatus.setGameNumber(modeStatus.getGameNumber() + 1);
         objectiveRepository.findAllByUsr(player.getLogin()).stream()
             .filter(o -> o.getGameMode() == game.getGameMode() && o.getNbCompletedGames() < o.getNbGamesToComplete())
-            .sorted((o1, o2) -> (int) Math.signum(o1.getCreationDate().getMillis() - o2.getCreationDate().getMillis()))
-            .findFirst().ifPresent(objective -> {
+            .sorted(Comparator.comparingLong(o->o.getCreationDate().getMillis()))
+        .findFirst().ifPresent(objective -> {
             objective.getPendingGames().add(game.getId());
             objective.setNbCompletedGames(objective.getNbCompletedGames() + 1);
             objectiveRepository.save(objective);
@@ -315,7 +451,7 @@ public class GameProcessingService {
                     (ProcessedPlantIdentificationResult) processedGame.getProcessedGameResult());
                 log.debug("Processed game : {}", processedGame);
                 processedGameRepository.save(processedGame);
-                if(processedGame.getProcessedGameResult().getNbResults() >= MIN_RESULT) {
+                if(processedGame.getProcessedGameResult().getNbResults() >= imageSet.getRequiredSubmissions()) {
                     if(modeStatus.getStatus().equals(ImageStatus.NOT_PROCESSED)) {
                         modeStatus.setStatus(ImageStatus.IN_PROCESSING);
                     }
@@ -332,7 +468,7 @@ public class GameProcessingService {
                     (ProcessedAnimalIdentificationResult) processedGame.getProcessedGameResult());
                 log.debug("Processed game : {}", processedGame);
                 processedGameRepository.save(processedGame);
-                if(processedGame.getProcessedGameResult().getNbResults() >= MIN_RESULT) {
+                if(processedGame.getProcessedGameResult().getNbResults() >= imageSet.getRequiredSubmissions()) {
                     if(modeStatus.getStatus().equals(ImageStatus.NOT_PROCESSED)) {
                         modeStatus.setStatus(ImageStatus.IN_PROCESSING);
                     }
@@ -349,7 +485,7 @@ public class GameProcessingService {
                     (ProcessedAllStarsResult) processedGame.getProcessedGameResult());
                 log.debug("Processed game : {}", processedGame);
                 processedGameRepository.save(processedGame);
-                if(processedGame.getProcessedGameResult().getNbResults() >= MIN_RESULT) {
+                if(processedGame.getProcessedGameResult().getNbResults() >= imageSet.getRequiredSubmissions()) {
                     if(modeStatus.getStatus().equals(ImageStatus.NOT_PROCESSED)) {
                         modeStatus.setStatus(ImageStatus.IN_PROCESSING);
                     }

@@ -3,7 +3,10 @@ package com.irisa.ludecol.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.domain.Image;
+import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
+import com.irisa.ludecol.domain.subdomain.ImageStatus;
 import com.irisa.ludecol.repository.GameRepository;
+import com.irisa.ludecol.repository.ImageRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
 import com.irisa.ludecol.service.GameProcessingService;
 import com.irisa.ludecol.service.ImageProviderService;
@@ -22,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -38,6 +42,9 @@ public class GameResource {
 
     @Inject
     private ImageProviderService imageProviderService;
+
+    @Inject
+    private ImageRepository imageRepository;
 
     @Inject
     private GameProcessingService gameProcessingService;
@@ -59,6 +66,9 @@ public class GameResource {
         Image img = imageProviderService.findImage(game.getGameMode(), game.getUsr());
         if(img == null)
             return ResponseEntity.badRequest().header("Failure", "No available image were found").build();
+        ImageModeStatus status = img.getModeStatus().get(game.getGameMode());
+        status.setGameNumber(status.getGameNumber() + 1);
+        imageRepository.save(img);
         game.setImg(img.getId());
         gameRepository.save(game);
         HttpHeaders responseHeaders = new HttpHeaders();
