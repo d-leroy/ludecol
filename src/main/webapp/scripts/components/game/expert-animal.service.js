@@ -100,8 +100,9 @@ angular.module('ludecolApp')
         var initializeGame = function(login,successCallback,errorCallback) {
             ImageService.destroyMap();
             _successCallback = successCallback;
-            _submitGame = GameService.initializeGame(login,'AnimalIdentification',_initializeFeatureCollection,
+            var services = GameService.initializeGame(login,'AnimalIdentification',_initializeFeatureCollection,
                 _getResult,_setupGame,errorCallback,UserExpertGame.query,ExpertGame.update);
+            _submitGame = services.submitGame;
         };
 
         var initializeReferenceDefinition = function(login,successCallback,errorCallback,img,submitCallback) {

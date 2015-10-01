@@ -4,12 +4,12 @@ import com.codahale.metrics.annotation.Timed;
 import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.domain.Image;
 import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
-import com.irisa.ludecol.domain.subdomain.ImageStatus;
 import com.irisa.ludecol.repository.GameRepository;
 import com.irisa.ludecol.repository.ImageRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
 import com.irisa.ludecol.service.GameProcessingService;
 import com.irisa.ludecol.service.ImageProviderService;
+import com.irisa.ludecol.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -25,7 +25,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -48,6 +47,9 @@ public class GameResource {
 
     @Inject
     private GameProcessingService gameProcessingService;
+
+    @Inject
+    private UserService userService;
 
     /**
      * POST  /games -> Create a new game.
@@ -112,6 +114,26 @@ public class GameResource {
         if(!result.getUsr().equals(principal.getName()))
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * DELETE /games -> deletes the game if it is not completed and adds the image tp the "skipped images" list of the user
+     */
+    @RequestMapping(value = "/games/{id}",
+        method = RequestMethod.DELETE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    @RolesAllowed(AuthoritiesConstants.USER)
+    public ResponseEntity<Void> delete(@PathVariable String id, Principal principal) {
+        Game game = gameRepository.findOne(id);
+        if(!game.getUsr().equals(principal.getName()))
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if(game.getCompleted())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        game.getImg()
+        userService.updateSkippedList(game.getUsr(),game.getImg(),game.getGameMode());
+        gameRepository.delete(id);
+        return ResponseEntity.ok().build();
     }
 
     /**

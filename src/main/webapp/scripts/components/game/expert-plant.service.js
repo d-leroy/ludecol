@@ -244,8 +244,9 @@ angular.module('ludecolApp')
             ImageService.destroyMap();
             _successCallback = successCallback;
             _cols = cols; _rows = rows;
-            _submitGame = GameService.initializeGame(login,'PlantIdentification',_initializePresenceGrid,
+            var services = GameService.initializeGame(login,'PlantIdentification',_initializePresenceGrid,
                 _getResult,_setupGame,errorCallback,UserExpertGame.query,ExpertGame.update);
+            _submitGame = services.submitGame;
         };
 
         var initializeReferenceDefinition = function(login,cols,rows,successCallback,errorCallback,img,submitCallback) {

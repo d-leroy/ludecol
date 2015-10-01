@@ -1,20 +1,24 @@
 package com.irisa.ludecol.service;
 
-import com.irisa.ludecol.domain.ExpertGame;
-import com.irisa.ludecol.domain.Game;
-import com.irisa.ludecol.domain.Image;
-import com.irisa.ludecol.domain.TrainingGame;
+import com.irisa.ludecol.domain.*;
 import com.irisa.ludecol.domain.subdomain.GameMode;
 import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
 import com.irisa.ludecol.domain.subdomain.ImageStatus;
-import com.irisa.ludecol.repository.*;
+import com.irisa.ludecol.domain.subdomain.Pair;
+import com.irisa.ludecol.repository.ExpertGameRepository;
+import com.irisa.ludecol.repository.GameRepository;
+import com.irisa.ludecol.repository.TrainingGameRepository;
+import com.irisa.ludecol.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -30,6 +34,9 @@ public class ImageProviderService {
     private MongoTemplate mongoTemplate;
 
     @Inject
+    private UserRepository userRepository;
+
+    @Inject
     private GameRepository gameRepository;
 
     @Inject
@@ -43,21 +50,27 @@ public class ImageProviderService {
     private Random rand = new Random();
 
     private List<Image> filterPlayedImages(List<Image> images, GameMode mode, String login) {
-        List<String> games = gameRepository.findAllByUsrAndGameMode(login, mode).stream().map(Game::getImg).collect(Collectors.toList());
+        List<String> games = gameRepository.findAllByUsrAndGameMode(login, mode).stream()
+            .map(Game::getImg)
+            .collect(Collectors.toList());
         return images.stream()
             .filter(i -> !games.contains(i.getId()))
             .collect(Collectors.toList());
     }
 
     private List<Image> filterPlayedTrainingImages(List<Image> images, GameMode mode, String login) {
-        List<String> games = trainingGameRepository.findAllByUsrAndGameMode(login, mode).stream().map(TrainingGame::getImg).collect(Collectors.toList());
+        List<String> games = trainingGameRepository.findAllByUsrAndGameMode(login, mode).stream()
+            .map(TrainingGame::getImg)
+            .collect(Collectors.toList());
         return images.stream()
             .filter(i -> !games.contains(i.getId()))
             .collect(Collectors.toList());
     }
 
     private List<Image> filterPlayedExpertImages(List<Image> images, GameMode mode, String login) {
-        List<String> games = expertGameRepository.findAllByUsrAndGameMode(login, mode).stream().map(ExpertGame::getImg).collect(Collectors.toList());
+        List<String> games = expertGameRepository.findAllByUsrAndGameMode(login, mode).stream()
+            .map(ExpertGame::getImg)
+            .collect(Collectors.toList());
         return images.stream()
             .filter(i -> !games.contains(i.getId()))
             .collect(Collectors.toList());
@@ -71,8 +84,12 @@ public class ImageProviderService {
     }
 
     private List<Image> filterImageListBySet(List<Image> images) {
-        int maxSetPriority = images.stream().collect(Collectors.maxBy(Comparator.comparingInt(Image::getSetPriority))).get().getSetPriority();
-        return images.stream().filter(i->i.getSetPriority() == maxSetPriority).collect(Collectors.toList());
+        int maxSetPriority = images.stream()
+            .collect(Collectors.maxBy(Comparator.comparingInt(Image::getSetPriority)))
+            .get().getSetPriority();
+        return images.stream()
+            .filter(i -> i.getSetPriority() == maxSetPriority)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -82,8 +99,21 @@ public class ImageProviderService {
      * @return
      */
     public Image findImage(GameMode mode, String login) {
+        User user = userRepository.findOneByLogin(login).get();
+        Set<Pair<String,GameMode>> skippedImages = user.getSkippedImages();
+
+        List<String> played = gameRepository.findAllByUsrAndGameMode(login, mode).stream().map(Game::getImg).collect(Collectors.toList());
+        List<String> skipped = skippedImages.stream()
+            .filter(p -> p.getY().equals(mode))
+            .map(p -> p.getX())
+            .collect(Collectors.toList());
+
         List<Image> images = mongoTemplate.find(query(where("mode_status." + mode + ".status").is(ImageStatus.NOT_PROCESSED.toString())), Image.class);
-        images = filterPlayedImages(images, mode, login);
+
+        images = images.stream()
+            .filter(i -> !played.contains(i.getId()))
+            .collect(Collectors.toList());
+
         images = images.stream()
             .sorted(new Comparator<Image>() {
                 @Override
@@ -121,29 +151,52 @@ public class ImageProviderService {
                     return Integer.compare(m1.getGameNumber(), m2.getGameNumber());
                 }
             })
-            .sorted(Comparator.comparingInt(i -> i.getModeStatus().get(mode).getGameNumber()))
             .collect(Collectors.toList());
         if(images.isEmpty()) {
             images = mongoTemplate.find(query(where("mode_status." + mode + ".status").is(ImageStatus.IN_PROCESSING.toString())), Image.class);
-            images = filterPlayedImages(images, mode, login);
+            images = images.stream()
+                .filter(i -> !played.contains(i.getId()))
+                .collect(Collectors.toList());
             images = images.stream()
                 .sorted(Comparator.comparingInt(i->i.getModeStatus().get(mode).getGameNumber()))
                 .collect(Collectors.toList());
             if(images.isEmpty()) {
                 images = mongoTemplate.find(query(where("mode_status." + mode + ".status").is(ImageStatus.PROCESSED.toString())), Image.class);
-                images = filterPlayedImages(images, mode, login);
+                images = images.stream()
+                    .filter(i -> !played.contains(i.getId()))
+                    .collect(Collectors.toList());
+                images.stream()
+                    .forEach(i -> {
+                        if (skipped.contains(i.getId())) {
+                            skippedImages.removeIf(p -> p.getX().equals(i) && p.getY().equals(mode));
+                        }
+                    });
                 if(images.isEmpty()) {
                     log.debug("No eligible image was found");
                     return null;
                 }
             }
         }
+        //Only images from the highest priority set
         images = filterImageListBySet(images);
+        //Only images with the highest game number
         images = filterImageListByGameNumber(images, mode);
         log.debug("Total number of eligible images : {}", images.size());
-        if(images.isEmpty())
+        if(images.isEmpty()) {
+            userRepository.save(user);
             return null;
-        return images.get(rand.nextInt(images.size()));
+        }
+        //Only non-skipped images unless only skipped images remain
+        List<Image> tmp = images.stream()
+            .filter(i->!skipped.contains(i.getId()))
+            .collect(Collectors.toList());
+        if(!tmp.isEmpty()) {
+            images = tmp;
+        }
+        Image image = images.get(rand.nextInt(images.size()));
+        skippedImages.removeIf(p -> p.getX().equals(image.getId()) && p.getY().equals(mode));
+        userRepository.save(user);
+        return image;
     }
 
     /**
@@ -153,6 +206,13 @@ public class ImageProviderService {
      * @return
      */
     public Image findTrainingImage(GameMode mode, String login) {
+        User user = userRepository.findOneByLogin(login).get();
+        Set<Pair<String,GameMode>> skippedImages = user.getSkippedImages();
+        List<String> skipped = skippedImages.stream()
+            .filter(p -> p.getY().equals(mode))
+            .map(p -> p.getX())
+            .collect(Collectors.toList());
+
         //Eligible images are in the PROCESSED status for the requested mode.
         List<Image> images = mongoTemplate.find(query(where("mode_status."+mode+".status").is(ImageStatus.PROCESSED.toString())), Image.class);
         //Eligible images have not already been played by the requesting player.
@@ -160,10 +220,20 @@ public class ImageProviderService {
         images = images.stream()
             .sorted(Comparator.comparingInt(i -> i.getModeStatus().get(mode).getGameNumber()))
             .collect(Collectors.toList());
-        if(images.isEmpty())
+        if(images.isEmpty()) {
             return null;
+        }
+            List<Image> tmp = images.stream()
+            .filter(i->!skipped.contains(i.getId()))
+            .collect(Collectors.toList());
+        if(!tmp.isEmpty()) {
+            images = tmp;
+        }
         log.debug("Total number of eligible images : {}", images.size());
-        return images.get(rand.nextInt(images.size()));
+        Image image = images.get(rand.nextInt(images.size()));
+        skippedImages.removeIf(p -> p.getX().equals(image.getId()) && p.getY().equals(mode));
+        userRepository.save(user);
+        return image;
     }
 
     /**

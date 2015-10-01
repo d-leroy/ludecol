@@ -10,16 +10,18 @@ import java.util.Map;
 /**
  * Created by dorian on 04/05/15.
  */
-public class PlantIdentificationResult extends GameResult {
+public class PlantIdentificationResult extends GameResult/*<PlantSpecies,List<Boolean>>*/ {
 
     @Field("species_map")
     @JsonProperty("species_map")
     private Map<PlantSpecies,List<Boolean>> speciesMap = new EnumMap<>(PlantSpecies.class);
 
+    /*@Override*/
     public Map<PlantSpecies, List<Boolean>> getSpeciesMap() {
         return speciesMap;
     }
 
+    /*@Override*/
     public void setSpeciesMap(Map<PlantSpecies, List<Boolean>> speciesMap) {
         this.speciesMap = speciesMap;
     }

@@ -1,7 +1,10 @@
 package com.irisa.ludecol.domain.subdomain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dorian on 24/08/15.
@@ -11,6 +14,12 @@ public class ImageModeStatus {
     private ImageStatus status = ImageStatus.UNAVAILABLE;
 
     private Integer gameNumber = 0;
+
+    @JsonIgnore
+    private List<GameResult> gameResults = new ArrayList<>();
+
+    @JsonIgnore
+    private Map referenceResult;
 
     public ImageModeStatus() {}
 
@@ -33,5 +42,17 @@ public class ImageModeStatus {
 
     public void setGameNumber(Integer gameNumber) {
         this.gameNumber = gameNumber;
+    }
+
+    public List<GameResult> getGameResults() {
+        return gameResults;
+    }
+
+    public Map getReferenceResult() {
+        return referenceResult;
+    }
+
+    public void setReferenceResult(Map referenceResult) {
+        this.referenceResult = referenceResult;
     }
 }

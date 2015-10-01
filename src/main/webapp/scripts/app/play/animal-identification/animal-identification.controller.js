@@ -41,6 +41,7 @@ angular.module('ludecolApp')
                 ImageService.addControl(controls);
                 ImageService.addControl(options);
                 $scope.submit = function(){$scope.errorMsg = null; AnimalGameService.submitGame();};
+                $scope.skip = function(){$scope.errorMsg = null; AnimalGameService.skipGame();};
 
                 $scope.burrows = FeatureCollection.Burrow;
                 $scope.crabs = FeatureCollection.Crab;

@@ -3,7 +3,6 @@ package com.irisa.ludecol.config;
 
 import com.irisa.ludecol.domain.Image;
 import com.irisa.ludecol.domain.subdomain.GameMode;
-import com.irisa.ludecol.domain.subdomain.ImageStatus;
 import com.mongodb.Mongo;
 import org.mongeez.Mongeez;
 import org.slf4j.Logger;

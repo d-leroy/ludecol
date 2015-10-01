@@ -9,17 +9,19 @@ import java.util.Map;
 /**
  * Created by dorian on 04/05/15.
  */
-public class AllStarsResult  extends GameResult {
+public class AllStarsResult extends GameResult/*<Species,Boolean>*/ {
 
     @Field("species_map")
     @JsonProperty("species_map")
-    private Map<Species,Integer> speciesMap = new EnumMap<>(Species.class);
+    private Map<Species,Boolean> speciesMap = new EnumMap<>(Species.class);
 
-    public Map<Species, Integer> getSpeciesMap() {
+    /*@Override*/
+    public Map<Species, Boolean> getSpeciesMap() {
         return speciesMap;
     }
 
-    public void setSpeciesMap(Map<Species, Integer> speciesMap) {
+    /*@Override*/
+    public void setSpeciesMap(Map<Species, Boolean> speciesMap) {
         this.speciesMap = speciesMap;
     }
 

@@ -1,15 +1,21 @@
 package com.irisa.ludecol.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import com.irisa.ludecol.domain.*;
+import com.irisa.ludecol.domain.ExpertGame;
+import com.irisa.ludecol.domain.Game;
+import com.irisa.ludecol.domain.TrainingGame;
+import com.irisa.ludecol.domain.User;
 import com.irisa.ludecol.domain.subdomain.GameMode;
-import com.irisa.ludecol.repository.*;
+import com.irisa.ludecol.repository.ExpertGameRepository;
+import com.irisa.ludecol.repository.GameRepository;
+import com.irisa.ludecol.repository.TrainingGameRepository;
+import com.irisa.ludecol.repository.UserRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
 import com.irisa.ludecol.service.ImageProviderService;
 import com.irisa.ludecol.service.TrainingGameService;
 import com.irisa.ludecol.service.UserService;
-import com.irisa.ludecol.web.rest.dto.UserStatisticsDTO;
 import com.irisa.ludecol.web.rest.dto.TrainingGameDTO;
+import com.irisa.ludecol.web.rest.dto.UserStatisticsDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;

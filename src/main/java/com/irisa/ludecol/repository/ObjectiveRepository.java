@@ -1,6 +1,5 @@
 package com.irisa.ludecol.repository;
 
-import com.irisa.ludecol.domain.GameNotification;
 import com.irisa.ludecol.domain.Objective;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

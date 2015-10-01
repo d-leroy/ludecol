@@ -4,7 +4,6 @@ import com.codahale.metrics.annotation.Timed;
 import com.irisa.ludecol.domain.ExpertGame;
 import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.repository.ExpertGameRepository;
-import com.irisa.ludecol.repository.ProcessedGameRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
 import com.irisa.ludecol.service.ExpertGameService;
 import com.irisa.ludecol.service.ImageProviderService;
@@ -23,6 +22,8 @@ import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.List;
 
+//import com.irisa.ludecol.repository.ProcessedGameRepository;
+
 /**
  * REST controller for managing users.
  */
@@ -32,8 +33,8 @@ public class ExpertGameResource {
 
     private final Logger log = LoggerFactory.getLogger(ExpertGameResource.class);
 
-    @Inject
-    private ProcessedGameRepository processedGameRepository;
+//    @Inject
+//    private ProcessedGameRepository processedGameRepository;
 
     @Inject
     private ExpertGameRepository expertGameRepository;

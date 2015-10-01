@@ -12,16 +12,18 @@ import java.util.Map;
  * Created by dorian on 05/05/15.
  */
 @JsonAutoDetect
-public class AnimalIdentificationResult extends GameResult {
+public class AnimalIdentificationResult extends GameResult/*<AnimalSpecies,List<double[]>>*/ {
 
     @JsonProperty("species_map")
     @Field("species_map")
     private Map<AnimalSpecies,List<double[]>> speciesMap = new EnumMap<>(AnimalSpecies.class);
 
+    /*@Override*/
     public Map<AnimalSpecies, List<double[]>> getSpeciesMap() {
         return speciesMap;
     }
 
+    /*@Override*/
     public void setSpeciesMap(Map<AnimalSpecies, List<double[]>> speciesMap) {
         this.speciesMap = speciesMap;
     }

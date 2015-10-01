@@ -36,6 +36,7 @@ angular.module('ludecolApp')
                 ImageService.addControl(controls);
                 ImageService.addControl(options);
                 $scope.submit = function(){$scope.errorMsg = null; PlantGameService.submitGame();};
+                $scope.skip = function(){$scope.errorMsg = null; PlantGameService.skipGame();};
 
                 $scope.jokerDisabled = true;
                 $scope.displayControls = true;

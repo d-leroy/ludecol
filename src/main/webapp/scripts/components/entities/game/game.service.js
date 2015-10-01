@@ -3,6 +3,7 @@
 angular.module('ludecolApp')
     .factory('Game', function ($resource) {
         return $resource('api/games/:id', {}, {
+            'delete': { method: 'DELETE' },
             'query': { method: 'GET', isArray: true},
             'get': {
                 method: 'GET',

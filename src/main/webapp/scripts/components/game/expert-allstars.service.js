@@ -13,8 +13,9 @@ angular.module('ludecolApp')
 
         var initializeGame = function(login,successCallback,errorCallback) {
             ImageService.destroyMap();
-            _submitGame = GameService.initializeGame(login,'AllStars',function(){return {};},
+            var services = GameService.initializeGame(login,'AllStars',function(){return {};},
                 _getResult,successCallback,errorCallback,UserExpertGame.query,ExpertGame.update);
+            _submitGame = services.submitGame;
         };
 
         var initializeReferenceDefinition = function(login,successCallback,errorCallback,img,submitCallback) {

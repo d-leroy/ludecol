@@ -3,7 +3,7 @@
 angular.module('ludecolApp')
     .factory('AnimalGameService', function ($rootScope, FeatureCollection, RadioModel, ImageService, GameService, UserGame, Game) {
 
-        var _width, _height, _successCallback, _submitGame;
+        var _width, _height, _successCallback, _submitGame, _skipGame;
         var _vectorSource, _displayedFeatures;
         var _rectWidth, _rectHeight;
         var _cols = 3; var _rows = 3;
@@ -95,12 +95,18 @@ angular.module('ludecolApp')
         var initializeGame = function(login,successCallback,errorCallback) {
             ImageService.destroyMap();
             _successCallback = successCallback;
-            _submitGame = GameService.initializeGame(login,'AnimalIdentification',_initializeFeatureCollection,
-                _getResult,_setupGame,errorCallback,UserGame.query,Game.update);
+            var services = GameService.initializeGame(login,'AnimalIdentification',_initializeFeatureCollection,
+                _getResult,_setupGame,errorCallback,UserGame.query,Game.update,Game.delete);
+            _submitGame = services.submitGame;
+            _skipGame = services.skipGame;
         };
 
         var submitGame = function(){
             _submitGame();
+        };
+
+        var skipGame = function(){
+            _skipGame();
         };
 
         var highlightFeature = function(property,idx,b) {
@@ -125,6 +131,7 @@ angular.module('ludecolApp')
         return {
             initializeGame: initializeGame,
             submitGame: submitGame,
+            skipGame: skipGame,
             toggleFeatures: toggleFeatures,
             highlightFeature: highlightFeature,
             removeFeature: removeFeature

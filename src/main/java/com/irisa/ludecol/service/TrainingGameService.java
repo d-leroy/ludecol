@@ -2,10 +2,8 @@ package com.irisa.ludecol.service;
 
 import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.domain.Image;
-import com.irisa.ludecol.domain.ReferenceGame;
 import com.irisa.ludecol.domain.TrainingGame;
 import com.irisa.ludecol.domain.subdomain.*;
-import com.irisa.ludecol.repository.ReferenceGameRepository;
 import com.irisa.ludecol.repository.TrainingGameRepository;
 import com.irisa.ludecol.web.rest.dto.AnimalTrainingGameDTO;
 import com.irisa.ludecol.web.rest.dto.PlantTrainingGameDTO;
@@ -33,8 +31,8 @@ public class TrainingGameService {
     @Inject
     private TrainingGameRepository trainingGameRepository;
 
-    @Inject
-    private ReferenceGameRepository referenceGameRepository;
+//    @Inject
+//    private ReferenceGameRepository referenceGameRepository;
 
     @Inject
     private ImageProviderService imageProviderService;
@@ -188,22 +186,25 @@ public class TrainingGameService {
         Image img = imageProviderService.findTrainingImage(mode, login);
         if(img == null)
             return null;
+        ImageModeStatus modeStatus = img.getModeStatus().get(mode);
+        if(modeStatus == null)
+            return null;
         TrainingGame trainingGame;
-        ReferenceGame refGame;
+        GameResult refResult;
         switch(game.getGameMode()) {
             case AnimalIdentification: {
-                refGame = (ReferenceGame<AnimalIdentificationResult>) (referenceGameRepository.findByImgAndGameMode(img.getId(), mode));
-                if(refGame == null) {
-                    log.debug("====================refGame is null====================");
+                refResult = new AnimalIdentificationResult();
+                ((AnimalIdentificationResult) refResult).setSpeciesMap(modeStatus.getReferenceResult());
+                if(refResult == null) {
                     return null;
                 }
                 trainingGame = new TrainingGame<AnimalIdentificationResult>();
             }
             break;
             case PlantIdentification: {
-                refGame = (ReferenceGame<PlantIdentificationResult>) (referenceGameRepository.findByImgAndGameMode(img.getId(), mode));
-                if(refGame == null) {
-                    log.debug("====================refGame is null====================");
+                refResult = new PlantIdentificationResult();
+                ((PlantIdentificationResult) refResult).setSpeciesMap(modeStatus.getReferenceResult());
+                if(refResult == null) {
                     return null;
                 }
                 trainingGame = new TrainingGame<PlantIdentificationResult>();
@@ -218,7 +219,8 @@ public class TrainingGameService {
         trainingGame.setImg(img.getId());
         trainingGame.setGameMode(mode);
         trainingGame.setSubmittedResult(game.getGameResult());
-        trainingGame.setReferenceResult(refGame.getGameResult());
+        img.getModeStatus().get(game.getGameMode()).getReferenceResult();
+        trainingGame.setReferenceResult(refResult);
         trainingGameRepository.save(trainingGame);
         return getTrainingGameWrapper(trainingGame);
     }

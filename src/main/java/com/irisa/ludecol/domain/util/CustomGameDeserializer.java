@@ -45,7 +45,7 @@ public class CustomGameDeserializer extends JsonDeserializer<Game> {
                 case AllStars: {
                     ObjectMapper mapper = new ObjectMapper();
                     JsonParser map = node.get("game_result").traverse();
-                    HashMap<Species,Integer> tmp = mapper.readValue(map,mapType);
+                    HashMap<Species,Boolean> tmp = mapper.readValue(map,mapType);
                     AllStarsResult res = new AllStarsResult();
                     res.setSpeciesMap(tmp);
                     result.setGameResult(res);

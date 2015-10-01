@@ -6,7 +6,7 @@ angular.module('ludecolApp')
         var _cols, _rows, _width, _height;
         var _tagWidth, _rectWidth, _rectHeight;
         var _vectorSource, _tags, _displayedFeatures;
-        var _successCallback, _submitGame;
+        var _successCallback, _submitGame, _skipGame;
 
         var _speciesStyles = {
             Batis: new ol.style.Style({fill: new ol.style.Fill({color: '#40B12F'})}),
@@ -156,12 +156,18 @@ angular.module('ludecolApp')
             ImageService.destroyMap();
             _successCallback = successCallback;
             _cols = cols; _rows = rows;
-            _submitGame = GameService.initializeGame(login,'PlantIdentification',_initializePresenceGrid,
-                _getResult,_setupGame,errorCallback,UserGame.query,Game.update);
+            var services = GameService.initializeGame(login,'PlantIdentification',_initializePresenceGrid,
+                _getResult,_setupGame,errorCallback,UserGame.query,Game.update,Game.delete);
+            _submitGame = services.submitGame;
+            _skipGame = services.skipGame;
         };
 
         var submitGame = function(){
             _submitGame();
+        };
+
+        var skipGame = function(){
+            _skipGame();
         };
 
         var toggleFeatures = function(property,show) {
@@ -172,5 +178,5 @@ angular.module('ludecolApp')
             else {angular.forEach(features,function(value) {_vectorSource.removeFeature(value);});}
         }
 
-        return {initializeGame: initializeGame, toggleFeatures: toggleFeatures, submitGame: submitGame};
+        return {initializeGame: initializeGame, toggleFeatures: toggleFeatures, submitGame: submitGame, skipGame: skipGame};
     });

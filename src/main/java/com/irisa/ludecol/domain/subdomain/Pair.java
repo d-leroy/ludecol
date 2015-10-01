@@ -3,12 +3,12 @@ package com.irisa.ludecol.domain.subdomain;
 /**
  * Created by dorian on 12/06/15.
  */
-public class Pair<T> {
+public class Pair<T,U> {
 
     private T x;
-    private T y;
+    private U y;
 
-    public Pair(T x, T y) {
+    public Pair(T x, U y) {
         this.x = x;
         this.y = y;
     }
@@ -21,11 +21,11 @@ public class Pair<T> {
         this.x = x;
     }
 
-    public T getY() {
+    public U getY() {
         return y;
     }
 
-    public void setY(T y) {
+    public void setY(U y) {
         this.y = y;
     }
 
@@ -35,5 +35,24 @@ public class Pair<T> {
             "x=" + x +
             ", y=" + y +
             '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Pair<?, ?> pair = (Pair<?, ?>) o;
+
+        if (x != null ? !x.equals(pair.x) : pair.x != null) return false;
+        return !(y != null ? !y.equals(pair.y) : pair.y != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = x != null ? x.hashCode() : 0;
+        result = 31 * result + (y != null ? y.hashCode() : 0);
+        return result;
     }
 }

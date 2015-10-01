@@ -3,7 +3,7 @@
 angular.module('ludecolApp')
     .factory('AllStarsGameService', function (RadioModel, UserGame, Game, ImageService, GameService) {
 
-        var _submitGame;
+        var _submitGame, _skipGame;
 
         function _getResult() {
             return RadioModel.data;
@@ -13,13 +13,19 @@ angular.module('ludecolApp')
 
         var initializeGame = function(login,successCallback,errorCallback) {
             ImageService.destroyMap();
-            _submitGame = GameService.initializeGame(login,'AllStars',function(){return {};},
-                _getResult,successCallback,errorCallback,UserGame.query,Game.update);
+            var services = GameService.initializeGame(login,'AllStars',function(){return {};},
+                _getResult,successCallback,errorCallback,UserGame.query,Game.update,Game.delete);
+            _submitGame = services.submitGame;
+            _skipGame = services.skipGame;
         };
 
         var submitGame = function(){
             _submitGame();
         };
 
-        return {initializeGame: initializeGame, submitGame: submitGame};
+        var skipGame = function(){
+            _skipGame();
+        };
+
+        return {initializeGame: initializeGame, submitGame: submitGame, skipGame: skipGame};
     });

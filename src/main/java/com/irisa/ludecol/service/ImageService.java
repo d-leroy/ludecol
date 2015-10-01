@@ -1,16 +1,14 @@
 package com.irisa.ludecol.service;
 
-import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.domain.Image;
 import com.irisa.ludecol.domain.ImageSet;
-import com.irisa.ludecol.domain.ReferenceGame;
 import com.irisa.ludecol.domain.subdomain.GameMode;
 import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
 import com.irisa.ludecol.domain.subdomain.ImageStatus;
-import com.irisa.ludecol.repository.*;
-import com.irisa.ludecol.web.rest.dto.ImageSetStatisticsDTO;
-import com.irisa.ludecol.web.rest.dto.ImageStatisticsDTO;
-import com.irisa.ludecol.web.rest.dto.ImagesStatisticsDTO;
+import com.irisa.ludecol.repository.ExpertGameRepository;
+import com.irisa.ludecol.repository.GameRepository;
+import com.irisa.ludecol.repository.ImageRepository;
+import com.irisa.ludecol.repository.TrainingGameRepository;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.name.Rename;
 import org.slf4j.Logger;
@@ -22,10 +20,13 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by dorian on 10/07/15.
@@ -43,15 +44,9 @@ public class ImageService {
     private TrainingGameRepository trainingGameRepository;
 
     @Inject
-    private ProcessedGameRepository processedGameRepository;
-
-    @Inject
     private ExpertGameRepository expertGameRepository;
 
     private final Logger log = LoggerFactory.getLogger(ImageService.class);
-
-    @Inject
-    private ReferenceGameRepository referenceGameRepository;
 
     public void insertImage(File file, ImageSet imageSet) {
         try {
@@ -183,8 +178,6 @@ public class ImageService {
         });
         trainingGameRepository.findAllByImg(id).stream().forEach(trainingGameRepository::delete);
         expertGameRepository.findAllByImg(id).stream().forEach(expertGameRepository::delete);
-        referenceGameRepository.findAllByImg(id).stream().forEach(referenceGameRepository::delete);
-        processedGameRepository.findAllByImg(id).stream().forEach(processedGameRepository::delete);
     }
 
 

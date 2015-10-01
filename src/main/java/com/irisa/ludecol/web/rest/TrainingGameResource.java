@@ -3,7 +3,6 @@ package com.irisa.ludecol.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.domain.TrainingGame;
-import com.irisa.ludecol.repository.ReferenceGameRepository;
 import com.irisa.ludecol.repository.TrainingGameRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
 import com.irisa.ludecol.service.ImageProviderService;
@@ -32,9 +31,6 @@ import java.util.List;
 public class TrainingGameResource {
 
     private final Logger log = LoggerFactory.getLogger(TrainingGameResource.class);
-
-    @Inject
-    private ReferenceGameRepository referenceGameRepository;
 
     @Inject
     private TrainingGameRepository trainingGameRepository;

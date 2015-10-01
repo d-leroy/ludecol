@@ -6,6 +6,7 @@ import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.domain.Objective;
 import com.irisa.ludecol.domain.User;
 import com.irisa.ludecol.domain.subdomain.GameMode;
+import com.irisa.ludecol.domain.subdomain.Pair;
 import com.irisa.ludecol.repository.*;
 import com.irisa.ludecol.security.SecurityUtils;
 import com.irisa.ludecol.service.util.RandomUtil;
@@ -167,6 +168,14 @@ public class UserService {
         result.setMeanRank(player.getMeanRank());
 
         return result;
+    }
+
+    public void updateSkippedList(String usr, String img, GameMode mode) {
+        User user = userRepository.findOneByLogin(usr).get();
+        Set<Pair<String,GameMode>> skippedImages = user.getSkippedImages();
+        Pair<String,GameMode> pair = new Pair(img,mode);
+        skippedImages.add(pair);
+        userRepository.save(user);
     }
 
     /**

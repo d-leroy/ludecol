@@ -37,6 +37,7 @@ angular.module('ludecolApp')
                 ImageService.addControl(controls);
                 ImageService.addControl(scoreboard);
                 $scope.submit = TrainingAnimalGameService.submitGame;
+                $scope.skip = function(){$scope.errorMsg = null; TrainingAnimalGameService.skipGame();};
 
                 $scope.isCompleted = function(key) {
                     var entry = ScoreboardService.data.animals[key];

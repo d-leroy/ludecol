@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.irisa.ludecol.domain.subdomain.GameMode;
 import com.irisa.ludecol.domain.subdomain.GameResult;
-import com.irisa.ludecol.domain.subdomain.ProcessedGameResult;
 import com.irisa.ludecol.domain.util.CustomGameDeserializer;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
@@ -24,7 +23,7 @@ import javax.validation.constraints.NotNull;
     @CompoundIndex(name = "img_idx", def = "{'game_mode': 1, 'img': 1}")
 })
 @JsonDeserialize(using = CustomGameDeserializer.class)
-public class ExpertGame<T extends ProcessedGameResult, S extends GameResult> {
+public class ExpertGame<T extends GameResult> {
 
     @Id
     private String id;
@@ -49,7 +48,7 @@ public class ExpertGame<T extends ProcessedGameResult, S extends GameResult> {
     @NotNull
     @Field("submitted_result")
     @JsonProperty("submitted_result")
-    private S submittedResult;
+    private T submittedResult;
 
     @Field("completed")
     private boolean completed;
@@ -89,11 +88,11 @@ public class ExpertGame<T extends ProcessedGameResult, S extends GameResult> {
         this.processedResult = processedResult;
     }
 
-    public S getSubmittedResult() {
+    public T getSubmittedResult() {
         return submittedResult;
     }
 
-    public void setSubmittedResult(S submittedResult) {
+    public void setSubmittedResult(T submittedResult) {
         this.submittedResult = submittedResult;
     }
 

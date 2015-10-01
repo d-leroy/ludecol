@@ -2,9 +2,10 @@ package com.irisa.ludecol.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.irisa.ludecol.domain.subdomain.GameMode;
+import com.irisa.ludecol.domain.subdomain.Pair;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -80,6 +81,9 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     @JsonIgnore
     private Set<Authority> authorities = new HashSet<>();
+
+    @JsonIgnore
+    private Set<Pair<String,GameMode>> skippedImages = new HashSet<>();
 
     public String getId() {
         return id;
@@ -207,6 +211,14 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setBonusPoints(Integer bonusPoints) {
         this.bonusPoints = bonusPoints;
+    }
+
+    public Set<Pair<String, GameMode>> getSkippedImages() {
+        return skippedImages;
+    }
+
+    public void setSkippedImages(Set<Pair<String, GameMode>> skippedImages) {
+        this.skippedImages = skippedImages;
     }
 
     @Override

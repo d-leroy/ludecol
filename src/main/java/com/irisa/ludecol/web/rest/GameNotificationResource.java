@@ -17,7 +17,6 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import java.security.Principal;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * REST controller for managing users.

@@ -3,7 +3,7 @@
 angular.module('ludecolApp')
     .factory('GameService', function ($state, Image, SubmitModalService, ImageService) {
 
-        var _mode, _login, _successCallback, _errorCallback, _game, _queryFunction, _updateFunction, _submitCallback;
+        var _mode, _login, _successCallback, _errorCallback, _game, _queryFunction, _updateFunction, _deleteFunction, _submitCallback;
 
         function _emptyResultSupplier() {return {};}
 
@@ -35,6 +35,12 @@ angular.module('ludecolApp')
             });
         }
 
+        var _skipGame = function() {
+            _deleteFunction(_game.id,function() {
+                _startNewGame();
+            })
+        }
+
         var _submitReference = function() {
             var res = _resultSupplier();
             _game.game_result = res;
@@ -44,7 +50,7 @@ angular.module('ludecolApp')
 
         //-------------------API
 
-        var initializeGame = function(login,mode,emptyResultSupplier,resultSupplier,successCallback,errorCallback,queryFunction,updateFunction) {
+        var initializeGame = function(login,mode,emptyResultSupplier,resultSupplier,successCallback,errorCallback,queryFunction,updateFunction,deleteFunction) {
             _login = login;
             _mode = mode;
             _emptyResultSupplier = emptyResultSupplier;
@@ -53,6 +59,7 @@ angular.module('ludecolApp')
             _successCallback = successCallback;
             _queryFunction = queryFunction;
             _updateFunction = updateFunction;
+            _deleteFunction = deleteFunction;
 
             _queryFunction({login: _login, completed: false, mode: _mode}, function(result) {
                 if(result.length === 0) {
@@ -79,7 +86,7 @@ angular.module('ludecolApp')
                 }
             });
 
-            return _submitGame;
+            return {submitGame: _submitGame, skipGame: _skipGame};
         }
 
         var initializeReferenceDefinition = function(login,mode,emptyResultSupplier,resultSupplier,successCallback,errorCallback,updateFunction,img,submitCallback) {

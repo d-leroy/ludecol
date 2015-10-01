@@ -1,7 +1,6 @@
 package com.irisa.ludecol.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import com.irisa.ludecol.domain.ExpertGame;
 import com.irisa.ludecol.domain.Feedback;
 import com.irisa.ludecol.repository.FeedbackRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;

@@ -1,14 +1,20 @@
 package com.irisa.ludecol.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.irisa.ludecol.domain.subdomain.*;
+import com.irisa.ludecol.domain.subdomain.AnimalSpecies;
+import com.irisa.ludecol.domain.subdomain.GameMode;
+import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
+import com.irisa.ludecol.domain.subdomain.PlantSpecies;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.validation.constraints.NotNull;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by dorian on 04/05/15.

@@ -4,20 +4,15 @@ import com.codahale.metrics.annotation.Timed;
 import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.domain.Image;
 import com.irisa.ludecol.domain.ImageSet;
-import com.irisa.ludecol.domain.ReferenceGame;
-import com.irisa.ludecol.domain.subdomain.GameMode;
 import com.irisa.ludecol.repository.GameRepository;
 import com.irisa.ludecol.repository.ImageRepository;
 import com.irisa.ludecol.repository.ImageSetRepository;
-import com.irisa.ludecol.repository.ReferenceGameRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
 import com.irisa.ludecol.service.ImageProviderService;
 import com.irisa.ludecol.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,16 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,8 +54,8 @@ public class ImageResource {
     @Inject
     private GameRepository gameRepository;
 
-    @Inject
-    private ReferenceGameRepository referenceGameRepository;
+//    @Inject
+//    private ReferenceGameRepository referenceGameRepository;
 
     @RequestMapping(value = "/images",
         method = RequestMethod.POST,
@@ -194,27 +184,6 @@ public class ImageResource {
     ResponseEntity<List<Game>> getImageGames(@PathVariable String id) {
         log.debug("REST request to get User : {}", id);
         return new ResponseEntity<>(gameRepository.findAllByImg(id), HttpStatus.OK);
-    }
-
-    /**
-     * GET  /images/:id/refgames -> get all reference games on the "id" image.
-     */
-    @RequestMapping(value = "/images/{id}/refgames",
-        method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    @Timed
-    @RolesAllowed(AuthoritiesConstants.ADMIN)
-    ResponseEntity<List<ReferenceGame>> getImageReferenceGames(HttpServletRequest request, @PathVariable String id) {
-        log.debug("REST request to get User : {}", id);
-        String mode = request.getParameter("mode");
-        List result = new ArrayList<>();
-        if(mode != null) {
-            result.add(referenceGameRepository.findByImgAndGameMode(id,GameMode.valueOf(mode)));
-        }
-        else {
-            result.addAll(referenceGameRepository.findAllByImg(id));
-        }
-        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     /**

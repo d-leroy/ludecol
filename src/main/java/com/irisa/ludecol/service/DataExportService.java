@@ -1,8 +1,7 @@
 package com.irisa.ludecol.service;
 
-import com.irisa.ludecol.domain.ReferenceGame;
+import com.irisa.ludecol.domain.Image;
 import com.irisa.ludecol.repository.ImageRepository;
-import com.irisa.ludecol.repository.ReferenceGameRepository;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -17,25 +16,28 @@ import java.util.List;
 public class DataExportService {
 
     @Inject
-    private ReferenceGameRepository referenceGameRepository;
-
-    @Inject
     private ImageRepository imageRepository;
 
-    public String export() throws IOException {
-        List<ReferenceGame> referenceGames = referenceGameRepository.findAll();
+    public String exportAll() throws IOException {
+
+        List<Image> images = imageRepository.findAll();
 
         Date date = new Date();
 
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File("src/main/webapp/exported/"+date.getTime())), "utf-8"))) {
-            for(ReferenceGame referenceGame : referenceGames) {
-                writer.write("Image : " + imageRepository.findOne(referenceGame.getImg()).getName() + ";\n");
-                writer.write("  Mode : " + referenceGame.getGameMode().toString() + ";\n");
-                writer.write("  Result : " + referenceGame.getGameResult().toString() + ";\n");
+            for(Image image : images) {
+                writer.write("Image : " + image.getName() + ";\n");
+                image.getModeStatus().forEach((mode,status) -> {
+                    try {
+                        writer.write("  Mode : " + mode.toString() + ";\n");
+                        writer.write("  Result : " + status.getReferenceResult().toString() + ";\n");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
                 writer.write("============" + "\n");
             }
         }
         return "";
-
     }
 }
