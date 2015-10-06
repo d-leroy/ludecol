@@ -26,6 +26,8 @@ public class ImageSet {
     @JsonProperty("required_submissions")
     private Integer requiredSubmissions;
 
+    private Boolean enabled = true;
+
     public String getId() {
         return id;
     }
@@ -66,6 +68,14 @@ public class ImageSet {
         this.requiredSubmissions = requiredSubmissions;
     }
 
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public String toString() {
         return "ImageSet{" +
@@ -74,6 +84,7 @@ public class ImageSet {
             ", imageCount=" + imageCount +
             ", priority=" + priority +
             ", requiredSubmissions=" + requiredSubmissions +
+            ", enabled=" + enabled +
             '}';
     }
 }

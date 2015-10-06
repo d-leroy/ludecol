@@ -17,26 +17,28 @@
         <div ng-show="displayControls">
             <div style="width: 300px;">
                 <div class="btn-group btn-group-justified">
-                    <label class="btn blue" style="border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Snail'" uncheckable ng-disabled="snails === undefined">
+                    <label class="btn blue" style="border-top-right-radius: 0px;border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;"
+                           ng-model="radioModel.selected" btn-radio="'Snail'" uncheckable ng-disabled="snails === undefined">
                         <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Snail'"></span>
                         <span class="glyphicon glyphicon-lock" ng-show="snails === undefined"></span>
                         Snail
                     </label>
-                </div>
-                <div class="btn-group btn-group-justified">
-                    <label class="btn green" style="border-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Mussel'" uncheckable ng-disabled="mussels === undefined">
+                    <label class="btn green" style="border-top-left-radius: 0px;border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;"
+                           ng-model="radioModel.selected" btn-radio="'Mussel'" uncheckable ng-disabled="mussels === undefined">
                         <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Mussel'"></span>
                         <span class="glyphicon glyphicon-lock" ng-show="mussels === undefined"></span>
                         Mussel
                     </label>
                 </div>
                 <div class="btn-group btn-group-justified">
-                    <!--<label class="btn yellow" style="border-top-left-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Crab'" uncheckable ng-disabled="crabs === undefined">-->
-                        <!--<span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Crab'"></span>-->
-                        <!--<span class="glyphicon glyphicon-lock" ng-show="crabs === undefined"></span>-->
-                        <!--Crab-->
-                    <!--</label>-->
-                    <label class="btn purple" style="border-top-left-radius: 0px;border-top-right-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Burrow'" uncheckable ng-disabled="burrows === undefined">
+                    <label class="btn yellow" style="border-top-left-radius: 0px;border-top-right-radius: 0px;border-bottom-right-radius: 0px;"
+                           ng-model="radioModel.selected" btn-radio="'Crab'" uncheckable ng-disabled="crabs === undefined">
+                        <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Crab'"></span>
+                        <span class="glyphicon glyphicon-lock" ng-show="crabs === undefined"></span>
+                        Crab
+                    </label>
+                    <label class="btn purple" style="border-top-left-radius: 0px;border-top-right-radius: 0px;border-bottom-left-radius: 0px;"
+                           ng-model="radioModel.selected" btn-radio="'Burrow'" uncheckable ng-disabled="burrows === undefined">
                         <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Burrow'"></span>
                         <span class="glyphicon glyphicon-lock" ng-show="burrows === undefined"></span>
                         Burrow

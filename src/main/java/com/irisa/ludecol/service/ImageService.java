@@ -164,13 +164,31 @@ public class ImageService {
 
     public void cleanupImage(String id) {
         Image img = imageRepository.findOne(id);
+        cleanupImage(img);
+    }
 
-        File thbdir = Paths.get("src/main/webapp/images/"+img.getImageSet()+"/thumbnail").toFile();
-        File thb = thbdir.listFiles((d,n) -> n.equals("thumbnail."+img.getName()))[0];
-        thb.delete();
+    public void cleanupImage(Image img) {
+        String id = img.getId();
+        File thb = Paths.get("src/main/webapp/images/"+img.getImageSet()+"/thumbnail/thumbnail."+img.getName()+".JPG").toFile();
+        if(thb.delete()) {
+            log.debug("Deleted thumbnail for image : {}", img.getName());
+        } else {
+            log.debug("Deletion of thumbnail for image {} failed", img.getName());
+        }
 
-        File tilesdir = Paths.get("src/main/webapp/tiles/"+img.getImageSet()+"/"+img.getName()).toFile();
-        tilesdir.delete();
+        File dir = Paths.get("src/main/webapp/tiles/"+img.getImageSet()+"/"+img.getName()).toFile();
+        File[] files = dir.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            File file = files[i];
+            if(file.isDirectory()) {
+                File[] tiles = file.listFiles();
+                for (int j = 0; j < tiles.length; j++) {
+                    tiles[j].delete();
+                }
+            }
+            file.delete();
+        }
+        dir.delete();
 
         gameRepository.findAllByImg(id).stream().forEach(g -> {
             if (g.getCompleted()) g.setImg("-1");
@@ -178,6 +196,7 @@ public class ImageService {
         });
         trainingGameRepository.findAllByImg(id).stream().forEach(trainingGameRepository::delete);
         expertGameRepository.findAllByImg(id).stream().forEach(expertGameRepository::delete);
+        imageRepository.delete(id);
     }
 
 

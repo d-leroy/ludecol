@@ -17,21 +17,25 @@
         <div ng-show="displayControls">
             <div style="width: 300px;">
                 <div class="btn-group btn-group-justified">
-                    <label class="btn blue" style="border-bottom-left-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Snail'" uncheckable>
+                    <label class="btn blue" style="border-top-left-radius: 0px;border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;"
+                           ng-model="radioModel.selected" btn-radio="'Snail'" uncheckable>
                         <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Snail'"></span>
                         Snail
                     </label>
-                    <label class="btn green" style="border-bottom-right-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Mussel'" uncheckable>
+                    <label class="btn green" style="border-top-right-radius: 0px;border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;"
+                           ng-model="radioModel.selected" btn-radio="'Mussel'" uncheckable>
                         <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Mussel'"></span>
                         Mussel
                     </label>
                 </div>
                 <div class="btn-group btn-group-justified">
-                    <label class="btn yellow" style="border-top-left-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Crab'" uncheckable>
+                    <label class="btn yellow" style="border-top-right-radius: 0px;border-top-left-radius: 0px;border-bottom-right-radius: 0px;"
+                           ng-model="radioModel.selected" btn-radio="'Crab'" uncheckable>
                         <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Crab'"></span>
                         Crab
                     </label>
-                    <label class="btn purple" style="border-top-right-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Burrow'" uncheckable>
+                    <label class="btn purple" style="border-top-right-radius: 0px;border-top-left-radius: 0px;border-bottom-left-radius: 0px;"
+                           ng-model="radioModel.selected" btn-radio="'Burrow'" uncheckable>
                         <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Burrow'"></span>
                         Burrow
                     </label>

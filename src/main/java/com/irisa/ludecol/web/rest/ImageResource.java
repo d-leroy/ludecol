@@ -72,7 +72,6 @@ public class ImageResource {
             try {
                 Paths.get("src/main/webapp/images/" + set).toFile().mkdirs();
                 byte[] bytes = file.getBytes();
-                log.debug("Path to saved file : {}","src/main/webapp/images/" + set + "/" + name);
                 File res = Paths.get("src/main/webapp/images/" + set + "/" + name).toFile();
                 BufferedOutputStream stream =
                     new BufferedOutputStream(new FileOutputStream(res));
@@ -196,10 +195,7 @@ public class ImageResource {
     @RolesAllowed(AuthoritiesConstants.ADMIN)
     public void delete(@PathVariable String id) {
         log.debug("REST request to delete Image : {}", id);
-        gameRepository.findAllByImg(id).stream().forEach(g->g.setImg("-1"));
-
-        imageRepository.delete(id);
-
+        imageService.cleanupImage(id);
     }
 
 //    /**

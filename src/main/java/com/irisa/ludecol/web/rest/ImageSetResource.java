@@ -6,6 +6,7 @@ import com.irisa.ludecol.domain.ImageSet;
 import com.irisa.ludecol.repository.ImageRepository;
 import com.irisa.ludecol.repository.ImageSetRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
+import com.irisa.ludecol.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +37,9 @@ public class ImageSetResource {
 
     @Inject
     private ImageRepository imageRepository;
+
+    @Inject
+    private ImageService imageService;
 
     /**
      * POST  /images -> Create a new image set.
@@ -69,14 +75,39 @@ public class ImageSetResource {
             return create(imageSet);
         }
         ImageSet set = imageSetRepository.findOne(imageSet.getId());
+        if(set == null) {
+            return ResponseEntity.badRequest().header("Failure", "This image set does not exist").build();
+        }
+        String setName = imageSet.getName();
+        if(!setName.equals(set.getName())) {
+            if (imageSetRepository.findByName(setName) != null) {
+                return ResponseEntity.badRequest().header("Failure", "An image set already exists with that name").build();
+            }
+            File imagesDir = Paths.get("src/main/webapp/images/"+set.getName()).toFile();
+            File newImagesDir = Paths.get("src/main/webapp/images/"+imageSet.getName()).toFile();
+            File tilesDir = Paths.get("src/main/webapp/tiles/"+set.getName()).toFile();
+            File newTilesDir = Paths.get("src/main/webapp/tiles/"+imageSet.getName()).toFile();
+
+            if(!imagesDir.renameTo(newImagesDir)) {
+                return ResponseEntity.badRequest().header("Failure", "The renaming of the image set failed").build();
+            } else if(!tilesDir.renameTo(newTilesDir)) {
+                newImagesDir.renameTo(imagesDir);
+                return ResponseEntity.badRequest().header("Failure", "The renaming of the image set failed").build();
+            }
+        }
+        set.setEnabled(imageSet.getEnabled());
+        set.setPriority(imageSet.getPriority());
+        set.setRequiredSubmissions(imageSet.getRequiredSubmissions());
         List<Image> images = imageRepository.findByImageSet(set.getName());
         images.stream()
             .forEach(image -> {
                 image.setSetPriority(imageSet.getPriority());
-                image.setImageSet(imageSet.getName());
+                image.setImageSet(setName);
+                image.setPath("/tiles/"+setName+"/"+image.getName()+"/");
             });
+        set.setName(setName);
         imageRepository.save(images);
-        imageSetRepository.save(imageSet);
+        imageSetRepository.save(set);
         return ResponseEntity.ok().build();
     }
 
@@ -118,6 +149,15 @@ public class ImageSetResource {
     @RolesAllowed(AuthoritiesConstants.ADMIN)
     public void delete(@PathVariable String id) {
         log.debug("REST request to delete ImageSet : {}", id);
+        ImageSet imageSet = imageSetRepository.findOne(id);
+        //cleaning all references to the images of the image set
+        List<Image> images = imageRepository.findByImageSet(imageSet.getName());
+        images.stream().forEach(i->imageService.cleanupImage(i));
+        Paths.get("src/main/webapp/images/"+imageSet.getName()+"/divided").toFile().delete();
+        Paths.get("src/main/webapp/images/"+imageSet.getName()+"/thumbnail").toFile().delete();
+        Paths.get("src/main/webapp/images/"+imageSet.getName()).toFile().delete();
+        Paths.get("src/main/webapp/tiles/"+imageSet.getName()).toFile().delete();
+        //removing the image set from the database
         imageSetRepository.delete(id);
     }
 }

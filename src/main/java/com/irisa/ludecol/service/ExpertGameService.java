@@ -58,7 +58,9 @@ public class ExpertGameService {
 
     public void handleExpertGameSubmission(ExpertGame expertGame) {
         Image image = imageRepository.findOne(expertGame.getImg());
-        switch(expertGame.getGameMode()) {
+        GameMode mode = expertGame.getGameMode();
+        ImageModeStatus status = image.getModeStatus().get(mode);
+        switch(mode) {
             case AllStars: {
                 Map<Species,Boolean> referenceMap = ((AllStarsResult) expertGame.getSubmittedResult()).getSpeciesMap();
 
@@ -76,7 +78,7 @@ public class ExpertGameService {
                     }
                 });
 
-                image.getModeStatus().get(GameMode.AllStars).setStatus(ImageStatus.PROCESSED);
+                status.setStatus(ImageStatus.PROCESSED);
                 if(!faunaSpecies.isEmpty()) {
                     ImageModeStatus modeStatus = image.getModeStatus().get(GameMode.AnimalIdentification);
                     if(modeStatus.getStatus().equals(ImageStatus.UNAVAILABLE))
@@ -89,7 +91,7 @@ public class ExpertGameService {
                         modeStatus.setStatus(ImageStatus.NOT_PROCESSED);
                     image.setFloraSpecies(floraSpecies);
                 }
-
+                status.setReferenceResult(referenceMap);
                 imageRepository.save(image);
             }
             break;
@@ -103,7 +105,7 @@ public class ExpertGameService {
                         set.add(e.getKey());
                 });
                 image.setFaunaSpecies(set);
-
+                status.setReferenceResult(referenceMap);
                 imageRepository.save(image);
             }
             break;
@@ -117,7 +119,7 @@ public class ExpertGameService {
                         set.add(e.getKey());
                 });
                 image.setFloraSpecies(set);
-
+                status.setReferenceResult(referenceMap);
                 imageRepository.save(image);
             }
             break;

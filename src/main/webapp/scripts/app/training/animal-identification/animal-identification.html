@@ -17,15 +17,15 @@
         <div ng-show="displayControls">
             <div style="width: 300px;">
                 <div class="btn-group btn-group-justified">
-                    <label class="btn blue" style="border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Snail'" uncheckable ng-disabled="scoreboard.animals.Snail === undefined">
+                    <label class="btn blue" style="border-top-right-radius: 0px;border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;"
+                           ng-model="radioModel.selected" btn-radio="'Snail'" uncheckable ng-disabled="scoreboard.animals.Snail === undefined">
                         <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Snail'"></span>
                         <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Snail')"></span>
                         <span class="glyphicon glyphicon-lock" ng-show="scoreboard.animals.Snail === undefined"></span>
                         Snail
                     </label>
-                </div>
-                <div class="btn-group btn-group-justified">
-                    <label class="btn green" style="border-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Mussel'" uncheckable ng-disabled="scoreboard.animals.Mussel === undefined">
+                    <label class="btn green" style="border-top-left-radius: 0px;border-bottom-left-radius: 0px;border-bottom-right-radius: 0px;"
+                           ng-model="radioModel.selected" btn-radio="'Mussel'" uncheckable ng-disabled="scoreboard.animals.Mussel === undefined">
                         <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Mussel'"></span>
                         <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Mussel')"></span>
                         <span class="glyphicon glyphicon-lock" ng-show="scoreboard.animals.Mussel === undefined"></span>
@@ -33,13 +33,15 @@
                     </label>
                 </div>
                 <div class="btn-group btn-group-justified">
-                    <!--<label class="btn yellow" style="border-top-left-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Crab'" uncheckable ng-disabled="scoreboard.animals.Crab === undefined">-->
-                        <!--<span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Crab'"></span>-->
-                        <!--<span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Crab')"></span>-->
-                        <!--<span class="glyphicon glyphicon-lock" ng-show="scoreboard.animals.Crab === undefined"></span>-->
-                        <!--Crab-->
-                    <!--</label>-->
-                    <label class="btn purple" style="border-top-left-radius: 0px;border-top-right-radius: 0px;" ng-model="radioModel.selected" btn-radio="'Burrow'" uncheckable ng-disabled="scoreboard.animals.Burrow === undefined">
+                    <label class="btn yellow" style="border-top-left-radius: 0px;border-top-right-radius: 0px;border-bottom-right-radius: 0px;"
+                           ng-model="radioModel.selected" btn-radio="'Crab'" uncheckable ng-disabled="scoreboard.animals.Crab === undefined">
+                        <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Crab'"></span>
+                        <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Crab')"></span>
+                        <span class="glyphicon glyphicon-lock" ng-show="scoreboard.animals.Crab === undefined"></span>
+                        Crab
+                    </label>
+                    <label class="btn purple" style="border-top-left-radius: 0px;border-top-right-radius: 0px;border-bottom-left-radius: 0px;"
+                           ng-model="radioModel.selected" btn-radio="'Burrow'" uncheckable ng-disabled="scoreboard.animals.Burrow === undefined">
                         <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Burrow'"></span>
                         <span class="glyphicon glyphicon-thumbs-up" ng-show="isCompleted('Burrow')"></span>
                         <span class="glyphicon glyphicon-lock" ng-show="scoreboard.animals.Burrow === undefined"></span>
