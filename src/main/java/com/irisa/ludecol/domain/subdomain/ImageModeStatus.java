@@ -1,10 +1,9 @@
 package com.irisa.ludecol.domain.subdomain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by dorian on 24/08/15.
@@ -22,6 +21,10 @@ public class ImageModeStatus {
     private Map referenceResult;
 
     public ImageModeStatus() {}
+
+    public ImageModeStatus(ImageStatus status) {
+        this.status = status;
+    }
 
     public ImageModeStatus(ImageStatus status, Integer gameNumber) {
         this.status = status;

@@ -26,6 +26,7 @@ angular.module('ludecolApp')
                 $scope.Limonium= undefined;
 
                 angular.forEach(img.flora_species,function(value) {
+                    console.log(value);
                     $scope[value] = true;
                     $scope.$watch('show'+value,function(n) {TrainingPlantGameService.toggleFeatures(value,n);});
                     $scope['show'+value] = true;

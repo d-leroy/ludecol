@@ -6,6 +6,7 @@ import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.repository.ExpertGameRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
 import com.irisa.ludecol.service.ExpertGameService;
+import com.irisa.ludecol.service.GameProcessingService;
 import com.irisa.ludecol.service.ImageProviderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +33,6 @@ import java.util.List;
 public class ExpertGameResource {
 
     private final Logger log = LoggerFactory.getLogger(ExpertGameResource.class);
-
-//    @Inject
-//    private ProcessedGameRepository processedGameRepository;
 
     @Inject
     private ExpertGameRepository expertGameRepository;

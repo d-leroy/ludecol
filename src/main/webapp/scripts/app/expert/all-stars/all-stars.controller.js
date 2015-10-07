@@ -42,7 +42,7 @@ angular.module('ludecolApp')
                 $scope.submit = function(){$scope.errorMsg = null; ExpertAllStarsGameService.submitGame();};
                 $scope.displayControls = true;
 
-                angular.forEach(game.processed_result.species_map,function(v,k){
+                angular.forEach(game.reference_result.species_map,function(v,k){
                     var x = v.x;
                     var y = v.y;
                     if(x+y !== 0) {

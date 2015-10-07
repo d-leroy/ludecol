@@ -64,7 +64,7 @@ public class GameProcessingService {
     }
 
     private Map<PlantSpecies,List<Boolean>> processPlantIdentification(final List<PlantIdentificationResult> gameResults) {
-        final Map<PlantSpecies,List<Boolean>> result = new EnumMap(PlantSpecies.class);
+        final Map<PlantSpecies,List<Boolean>> result = new HashMap();
         final List<Iterator<Boolean>> iterators = new ArrayList<>();
 
         for(PlantSpecies species : PlantSpecies.values()) {
@@ -86,7 +86,7 @@ public class GameProcessingService {
     }
 
     private Map<Species,Boolean> processAllStars(final List<AllStarsResult> gameResults) {
-        final Map<Species,Boolean> result = new EnumMap(Species.class);
+        final Map<Species,Boolean> result = new HashMap();
 
         for(Species species : Species.values()) {
             int presence = 0;
@@ -107,7 +107,7 @@ public class GameProcessingService {
 
     private Map<AnimalSpecies,List<double[]>> processAnimalIdentification(final List<AnimalIdentificationResult> gameResults) {
         final int nb_submissions = gameResults.size();
-        final Map<AnimalSpecies,List<double[]>> result = new EnumMap(AnimalSpecies.class);
+        final Map<AnimalSpecies,List<double[]>> result = new HashMap();
         for(AnimalSpecies species : AnimalSpecies.values()) {
             final Map<double[],List<double[]>> pointMap = new HashMap<>();
             for(int i=0;i<nb_submissions-1;i++) {
@@ -216,7 +216,7 @@ public class GameProcessingService {
         }
     }
 
-    public void rateGame(Image image, GameMode mode) {
+    public void rateGames(Image image, GameMode mode) {
         List<Game> games = gameRepository.findAllByImgAndGameModeAndCompleted(image.getName(),mode,true)
             .stream().filter(g->g.getScore()==-1).collect(Collectors.toList());
         ImageModeStatus imageModeStatus = image.getModeStatus().get(mode);
@@ -440,46 +440,112 @@ public class GameProcessingService {
         imageModeStatus.getGameResults().add(game.getGameResult());
         List<GameResult> results = imageModeStatus.getGameResults();
         results.add(game.getGameResult());
-        //If the image hasn't been processed yet for the given mode but has accrued enough submissions, it is processed now.
-        if(!imageModeStatus.getStatus().equals(ImageStatus.PROCESSED) && results.size() >= imageSet.getRequiredSubmissions()) {
-            Map processedResults = null;
-            switch (mode) {
-                case PlantIdentification: {
-                    List<PlantIdentificationResult> plantResults = results.stream()
-                        .filter(r -> r instanceof PlantIdentificationResult)
-                        .map(r -> (PlantIdentificationResult) r).collect(Collectors.toList());
-                    imageModeStatus.setStatus(ImageStatus.PROCESSED);
-                    /*Map<PlantSpecies, List<Boolean>> */processedResults = processPlantIdentification(plantResults);
-                }
-                break;
-                case AnimalIdentification: {
-                    List<AnimalIdentificationResult> animalResults = results.stream()
-                        .filter(r -> r instanceof AnimalIdentificationResult)
-                        .map(r -> (AnimalIdentificationResult) r).collect(Collectors.toList());
-                    imageModeStatus.setStatus(ImageStatus.PROCESSED);
-                    /*Map<AnimalSpecies, List<double[]>> */processedResults = processAnimalIdentification(animalResults);
-                }
-                break;
-                case AllStars: {
-                    List<AllStarsResult> allStarsResults = results.stream()
-                        .filter(r -> r instanceof AllStarsResult)
-                        .map(r -> (AllStarsResult) r).collect(Collectors.toList());
-                    imageModeStatus.setStatus(ImageStatus.PROCESSED);
-                    /*Map<Species,Boolean> */processedResults = processAllStars(allStarsResults);
-                }
-                break;
-            }
-            if(processedResults != null) {
-                imageModeStatus.setReferenceResult(processedResults);
-            }
-        }
         imageRepository.save(img);
 
-        if(imageModeStatus.getStatus().equals(ImageStatus.PROCESSED)) {
-            Map referenceResult = imageModeStatus.getReferenceResult();
-            if(referenceResult != null) {
-                rateGame(img,mode);
-            }
+        //If the image hasn't been processed yet for the given mode but has accrued enough submissions, it is processed now.
+        if(!imageModeStatus.getStatus().equals(ImageStatus.PROCESSED) && results.size() >= imageSet.getRequiredSubmissions()) {
+            processImage(mode,results,img);
         }
+    }
+
+    private void processImage(GameMode mode, List<GameResult> results, Image image) {
+        Map processedResults = null;
+        switch (mode) {
+            case PlantIdentification: {
+                List<PlantIdentificationResult> plantResults = results.stream()
+                    .filter(r -> r instanceof PlantIdentificationResult)
+                    .map(r -> (PlantIdentificationResult) r).collect(Collectors.toList());
+                    /*Map<PlantSpecies, List<Boolean>> */processedResults = processPlantIdentification(plantResults);
+            }
+            break;
+            case AnimalIdentification: {
+                List<AnimalIdentificationResult> animalResults = results.stream()
+                    .filter(r -> r instanceof AnimalIdentificationResult)
+                    .map(r -> (AnimalIdentificationResult) r).collect(Collectors.toList());
+                    /*Map<AnimalSpecies, List<double[]>> */processedResults = processAnimalIdentification(animalResults);
+
+            }
+            break;
+            case AllStars: {
+                List<AllStarsResult> allStarsResults = results.stream()
+                    .filter(r -> r instanceof AllStarsResult)
+                    .map(r -> (AllStarsResult) r).collect(Collectors.toList());
+                    /*Map<Species,Boolean> */processedResults = processAllStars(allStarsResults);
+            }
+            break;
+        }
+        if(processedResults != null) {
+            handleGameProcessing(image, mode, processedResults);
+        }
+    }
+
+    public void handleGameProcessing(Image image, GameMode mode, Map result) {
+        ImageModeStatus status = image.getModeStatus().get(mode);
+        switch(mode) {
+            case AllStars: {
+                Map<Species,Boolean> referenceMap = result;
+
+                Set<AnimalSpecies> faunaSpecies = new HashSet<>();
+                Set<PlantSpecies> floraSpecies = new HashSet<>();
+
+                referenceMap.keySet().stream().filter(k->referenceMap.get(k)).forEach(k->{
+                    try {floraSpecies.add(PlantSpecies.valueOf(k.toString()));}
+                    catch (IllegalArgumentException e1) {
+                        try {faunaSpecies.add(AnimalSpecies.valueOf(k.toString()));}
+                        catch (IllegalArgumentException e2) {
+                            e1.printStackTrace();
+                            e2.printStackTrace();
+                        }
+                    }
+                });
+
+                status.setStatus(ImageStatus.PROCESSED);
+                if(!faunaSpecies.isEmpty()) {
+                    ImageModeStatus modeStatus = image.getModeStatus().get(GameMode.AnimalIdentification);
+                    if(modeStatus.getStatus().equals(ImageStatus.UNAVAILABLE))
+                        modeStatus.setStatus(ImageStatus.NOT_PROCESSED);
+                    image.setFaunaSpecies(faunaSpecies);
+                }
+                if(!floraSpecies.isEmpty()) {
+                    ImageModeStatus modeStatus = image.getModeStatus().get(GameMode.PlantIdentification);
+                    if(modeStatus.getStatus().equals(ImageStatus.UNAVAILABLE))
+                        modeStatus.setStatus(ImageStatus.NOT_PROCESSED);
+                    image.setFloraSpecies(floraSpecies);
+                }
+                status.setReferenceResult(referenceMap);
+                imageRepository.save(image);
+            }
+            break;
+            case AnimalIdentification: {
+                Map<AnimalSpecies,List<double[]>> referenceMap = result;
+
+                status.setStatus(ImageStatus.PROCESSED);
+                Set<AnimalSpecies> set = new HashSet<>();
+                referenceMap.entrySet().stream().forEach(e -> {
+                    if (!e.getValue().isEmpty())
+                        set.add(e.getKey());
+                });
+                image.setFaunaSpecies(set);
+                status.setReferenceResult(referenceMap);
+                imageRepository.save(image);
+            }
+            break;
+            case PlantIdentification: {
+                Map<PlantSpecies,List<Boolean>> referenceMap = result;
+
+                status.setStatus(ImageStatus.PROCESSED);
+                Set<PlantSpecies> set = new HashSet<>();
+                referenceMap.entrySet().stream().forEach(e -> {
+                    if (e.getValue().contains(true))
+                        set.add(e.getKey());
+                });
+                image.setFloraSpecies(set);
+                status.setReferenceResult(referenceMap);
+                imageRepository.save(image);
+            }
+            break;
+        }
+        log.debug("Updated image : {}", image);
+        rateGames(image, mode);
     }
 }

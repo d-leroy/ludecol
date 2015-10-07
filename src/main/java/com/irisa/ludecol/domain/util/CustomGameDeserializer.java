@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class CustomGameDeserializer extends JsonDeserializer<Game> {
 
         TypeFactory tf = TypeFactory.defaultInstance();
         JavaType listType = tf.constructCollectionType(List.class, double[].class);
-        JavaType mapType = tf.constructMapType(HashMap.class, Species.class, Integer.class);
+        JavaType mapType = tf.constructMapType(EnumMap.class, Species.class, Integer.class);
         Game result = new Game();
         if (node.get("usr") != null)
             result.setUser(node.get("usr").asText());
@@ -45,7 +46,7 @@ public class CustomGameDeserializer extends JsonDeserializer<Game> {
                 case AllStars: {
                     ObjectMapper mapper = new ObjectMapper();
                     JsonParser map = node.get("game_result").traverse();
-                    HashMap<Species,Boolean> tmp = mapper.readValue(map,mapType);
+                    EnumMap<Species,Boolean> tmp = mapper.readValue(map,mapType);
                     AllStarsResult res = new AllStarsResult();
                     res.setSpeciesMap(tmp);
                     result.setGameResult(res);

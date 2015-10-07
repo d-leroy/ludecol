@@ -7,7 +7,7 @@ angular.module('ludecolApp')
             $scope.isAuthenticated = Principal.isAuthenticated;
             $scope.errorMsg = null;
 
-            function errorCallback() {$scope.errorMsg = true; ImageService.destroyMap();}
+            function errorCallback(e) {console.dir(e); $scope.errorMsg = true; ImageService.destroyMap();}
 
             function initializeFeatureCollection() {
                 return {

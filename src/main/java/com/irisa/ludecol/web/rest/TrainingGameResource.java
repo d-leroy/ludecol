@@ -7,6 +7,7 @@ import com.irisa.ludecol.repository.TrainingGameRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
 import com.irisa.ludecol.service.ImageProviderService;
 import com.irisa.ludecol.service.TrainingGameService;
+import com.irisa.ludecol.service.UserService;
 import com.irisa.ludecol.web.rest.dto.TrainingGameDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,9 @@ public class TrainingGameResource {
 
     @Inject
     private ImageProviderService imageProviderService;
+
+    @Inject
+    private UserService userService;
 
     /**
      * POST  /traingames -> Create a new game.
@@ -118,4 +122,23 @@ public class TrainingGameResource {
         return new ResponseEntity<>(trainingGameService.getTrainingGameWrapper(result), HttpStatus.OK);
     }
 
+    /**
+     * DELETE /traingames/:id -> deletes the game if it is not completed and adds the image tp the "skipped images" list of the user
+     */
+    @RequestMapping(value = "/traingames/{id}",
+        method = RequestMethod.DELETE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    @RolesAllowed(AuthoritiesConstants.USER)
+    public ResponseEntity<Void> delete(@PathVariable String id, Principal principal) {
+        log.debug("Delete request on game : {}", id);
+        TrainingGame game = trainingGameRepository.findOne(id);
+        if(!game.getUsr().equals(principal.getName()))
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if(game.getCompleted())
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        userService.updateSkippedList(game.getUsr(),game.getImg(),game.getGameMode());
+        trainingGameRepository.delete(id);
+        return ResponseEntity.ok().build();
+    }
 }

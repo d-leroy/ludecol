@@ -41,9 +41,9 @@ public class ExpertGame<T extends GameResult> {
     @JsonProperty("game_mode")
     private GameMode gameMode;
 
-    @Field("processed_result")
-    @JsonProperty("processed_result")
-    private T processedResult;
+    @Field("reference_result")
+    @JsonProperty("reference_result")
+    private T referenceResult;
 
     @NotNull
     @Field("submitted_result")
@@ -80,12 +80,12 @@ public class ExpertGame<T extends GameResult> {
         this.gameMode = gameMode;
     }
 
-    public T getProcessedResult() {
-        return processedResult;
+    public T getReferenceResult() {
+        return referenceResult;
     }
 
-    public void setProcessedResult(T processedResult) {
-        this.processedResult = processedResult;
+    public void setReferenceResult(T referenceResult) {
+        this.referenceResult = referenceResult;
     }
 
     public T getSubmittedResult() {
@@ -127,7 +127,7 @@ public class ExpertGame<T extends GameResult> {
             ", usr='" + usr + '\'' +
             ", img='" + img + '\'' +
             ", gameMode=" + gameMode +
-            ", processedResult=" + processedResult +
+            ", referenceResult=" + referenceResult +
             ", submittedResult=" + submittedResult +
             ", completed=" + completed +
             ", lastModified=" + lastModified +

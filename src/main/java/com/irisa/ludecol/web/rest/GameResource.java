@@ -130,7 +130,6 @@ public class GameResource {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         if(game.getCompleted())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        game.getImg()
         userService.updateSkippedList(game.getUsr(),game.getImg(),game.getGameMode());
         gameRepository.delete(id);
         return ResponseEntity.ok().build();

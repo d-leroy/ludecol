@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class AnimalIdentificationResult extends GameResult/*<AnimalSpecies,List<
 
     @JsonProperty("species_map")
     @Field("species_map")
-    private Map<AnimalSpecies,List<double[]>> speciesMap = new EnumMap<>(AnimalSpecies.class);
+    private Map<AnimalSpecies,List<double[]>> speciesMap = new HashMap();
 
     /*@Override*/
     public Map<AnimalSpecies, List<double[]>> getSpeciesMap() {

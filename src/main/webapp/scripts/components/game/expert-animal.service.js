@@ -22,11 +22,15 @@ angular.module('ludecolApp')
 
         var _highlightStyle = new ol.style.Style({image: new ol.style.Icon(({anchor: [0.5, 1],src: 'images/icon-red.png',}))});
 
-        var _speciesCircles = {
-            Burrow: [],
-            Crab: [],
-            Mussel: [],
-            Snail: []
+        var _speciesCircles;
+
+        function _initializeSpeciesCircles() {
+            return {
+                Burrow: [],
+                Crab: [],
+                Mussel: [],
+                Snail: []
+            }
         };
 
         function _isWithinBounds(coord) {
@@ -58,14 +62,16 @@ angular.module('ludecolApp')
         function _setupGame(img,game) {
             _displayedFeatures = {};
             _successCallback(img,game);
+            _speciesCircles = _initializeSpeciesCircles();
 
             _width = img.width; _height = img.height;
             //Creating vector layer, to which features will be added.
             _vectorSource = new ol.source.Vector({});
             ImageService.addLayer(new ol.layer.Vector({source: _vectorSource}));
 
-            if(game.processed_result !== null) {
-                angular.forEach(game.processed_result.species_map,function(species,property) {
+            if(game.reference_result !== null) {
+                console.dir(game.reference_result);
+                angular.forEach(game.reference_result.species_map,function(species,property) {
                     angular.forEach(species,function(occurrence) {
                         var circle = new ol.Feature({
                             geometry: new ol.geom.Circle([occurrence[0],occurrence[1]],64)

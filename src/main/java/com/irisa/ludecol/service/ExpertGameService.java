@@ -10,10 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.HashSet;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by dorian on 07/05/15.
@@ -59,71 +58,58 @@ public class ExpertGameService {
     public void handleExpertGameSubmission(ExpertGame expertGame) {
         Image image = imageRepository.findOne(expertGame.getImg());
         GameMode mode = expertGame.getGameMode();
-        ImageModeStatus status = image.getModeStatus().get(mode);
+        Map result = null;
         switch(mode) {
-            case AllStars: {
-                Map<Species,Boolean> referenceMap = ((AllStarsResult) expertGame.getSubmittedResult()).getSpeciesMap();
+            case AllStars:
+                result = ((AllStarsResult) expertGame.getSubmittedResult()).getSpeciesMap();
+                break;
+            case AnimalIdentification:
+                result = ((AnimalIdentificationResult) expertGame.getSubmittedResult()).getSpeciesMap();
+                break;
+            case PlantIdentification:
+                result = ((PlantIdentificationResult) expertGame.getSubmittedResult()).getSpeciesMap();
+                break;
+        }
+        gameProcessingService.handleGameProcessing(image,mode,result);
+    }
 
-                Set<AnimalSpecies> faunaSpecies = new HashSet<>();
-                Set<PlantSpecies> floraSpecies = new HashSet<>();
-
-                referenceMap.keySet().stream().filter(k->referenceMap.get(k)).forEach(k->{
-                    try {floraSpecies.add(PlantSpecies.valueOf(k.toString()));}
-                    catch (IllegalArgumentException e1) {
-                        try {faunaSpecies.add(AnimalSpecies.valueOf(k.toString()));}
-                        catch (IllegalArgumentException e2) {
-                            e1.printStackTrace();
-                            e2.printStackTrace();
-                        }
-                    }
-                });
-
-                status.setStatus(ImageStatus.PROCESSED);
-                if(!faunaSpecies.isEmpty()) {
-                    ImageModeStatus modeStatus = image.getModeStatus().get(GameMode.AnimalIdentification);
-                    if(modeStatus.getStatus().equals(ImageStatus.UNAVAILABLE))
-                        modeStatus.setStatus(ImageStatus.NOT_PROCESSED);
-                    image.setFaunaSpecies(faunaSpecies);
-                }
-                if(!floraSpecies.isEmpty()) {
-                    ImageModeStatus modeStatus = image.getModeStatus().get(GameMode.PlantIdentification);
-                    if(modeStatus.getStatus().equals(ImageStatus.UNAVAILABLE))
-                        modeStatus.setStatus(ImageStatus.NOT_PROCESSED);
-                    image.setFloraSpecies(floraSpecies);
-                }
-                status.setReferenceResult(referenceMap);
-                imageRepository.save(image);
-            }
-            break;
+    private ExpertGame createNewExpertGame(GameMode mode) {
+        ExpertGame result = null;
+        switch (mode) {
             case AnimalIdentification: {
-                Map<AnimalSpecies,List<double[]>> referenceMap = ((AnimalIdentificationResult) expertGame.getSubmittedResult()).getSpeciesMap();
-
-                image.getModeStatus().get(GameMode.AnimalIdentification).setStatus(ImageStatus.PROCESSED);
-                Set<AnimalSpecies> set = new HashSet<>();
-                referenceMap.entrySet().stream().forEach(e -> {
-                    if (!e.getValue().isEmpty())
-                        set.add(e.getKey());
-                });
-                image.setFaunaSpecies(set);
-                status.setReferenceResult(referenceMap);
-                imageRepository.save(image);
+                result = new ExpertGame<AnimalIdentificationResult>();
             }
             break;
             case PlantIdentification: {
-                Map<PlantSpecies,List<Boolean>> referenceMap = ((PlantIdentificationResult) expertGame.getSubmittedResult()).getSpeciesMap();
-
-                image.getModeStatus().get(GameMode.PlantIdentification).setStatus(ImageStatus.PROCESSED);
-                Set<PlantSpecies> set = new HashSet<>();
-                referenceMap.entrySet().stream().forEach(e -> {
-                    if (!e.getValue().contains(true))
-                        set.add(e.getKey());
-                });
-                image.setFloraSpecies(set);
-                status.setReferenceResult(referenceMap);
-                imageRepository.save(image);
+                result = new ExpertGame<PlantIdentificationResult>();
             }
             break;
+            case AllStars: {
+                result = new ExpertGame<AllStarsResult>();
+            }
         }
+        return result;
+    }
+
+    private GameResult createGameResult(GameMode mode, Map map) {
+        GameResult result = null;
+        switch (mode) {
+            case AnimalIdentification: {
+                result = new AnimalIdentificationResult();
+                ((AnimalIdentificationResult) result).setSpeciesMap(map);
+            }
+            break;
+            case PlantIdentification: {
+                result = new PlantIdentificationResult();
+                ((PlantIdentificationResult) result).setSpeciesMap(map);
+            }
+            break;
+            case AllStars: {
+                result = new AllStarsResult();
+                ((AllStarsResult) result).setSpeciesMap(map);
+            }
+        }
+        return result;
     }
 
     public ExpertGame createExpertGame(Game game) {
@@ -137,82 +123,17 @@ public class ExpertGameService {
             ImageModeStatus modeStatus = image.getModeStatus().get(mode);
             List<ExpertGame> games = expertGameRepository.findAllByImgAndUsrAndGameMode(img, login, mode);
             if (games.isEmpty()) {
-                switch (mode) {
-                    case AnimalIdentification: {
-                        result = new ExpertGame<AnimalIdentificationResult>();
-                        AnimalIdentificationResult gameResult = new AnimalIdentificationResult();
-                        if(modeStatus != null) {
-                            gameResult.setSpeciesMap(modeStatus.getReferenceResult());
-                        }
-                        result.setProcessedResult(gameResult);
-                    }
-                    break;
-                    case PlantIdentification: {
-                        result = new ExpertGame<PlantIdentificationResult>();
-                        PlantIdentificationResult gameResult = new PlantIdentificationResult();
-                        if(modeStatus != null) {
-                            gameResult.setSpeciesMap(modeStatus.getReferenceResult());
-                        }
-                        result.setProcessedResult(gameResult);
-                    }
-                    break;
-                    case AllStars: {
-                        result = new ExpertGame<AllStarsResult>();
-                        AllStarsResult gameResult = new AllStarsResult();
-                        if(modeStatus != null) {
-                            gameResult.setSpeciesMap(modeStatus.getReferenceResult());
-                        }
-                        result.setProcessedResult(gameResult);
-                    }
-                    default:
-                }
+                result = createNewExpertGame(mode);
             } else {
                 result = games.get(0);
-                switch (mode) {
-                    case AnimalIdentification: {
-                        AnimalIdentificationResult gameResult = new AnimalIdentificationResult();
-                        if(modeStatus != null) {
-                            gameResult.setSpeciesMap(modeStatus.getReferenceResult());
-                        }
-                        result.setProcessedResult(gameResult);
-                    }
-                    break;
-                    case PlantIdentification: {
-                        PlantIdentificationResult gameResult = new PlantIdentificationResult();
-                        if(modeStatus != null) {
-                            gameResult.setSpeciesMap(modeStatus.getReferenceResult());
-                        }
-                        result.setProcessedResult(gameResult);
-                    }
-                    break;
-                    case AllStars: {
-                        AllStarsResult gameResult = new AllStarsResult();
-                        if(modeStatus != null) {
-                            gameResult.setSpeciesMap(modeStatus.getReferenceResult());
-                        }
-                        result.setProcessedResult(gameResult);
-                    }
-                    default:
-                }
             }
+//            Map refMap = modeStatus.getReferenceResult();
+//            if(refMap != null) {
+//                result.setReferenceResult(createGameResult(mode, refMap));
+//            }
             result.setImg(img);
-        }
-        else {
-            switch (mode) {
-                case AnimalIdentification: {
-                    result = new ExpertGame<AnimalIdentificationResult>();
-                }
-                break;
-                case PlantIdentification: {
-                    result = new ExpertGame<PlantIdentificationResult>();
-                }
-                break;
-                case AllStars: {
-                    result = new ExpertGame<AllStarsResult>();
-                }
-                default:
-            }
-
+        } else {
+            result = createNewExpertGame(mode);
             Image image = imageProviderService.findExpertImage(mode, login);
             if(image == null) {
                 return null;
@@ -224,8 +145,6 @@ public class ExpertGameService {
         result.setGameMode(mode);
         result.setUsr(login);
 
-        expertGameRepository.save(result);
-
-        return result;
+        return expertGameRepository.save(result);
     }
 }

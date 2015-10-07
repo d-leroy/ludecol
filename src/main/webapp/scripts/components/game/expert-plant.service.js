@@ -140,10 +140,11 @@ angular.module('ludecolApp')
                     n++;
                 });
             }
-
-            setPositions(_hintTags);
+            if(_hintTags !== undefined) {
+                setPositions(_hintTags);
+                setFeatures(_hintTags);
+            }
             setPositions(_tags);
-            setFeatures(_hintTags);
             setFeatures(_tags);
         }
 
@@ -167,8 +168,10 @@ angular.module('ludecolApp')
             for(var i=0; i<_cols*_rows; i++) {
                 var tmp = _tags[i];
                 angular.forEach(tmp,function(value,key) {result[key][i] = true;});
-                tmp = _hintTags[i];
-                angular.forEach(tmp,function(value,key) {result[key][i] = true;});
+                if(_hintTags !== undefined) {
+                    tmp = _hintTags[i];
+                    angular.forEach(tmp,function(value,key) {result[key][i] = true;});
+                }
             }
             return result;
         }
@@ -188,8 +191,8 @@ angular.module('ludecolApp')
             _vectorSource.addFeature(new ol.Feature({geometry: new ol.geom.MultiLineString(_setupLineGrid())}));
             //Initializing the array that will contain the 'tags'.
             _setupTags();
-            if(game.processed_result !== null) {
-                _setupHintTags(game.processed_result.species_map);
+            if(game.reference_result !== null) {
+                _setupHintTags(game.reference_result.species_map);
             }
             //Adding the click listener.
             ImageService.addListener('singleclick', function(evt) {
@@ -202,7 +205,9 @@ angular.module('ludecolApp')
                         var tags = _tags[idx];
                         var baseCoords = _getBaseCoordinates(i,j);
 
-                        var hintTags = _hintTags[idx];
+                        if(_hintTags !== undefined) {
+                            var hintTags = _hintTags[idx];
+                        }
                         var tags = _tags[idx];
 
                         if(hintTags !== undefined && hintTags[radioModel] !== undefined) {
@@ -270,5 +275,6 @@ angular.module('ludecolApp')
             else {angular.forEach(features,function(value) {_vectorSource.removeFeature(value);});}
         }
 
-        return {initializeGame: initializeGame, toggleFeatures: toggleFeatures, submitGame: submitGame};
+        return {initializeGame: initializeGame, initializeReferenceDefinition: initializeReferenceDefinition,
+            toggleFeatures: toggleFeatures, submitGame: submitGame};
     });

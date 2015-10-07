@@ -30,7 +30,7 @@ angular.module('ludecolApp')
             $scope.faunaDeregister = null;
 
             $scope.currentPage = 1;
-            $scope.modes = [{name: 'AllStars', state: null, nb: 0},
+            $scope.modes = [/*{name: 'AllStars', state: null, nb: 0},*/
                             {name: 'AnimalIdentification', state: null, nb: 0},
                             {name: 'PlantIdentification', state: null, nb: 0}];
 

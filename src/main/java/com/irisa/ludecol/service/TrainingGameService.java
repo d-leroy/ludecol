@@ -13,10 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by dorian on 07/05/15.
@@ -76,7 +74,7 @@ public class TrainingGameService {
             case AnimalIdentification: {
                 Map<AnimalSpecies,List<double[]>> submittedMap = ((AnimalIdentificationResult) game.getGameResult()).getSpeciesMap();
                 Map<AnimalSpecies,List<double[]>> referenceMap = ((AnimalIdentificationResult) trainingGame.getReferenceResult()).getSpeciesMap();
-                Map<AnimalSpecies,List<double[]>> correctedMap = new HashMap<>();
+                Map<AnimalSpecies,List<double[]>> correctedMap = new HashMap();
 
                 for(AnimalSpecies key : submittedMap.keySet()) {
                     List<double[]> referenceList = referenceMap.get(key);
@@ -93,7 +91,7 @@ public class TrainingGameService {
             case PlantIdentification: {
                 Map<PlantSpecies,List<Boolean>> submittedMap = ((PlantIdentificationResult) game.getGameResult()).getSpeciesMap();
                 Map<PlantSpecies,List<Boolean>> referenceMap = ((PlantIdentificationResult) trainingGame.getReferenceResult()).getSpeciesMap();
-                Map<PlantSpecies,List<Boolean>> correctedMap = new HashMap<>();
+                Map<PlantSpecies,List<Boolean>> correctedMap = new HashMap();
 
                 for(PlantSpecies key : submittedMap.keySet()) {
                     List<Boolean> referenceList = referenceMap.get(key);
@@ -133,14 +131,25 @@ public class TrainingGameService {
 
                     Map<AnimalSpecies,List<double[]>> submittedMap = ((AnimalIdentificationResult) trainingGame.getSubmittedResult()).getSpeciesMap();
                     Map<AnimalSpecies,List<double[]>> referenceMap = ((AnimalIdentificationResult) trainingGame.getReferenceResult()).getSpeciesMap();
-
-                    for(AnimalSpecies key : submittedMap.keySet()) {
-                        List<double[]> referenceList = referenceMap.get(key);
-                        List<double[]> submittedList = submittedMap.get(key);
-                        int max = referenceList.size();
-                        wrapper.getPartialResult().put(key,submittedList);
-                        wrapper.getMissingSpecies().put(key, max - submittedList.size());
-                        wrapper.getMaxSpecies().put(key,max);
+                    for(Object key : referenceMap.keySet()) {
+                        List<double[]> referenceList = null;
+                        List<double[]> submittedList = null;
+//                        if(key instanceof String) {
+//                            AnimalSpecies enumKey = AnimalSpecies.valueOf((String)key);
+//                            referenceList = referenceMap.get(enumKey);
+//                            submittedList = submittedMap.get(enumKey);
+//                            int max = referenceList.size();
+//                            wrapper.getPartialResult().put(enumKey, submittedList);
+//                            wrapper.getMissingSpecies().put(enumKey, max - submittedList.size());
+//                            wrapper.getMaxSpecies().put(enumKey, max);
+//                        } else if(key instanceof AnimalSpecies) {
+                            referenceList = referenceMap.get(key);
+                            submittedList = submittedMap.get(key);
+                            int max = referenceList.size();
+                            wrapper.getPartialResult().put((AnimalSpecies) key, submittedList);
+                            wrapper.getMissingSpecies().put((AnimalSpecies) key, max - submittedList.size());
+                            wrapper.getMaxSpecies().put((AnimalSpecies) key, max);
+//                        }
                     }
 
                     result = wrapper;
@@ -152,7 +161,7 @@ public class TrainingGameService {
                     Map<PlantSpecies,List<Boolean>> submittedMap = ((PlantIdentificationResult) trainingGame.getSubmittedResult()).getSpeciesMap();
                     Map<PlantSpecies,List<Boolean>> referenceMap = ((PlantIdentificationResult) trainingGame.getReferenceResult()).getSpeciesMap();
 
-                    for(PlantSpecies key : submittedMap.keySet()) {
+                    for(PlantSpecies key : referenceMap.keySet()) {
                         List<Boolean> referenceList = referenceMap.get(key);
                         List<Boolean> submittedList = submittedMap.get(key);
 
@@ -194,7 +203,16 @@ public class TrainingGameService {
         switch(game.getGameMode()) {
             case AnimalIdentification: {
                 refResult = new AnimalIdentificationResult();
-                ((AnimalIdentificationResult) refResult).setSpeciesMap(modeStatus.getReferenceResult());
+                Map<AnimalSpecies,List<double[]>> refMap = new HashMap();
+                Map tmpMap = modeStatus.getReferenceResult();
+                for(Object key : tmpMap.keySet()) {
+                    if(key instanceof String) {
+                        refMap.put(AnimalSpecies.valueOf((String)key),(List<double[]>)tmpMap.get(key));
+                    } else if(key instanceof AnimalSpecies){
+                        refMap.put((AnimalSpecies)key,(List<double[]>)tmpMap.get(key));
+                    }
+                }
+                ((AnimalIdentificationResult) refResult).setSpeciesMap(refMap);
                 if(refResult == null) {
                     return null;
                 }
@@ -203,7 +221,16 @@ public class TrainingGameService {
             break;
             case PlantIdentification: {
                 refResult = new PlantIdentificationResult();
-                ((PlantIdentificationResult) refResult).setSpeciesMap(modeStatus.getReferenceResult());
+                Map<PlantSpecies,List<Boolean>> refMap = new HashMap();
+                Map tmpMap = modeStatus.getReferenceResult();
+                for(Object key : tmpMap.keySet()) {
+                    if(key instanceof String) {
+                        refMap.put(PlantSpecies.valueOf((String)key),(List<Boolean>)tmpMap.get(key));
+                    } else if(key instanceof PlantSpecies){
+                        refMap.put((PlantSpecies)key,(List<Boolean>)tmpMap.get(key));
+                    }
+                }
+                ((PlantIdentificationResult) refResult).setSpeciesMap(refMap);
                 if(refResult == null) {
                     return null;
                 }
@@ -219,7 +246,6 @@ public class TrainingGameService {
         trainingGame.setImg(img.getId());
         trainingGame.setGameMode(mode);
         trainingGame.setSubmittedResult(game.getGameResult());
-        img.getModeStatus().get(game.getGameMode()).getReferenceResult();
         trainingGame.setReferenceResult(refResult);
         trainingGameRepository.save(trainingGame);
         return getTrainingGameWrapper(trainingGame);

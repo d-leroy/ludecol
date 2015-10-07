@@ -25,7 +25,7 @@ angular.module('ludecolApp')
                 $scope.Juncus = undefined;
                 $scope.Limonium= undefined;
 
-                angular.forEach(img.flora_species,function(value) {
+                angular.forEach(['Salicornia','Spartina','Batis','Borrichia','Juncus','Limonium'],function(value) {
                     $scope[value] = true;
                     $scope.$watch('show'+value,function(n) {ExpertPlantGameService.toggleFeatures(value,n);});
                     $scope['show'+value] = true;

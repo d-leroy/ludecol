@@ -108,6 +108,7 @@ angular.module('ludecolApp')
             }
 
             _updateFunction(_game, function(updatedGame) {
+                console.dir(updatedGame);
                 Image.get({id: updatedGame.img}, function(image) {
                     _game = updatedGame;
                     _game.usr = _login;

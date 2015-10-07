@@ -2,9 +2,7 @@ package com.irisa.ludecol.service;
 
 import com.irisa.ludecol.domain.Image;
 import com.irisa.ludecol.domain.ImageSet;
-import com.irisa.ludecol.domain.subdomain.GameMode;
-import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
-import com.irisa.ludecol.domain.subdomain.ImageStatus;
+import com.irisa.ludecol.domain.subdomain.*;
 import com.irisa.ludecol.repository.ExpertGameRepository;
 import com.irisa.ludecol.repository.GameRepository;
 import com.irisa.ludecol.repository.ImageRepository;
@@ -23,9 +21,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumMap;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -65,13 +61,22 @@ public class ImageService {
                     image.setHeight(img.getHeight());
                     EnumMap<GameMode,ImageModeStatus> map = image.getModeStatus();
                     Arrays.asList(GameMode.values()).stream().forEach(v -> {
-                        if (!v.equals(GameMode.AllStars))
-                            map.put(v,new ImageModeStatus());
-                        else
-                            map.put(v,new ImageModeStatus(ImageStatus.NOT_PROCESSED, 0));
+//                        if (!v.equals(GameMode.AllStars))
+//                            map.put(v,new ImageModeStatus());
+//                        else
+                        switch(v) {
+                            case AllStars: map.put(v,new ImageModeStatus(ImageStatus.NOT_PROCESSED));
+                                break;
+                            case AnimalIdentification: map.put(v,new ImageModeStatus(ImageStatus.NOT_PROCESSED));
+                                break;
+                            case PlantIdentification: map.put(v,new ImageModeStatus(ImageStatus.NOT_PROCESSED));
+                                break;
+                        }
                     });
                     image.setImageSet(imageSet.getName());
                     image.setSetPriority(imageSet.getPriority());
+                    image.setFaunaSpecies(EnumSet.allOf(AnimalSpecies.class));
+                    image.setFloraSpecies(EnumSet.allOf(PlantSpecies.class));
                     imageRepository.save(image);
                     log.debug("Saved Image : {}", image);
                 }
@@ -198,8 +203,6 @@ public class ImageService {
         expertGameRepository.findAllByImg(id).stream().forEach(expertGameRepository::delete);
         imageRepository.delete(id);
     }
-
-
 
 //    private List<ImageStatisticsDTO.GameModeStatistics> getImageModeStatistics(Image image) {
 //        List<ImageStatisticsDTO.GameModeStatistics> result = new ArrayList<>();
