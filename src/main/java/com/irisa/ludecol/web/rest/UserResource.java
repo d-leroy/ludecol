@@ -1,10 +1,7 @@
 package com.irisa.ludecol.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import com.irisa.ludecol.domain.ExpertGame;
-import com.irisa.ludecol.domain.Game;
-import com.irisa.ludecol.domain.TrainingGame;
-import com.irisa.ludecol.domain.User;
+import com.irisa.ludecol.domain.*;
 import com.irisa.ludecol.domain.subdomain.GameMode;
 import com.irisa.ludecol.repository.ExpertGameRepository;
 import com.irisa.ludecol.repository.GameRepository;
@@ -93,6 +90,23 @@ public class UserResource {
         return userRepository.findOneByLogin(login)
                 .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    /**
+     * PUT  /promote/:login -> promotes the "login" user to the admin position
+     */
+    @RequestMapping(value = "/promote/{login}",
+        method = RequestMethod.PUT,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    ResponseEntity<Void> promoteUser(@PathVariable String login) {
+        User user = userRepository.findOneByLogin(login).get();
+        Authority authority = new Authority();
+        authority.setName(AuthoritiesConstants.ADMIN);
+        user.getAuthorities().add(authority);
+        userRepository.save(user);
+        return ResponseEntity.ok().build();
     }
 
     /**
