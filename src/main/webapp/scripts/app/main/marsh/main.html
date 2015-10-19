@@ -1,15 +1,28 @@
 <div ng-cloak>
 
-    <img src="images/ludecol-banner.jpg" style="width:100%; margin-bottom: 20px;">
+    <img src="images/ludecol-banner.jpg" style="width:100%;">
 
-    <h2 class="text-center">New to the game?</h2>
-    <div style="width: 25%; margin: 0 auto;">
-        <a type="button" class="btn btn-primary btn-lg" style="width: 100%;" data-toggle="modal" data-target="#tutorialModal">Read the tutorial</a>
-    </div>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
 
-    <div style="width: 25%; margin: 0 auto;">
-        <a type="button" class="btn btn-primary btn-lg" style="width: 100%;" data-toggle="modal" data-target="#presentationModal">Read the presentation</a>
-    </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a data-toggle="modal" data-target="#tutorialModal">Tutorial</a></li>
+                    <li><a data-toggle="modal" data-target="#presentationModal">Presentation</a></li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
 
     <div ng-switch="isAuthenticated()">
 
@@ -73,9 +86,9 @@
                 </ul>
             </div>
 
-            <div style="width: 25%; margin: 0 auto; padding: 100px 0;">
-                <a ui-sref="feedback" class="btn btn-primary btn-lg" style="width: 100%;">Give us feedback!</a>
-            </div>
+            <!--<div style="width: 25%; margin: 0 auto; padding: 100px 0;">-->
+                <!--<a ui-sref="feedback" class="btn btn-primary btn-lg" style="width: 100%;">Give us feedback!</a>-->
+            <!--</div>-->
         </div>
     </div>
 

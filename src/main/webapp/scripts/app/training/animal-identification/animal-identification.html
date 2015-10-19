@@ -1,7 +1,7 @@
 <div ng-cloak>
     <h1 class="text-center">Animal Identification Practice</h1>
 
-    <div ng-show="errorMsg === true">
+    <div ng-show="errorMsgAnimals === true">
         <p class="text-center">
             Sorry, no image is available to you in this game mode at this time.
         </p>
@@ -10,7 +10,7 @@
         </div>
     </div>
 
-    <div id="controls" class="ol-control control-panel" ng-show="errorMsg === false">
+    <div id="controls" class="ol-control control-panel" ng-show="errorMsgAnimals === false">
         <button type="button" ng-show="displayControls" ng-click="displayControls = !displayControls">&#x25B2;</button>
         <button type="button" ng-hide="displayControls" ng-click="displayControls = !displayControls">&#x25BC;</button>
 
@@ -117,7 +117,7 @@
         </div>
     </div>
 
-    <div id="scoreboard" class="ol-control scoreboard-panel" ng-show="errorMsg === false">
+    <div id="scoreboard" class="ol-control scoreboard-panel" ng-show="errorMsgAnimals === false">
         <button type="button" ng-show="displayScoreboard" ng-click="displayScoreboard = !displayScoreboard" style="float: right;">
             <span class="glyphicon glyphicon-triangle-top"></span>
         </button>

@@ -11,12 +11,12 @@ angular.module('ludecolApp')
         Principal.identity().then(function(account) {
             $scope.account = account;
             $scope.isAuthenticated = Principal.isAuthenticated;
-            $scope.errorMsg = null;
+            $scope.errorMsgAnimals = null;
 
-            function errorCallback() {$scope.errorMsg = true; ImageService.destroyMap();}
+            function errorCallback() {$scope.errorMsgAnimals = true; ImageService.destroyMap();}
 
             function loadGame(img,game) {
-                $scope.errorMsg = false;
+                $scope.errorMsgAnimals = false;
 
                 FeatureCollection.Burrow = undefined;
                 FeatureCollection.Crab = undefined;
@@ -37,7 +37,7 @@ angular.module('ludecolApp')
                 ImageService.addControl(controls);
                 ImageService.addControl(scoreboard);
                 $scope.submit = TrainingAnimalGameService.submitGame;
-                $scope.skip = function(){$scope.errorMsg = null; TrainingAnimalGameService.skipGame();};
+                $scope.skip = function(){$scope.errorMsgAnimals = null; TrainingAnimalGameService.skipGame();};
 
                 $scope.isCompleted = function(key) {
                     var entry = ScoreboardService.data.animals[key];
