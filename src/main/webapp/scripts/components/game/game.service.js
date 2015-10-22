@@ -38,9 +38,8 @@ angular.module('ludecolApp')
         var _skipGame = function() {
             console.log(_game.id);
             _deleteFunction({id: _game.id},function() {
-//                _startNewGame();
-//                initializeGame(_login,_mode,_emptyResultSupplier,_resultSupplier,_successCallback,_errorCallback,_queryFunction,_updateFunction,_deleteFunction);
-                $state.go('home');
+                initializeGame(_login,_mode,_emptyResultSupplier,_resultSupplier,_successCallback,_errorCallback,_queryFunction,_updateFunction,_deleteFunction);
+//                $state.go('home');
             })
         }
 

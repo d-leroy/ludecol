@@ -6,6 +6,8 @@ import com.irisa.ludecol.domain.subdomain.AnimalSpecies;
 import com.irisa.ludecol.domain.subdomain.GameMode;
 import com.irisa.ludecol.domain.subdomain.PlantSpecies;
 import com.irisa.ludecol.repository.ImageRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class DataExportService {
+
+    private final Logger log = LoggerFactory.getLogger(DataExportService.class);
 
     @Inject
     private ImageRepository imageRepository;
@@ -44,13 +48,15 @@ public class DataExportService {
             if(refAnimalMap != null && refPlantMap != null) {
                 Arrays.asList(AnimalSpecies.values()).stream()
                     .forEach(s -> {
-                        List<double[]> l = refAnimalMap.get(s);
+                        List<double[]> l = refAnimalMap.get(s.toString());
                         animalMap.put(s, l == null ? 0 : l.size());
                     });
                 Arrays.asList(PlantSpecies.values()).stream()
                     .forEach(s -> {
-                        List<Boolean> l = refPlantMap.get(s);
-                        plantMap.put(s, l == null ? 0. : l.stream().filter(b -> b).collect(Collectors.toList()).size() / l.size());
+                        List<Boolean> l = refPlantMap.get(s.toString());
+                        int s1 = l.stream().filter(b -> b).collect(Collectors.toList()).size();
+                        int s2 = l.size();
+                        plantMap.put(s, l == null ? 0. : (s1 * 1.) / (s2 * 1.));
                     });
                 builder.append(image.getName() + "\t"
                     + animalMap.get(AnimalSpecies.Burrow) + "\t"
