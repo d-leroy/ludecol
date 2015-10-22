@@ -5,10 +5,7 @@ import com.irisa.ludecol.domain.subdomain.GameMode;
 import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
 import com.irisa.ludecol.domain.subdomain.ImageStatus;
 import com.irisa.ludecol.domain.subdomain.Pair;
-import com.irisa.ludecol.repository.ExpertGameRepository;
-import com.irisa.ludecol.repository.GameRepository;
-import com.irisa.ludecol.repository.TrainingGameRepository;
-import com.irisa.ludecol.repository.UserRepository;
+import com.irisa.ludecol.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -44,6 +41,9 @@ public class ImageProviderService {
 
     @Inject
     private ExpertGameRepository expertGameRepository;
+
+    @Inject
+    private ImageSetRepository imageSetRepository;
 
     private final Logger log = LoggerFactory.getLogger(ImageProviderService.class);
 
@@ -84,12 +84,69 @@ public class ImageProviderService {
     }
 
     private List<Image> filterImageListBySet(List<Image> images) {
-        int maxSetPriority = images.stream()
-            .collect(Collectors.maxBy(Comparator.comparingInt(Image::getSetPriority)))
-            .get().getSetPriority();
+        ImageSet imageSet = imageSetRepository.findAll().stream()
+            .collect(Collectors.minBy(Comparator.comparingInt(ImageSet::getPriority))).get();
         return images.stream()
-            .filter(i -> i.getSetPriority() == maxSetPriority)
+            .filter(i->imageSet.getName().equals(i.getImageSet()))
             .collect(Collectors.toList());
+//        int maxSetPriority = images.stream()
+//            .collect(Collectors.minBy(Comparator.comparingInt(Image::getSetPriority)))
+//            .get().getSetPriority();
+//        return images.stream()
+//            .filter(i -> i.getSetPriority() == maxSetPriority)
+//            .collect(Collectors.toList());
+    }
+
+    private int compareImageNames(String n1, String n2) {
+        if(n1.equals(n2)) {
+            return 0;
+        }
+
+        //Images must be treated by ascending order on their suffix (_0, _1, _2, ...)
+        int i=n1.length()-1;
+        char c=n1.charAt(i);
+        while(Character.isDigit(c) && i>=0) {
+            i--;
+            c=n1.charAt(i);
+        }
+        int suffix1 = Integer.parseInt(n1.substring(i+1));
+        i=n2.length()-1;
+        c=n2.charAt(i);
+        while(Character.isDigit(c) && i>=0) {
+            i--;
+            c=n2.charAt(i);
+        }
+        int suffix2 = Integer.parseInt(n2.substring(i+1));
+        if(suffix1 > suffix2) {
+            return -1;
+        }
+        if(suffix2 > suffix1) {
+            return 1;
+        }
+
+        //In case of suffix equality, images must be treated by ascending order on their prefix
+        i=0;
+        c=n1.charAt(i);
+        while(Character.isDigit(c) && i<n1.length()) {
+            i++;
+            c=n1.charAt(i);
+        }
+        int prefix1 = Integer.parseInt(n1.substring(0, i-1));
+        i=0;
+        c=n2.charAt(i);
+        while(Character.isDigit(c) && i<n2.length()) {
+            i++;
+            c=n2.charAt(i);
+        }
+        int prefix2 = Integer.parseInt(n1.substring(0, i-1));
+        if(prefix1 > prefix2) {
+            return -1;
+        }
+        if(prefix2 > prefix1) {
+            return 1;
+        }
+
+        return 0;
     }
 
     /**
@@ -193,7 +250,9 @@ public class ImageProviderService {
         if(!tmp.isEmpty()) {
             images = tmp;
         }
-        Image image = images.get(rand.nextInt(images.size()));
+//        Image image = images.get(rand.nextInt(images.size()));
+        images.sort((i1,i2)->compareImageNames(i1.getName(),i2.getName()));
+        Image image = images.get(0);
         skippedImages.removeIf(p -> p.getX().equals(image.getId()) && p.getY().equals(mode));
         userRepository.save(user);
         return image;

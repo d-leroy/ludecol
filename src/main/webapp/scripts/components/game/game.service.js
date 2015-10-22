@@ -13,7 +13,7 @@ angular.module('ludecolApp')
             var modalInstance = SubmitModalService();
             modalInstance.result.then(
                 function (newGame) {
-                    if(newGame) {initializeGame(_login,_mode,_emptyResultSupplier,_resultSupplier,_successCallback,_errorCallback,_queryFunction,_updateFunction)}
+                    if(newGame) {initializeGame(_login,_mode,_emptyResultSupplier,_resultSupplier,_successCallback,_errorCallback,_queryFunction,_updateFunction,_deleteFunction)}
                     else {$state.go('home');}
                 },
                 function () {
@@ -36,8 +36,10 @@ angular.module('ludecolApp')
         }
 
         var _skipGame = function() {
-            _deleteFunction(_game.id,function() {
-                _startNewGame();
+            console.log(_game.id);
+            _deleteFunction({id: _game.id},function() {
+//                _startNewGame();
+                initializeGame(_login,_mode,_emptyResultSupplier,_resultSupplier,_successCallback,_errorCallback,_queryFunction,_updateFunction,_deleteFunction);
             })
         }
 

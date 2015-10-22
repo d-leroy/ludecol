@@ -106,6 +106,7 @@ angular.module('ludecolApp')
         };
 
         var skipGame = function(){
+            console.log("skip");
             _skipGame();
         };
 
