@@ -6,6 +6,7 @@ import com.irisa.ludecol.domain.ImageSet;
 import com.irisa.ludecol.repository.ImageRepository;
 import com.irisa.ludecol.repository.ImageSetRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
+import com.irisa.ludecol.service.DataExportService;
 import com.irisa.ludecol.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,9 @@ public class ImageSetResource {
 
     @Inject
     private ImageService imageService;
+
+    @Inject
+    private DataExportService dataExportService;
 
     /**
      * POST  /images -> Create a new image set.
@@ -128,8 +132,8 @@ public class ImageSetResource {
      * GET  /images/:id -> get the "id" image set.
      */
     @RequestMapping(value = "/imagesets/{id}",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @RolesAllowed(AuthoritiesConstants.ADMIN)
     public ResponseEntity<ImageSet> get(@PathVariable String id) {
@@ -137,6 +141,19 @@ public class ImageSetResource {
         return Optional.ofNullable(imageSetRepository.findOne(id))
             .map(image -> new ResponseEntity<>(image, HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    /**
+     * GET  /images/:id/download -> get the data of the "id" image set.
+     */
+    @RequestMapping(value = "/imagesets/{id}/download",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    public ResponseEntity<DataExportService.DataWrapper> download(@PathVariable String id) {
+        log.debug("REST request to get the data of the ImageSet : {}", id);
+        return new ResponseEntity<>(dataExportService.exportSet(imageSetRepository.findByName(id)), HttpStatus.OK);
     }
 
     /**

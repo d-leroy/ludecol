@@ -21,7 +21,7 @@ angular.module('ludecolApp')
             }
         };
     })
-    .controller('ImageManagerDetailController', function ($scope, $state, $stateParams, Principal, Image, FileUpload, ImageService) {
+    .controller('ImageManagerDetailController', function ($scope, $state, $stateParams, Principal, Image, FileUpload, ImageService, ImageSetDownload) {
         Principal.identity().then(function(account) {
             $scope.account = account;
             $scope.isAuthenticated = Principal.isAuthenticated;
@@ -56,6 +56,17 @@ angular.module('ludecolApp')
                 }
             }
 
+            $scope.download = function() {
+                var set = $stateParams.set;
+                ImageSetDownload.get({id: set},function(res){
+                    $scope.downloadData = res.result;
+                });
+            }
+
+            $scope.encode = function(text) {
+                return encodeURIComponent(text);
+            }
+
             $scope.add = function() {
                 $scope.currentFile = $scope.filesToUpload[0];
                 $scope.filesToUpload.splice(0,1);
@@ -83,7 +94,7 @@ angular.module('ludecolApp')
                 if($scope.faunaDeregister !== null) {$scope.faunaDeregister(); $scope.faunaDeregister = null;}
                 $scope.floraModel = {Batis: false, Borrichia: false, Juncus: false, Limonium: false, Salicornia: false, Spartina: false};
                 $scope.faunaModel = {Burrow: false, Crab: false, Mussel: false, Snail: false};
-
+                $scope.downloadData = null;
                 $scope.loadPage();
             }
 
