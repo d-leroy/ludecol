@@ -182,37 +182,37 @@ public class UserService {
      * Adds a new objective to users that have less than 3 ongoing objectives.
      * This is scheduled to get fired every 10 minutes.
      */
-    @Scheduled(cron = "5/30 * * * * ?")
-    @Timed
-    public void addObjective() {
-        List<User> users = userRepository.findAll();
-        Random rand = new Random();
-        users.stream()
-            .filter(user -> user.getActivated())
-            .forEach(user -> {
-                List<Objective> objectives = objectiveRepository.findAllByUsr(user.getLogin());
-                List<Objective> ongoingObjectives = new ArrayList<>();
-                objectives.stream().filter(o -> o.getNbCompletedGames() < o.getNbGamesToComplete()).forEach(ongoingObjectives::add);
-                if (ongoingObjectives.size() < 3) {
-                    EnumSet<GameMode> pool = EnumSet.of(GameMode.AllStars,GameMode.AnimalIdentification,GameMode.PlantIdentification);
-                    ongoingObjectives.forEach(o -> pool.remove(o.getGameMode()));
-                    Objective objective = new Objective();
-                    objective.setUsr(user.getLogin());
-                    GameMode gameMode = (GameMode) pool.toArray()[rand.nextInt(pool.size())];
-                    switch (gameMode) {
-                        //TODO refine number of games (1 and 2 are totally arbitrary numbers)
-                        case AllStars: objective.setNbGamesToComplete(2); break;
-                        case AnimalIdentification:
-                        case PlantIdentification: objective.setNbGamesToComplete(1); break;
-                        default: objective.setNbGamesToComplete(0); break;
-                    }
-                    objective.setGameMode(gameMode);
-                    objective.setCreationDate(new DateTime());
-                    log.debug("Adding objective : {}", objective);
-                    objectiveRepository.save(objective);
-                }
-            });
-    }
+//    @Scheduled(cron = "5/30 * * * * ?")
+//    @Timed
+//    public void addObjective() {
+//        List<User> users = userRepository.findAll();
+//        Random rand = new Random();
+//        users.stream()
+//            .filter(user -> user.getActivated())
+//            .forEach(user -> {
+//                List<Objective> objectives = objectiveRepository.findAllByUsr(user.getLogin());
+//                List<Objective> ongoingObjectives = new ArrayList<>();
+//                objectives.stream().filter(o -> o.getNbCompletedGames() < o.getNbGamesToComplete()).forEach(ongoingObjectives::add);
+//                if (ongoingObjectives.size() < 3) {
+//                    EnumSet<GameMode> pool = EnumSet.of(GameMode.AllStars,GameMode.AnimalIdentification,GameMode.PlantIdentification);
+//                    ongoingObjectives.forEach(o -> pool.remove(o.getGameMode()));
+//                    Objective objective = new Objective();
+//                    objective.setUsr(user.getLogin());
+//                    GameMode gameMode = (GameMode) pool.toArray()[rand.nextInt(pool.size())];
+//                    switch (gameMode) {
+//                        //TODO refine number of games (1 and 2 are totally arbitrary numbers)
+//                        case AllStars: objective.setNbGamesToComplete(2); break;
+//                        case AnimalIdentification:
+//                        case PlantIdentification: objective.setNbGamesToComplete(1); break;
+//                        default: objective.setNbGamesToComplete(0); break;
+//                    }
+//                    objective.setGameMode(gameMode);
+//                    objective.setCreationDate(new DateTime());
+//                    log.debug("Adding objective : {}", objective);
+//                    objectiveRepository.save(objective);
+//                }
+//            });
+//    }
 
     /**
      * Persistent Token are used for providing automatic authentication, they should be automatically deleted after

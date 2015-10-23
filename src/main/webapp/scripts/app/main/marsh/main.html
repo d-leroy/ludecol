@@ -17,8 +17,13 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li><a data-toggle="modal" data-target="#tutorialModal">Tutorial</a></li>
-                    <li><a data-toggle="modal" data-target="#presentationModal">Presentation</a></li>
+                    <!--<li><a data-toggle="modal" data-target="#tutorialModal">Tutorial</a></li>-->
+                    <li><a data-toggle="modal" data-target="#presentationModal">Présentation des marais salés</a></li>
+                    <li><a data-toggle="modal" data-target="#gradientModal">Gradient de stress abiotique</a></li>
+                    <li><a data-toggle="modal" data-target="#adaptationModal">Adaptation des organismes</a></li>
+                    <li><a data-toggle="modal" data-target="#formationModal">Formation du marais salé et interactions biotiques</a></li>
+                    <li><a data-toggle="modal" data-target="#organismesModal">Organismes cibles</a></li>
+                    <li><a data-toggle="modal" data-target="#tutorielModal">Tutoriel</a></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
@@ -34,23 +39,23 @@
 
         <div ng-switch-when="true">
 
-            <h2 class="text-center">Choose a game mode</h2>
+            <h2 class="text-center">Choisissez un mode de jeu</h2>
 
             <div style="width: 50%; margin: 0 auto; min-width: 200px;">
                 <ul class="nav nav-pills">
                     <li style="padding: 2px; width: 49%; height: auto;">
-                        <button class="btn btn-primary btn-lg" ng-click="isTrainingCollapsed = !isTrainingCollapsed" style="width: 100%;">Practice</button>
+                        <button class="btn btn-primary btn-lg" ng-click="isTrainingCollapsed = !isTrainingCollapsed" style="width: 100%;">Entraînement</button>
                         <ul class="width" collapse="isTrainingCollapsed" style="list-style-type: none; padding: 0; margin: 0 auto; width: 75%">
                             <li style="padding: 1px;">
-                                <a ui-sref="training-animal-identification" class="btn btn-success" style="width: 100%;">Animals</a>
+                                <a ui-sref="training-animal-identification" class="btn btn-success" style="width: 100%;">Animaux</a>
                             </li>
                             <li style="padding: 1px;">
-                                <a ui-sref="training-plant-identification" class="btn btn-success" style="width: 100%;">Plants</a>
+                                <a ui-sref="training-plant-identification" class="btn btn-success" style="width: 100%;">Plantes</a>
                             </li>
                         </ul>
                     </li>
                     <li style="padding: 2px; width: 49%;">
-                        <button class="btn btn-primary btn-lg" ng-click="isPlayCollapsed = !isPlayCollapsed" style="width: 100%;">Play</button>
+                        <button class="btn btn-primary btn-lg" ng-click="isPlayCollapsed = !isPlayCollapsed" style="width: 100%;">Normal</button>
                         <ul class="width" collapse="isPlayCollapsed" style="list-style-type: none; padding: 0; margin: 0 auto; width: 75%">
                             <!--<li style="padding: 1px;">-->
                                 <!--<a ui-sref="all-stars" class="btn btn-success" style="width: 100%;">-->
@@ -59,12 +64,12 @@
                             <!--</li>-->
                             <li style="padding: 1px;">
                                 <a ui-sref="animal-identification" class="btn btn-success" style="width: 100%;">
-                                    Animals
+                                    Animaux
                                 </a>
                             </li>
                             <li style="padding: 1px;">
                                 <a ui-sref="plant-identification" class="btn btn-success" style="width: 100%;">
-                                    Plants
+                                    Plantes
                                 </a>
                             </li>
                         </ul>
@@ -92,88 +97,403 @@
         </div>
     </div>
 
-    <div class="modal fade" id="tutorialModal" tabindex="-1" role="dialog" aria-labelledby="myTutorialLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myTutorialLabel">Tutorial</h4>
-                </div>
-                <div class="modal-body">
-                    <h2>Levels of play</h2>
-
-                    <h3>Practice</h3>
-                    <p>
-                        The Practice level of play allows you to train on pictures that have already been treated.
-                        You are provided with the number of occurrences you have to find for each species.
-                        Upon submission, each correct occurrence will be saved and your score will be reduced according to the number
-                        of wrong occurrences you submitted, to a minimum of 50. This score will be awarded once you find all occurrences.
-                    </p>
-
-                    <h3>Normal</h3>
-                    <p>
-                        In the Normal level of play, you are tasked with the exploration of pictures that have not yet been processed.
-                        Your submissions will be aggregated with those of other players and will help players in the Expert level decide
-                        on a final verdict. You will be awarded a score between 0 and 100, depicting how close you were to the correct answer.
-                        This score is awarded once the picture you played on has been corrected by an Expert player.
-                    </p>
-
-                    <h2>Game modes</h2>
-
-                    <h3>Animal Identification</h3>
-                    <p>
-                        In the Animal Identification game mode, the goal is to pin-point each occurrence of the members of a given species.
-                    </p>
-
-                    <h3>Plant Identification</h3>
-                    <p>
-                        In the Plant Identification game mode, you have to fill a presence grid by tagging each cell.
-                    </p>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="modal fade" id="presentationModal" tabindex="-1" role="dialog" aria-labelledby="myPresentationLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myPresentationLabel">Presentation</h4>
+                    <h4 class="modal-title" id="myPresentationLabel">Présentation des marais salés</h4>
                 </div>
                 <div class="modal-body">
                     <p>
-                        Marsh ecosystems are particularly sensitive to climate change.
-                        Species distribution are indeed strongly dependent on the extent
-                        of high tides and on their interactions with other species.
-                        In coastal habitats, one manifestation of climate change is
-                        accelerating sea level rise, this long-term slow rise being
-                        hidden within much greater annual variation. In the Long Term
-                        Ecological Research Site “Georgia Coastal Ecosystems”, long-term
-                        observation are made in order to analyze the impact of climate
-                        change on this ecosystem functioning. This game will help thanks
-                        to you to collect useful data for studying this impact.
+                        Les marais salés sont des zones humides à faible pente situés à l’interface eaux douces/salés
+                        (estuaire) et dont la formation, l’évolution, l’organisation spatiale et le fonctionnement sont
+                        conditionnés par les marées.
                     </p>
                     <p>
-                        More precisely, we set up an annual survey based on images taken
-                        rigorously on the same site every year since 2010. Together with
-                        the climatic and soil data collected on the site, this survey will
-                        help to analyse the ecological processes linked with species
-                        distribution and their interactions (for instance trophic interactions).
-                        Thanks to the game, we will get a huge amount of ecological data of
-                        interests in order to document species distribution and investigate
-                        with an unprecedented accuracy the mechanisms underlying their spatial
-                        patterns. In the figure below, you may show the design for image collection.
+                        Ces systèmes écologiques sont très productifs, offrent une mosaïque d’habitats variés et hébergent
+                        une faune et une flore caractéristique. Les réseaux trophiques y sont vastes.
+                    </p>
+                    <p>
+                        Les marais salés représentent des zones de reproduction et d’hivernage pour de nombreuses espèces
+                        animales et sont des lieux de pêche récréative, conchyliculture et d’élevage pour l’Homme.
+                    </p>
+                    <p>
+                        Ces systèmes procurent de nombreux services comme la filtration des polluants, le stockage du carbone,
+                        la stabilisation et la protection du trait de côte contre l’érosion (marée, tempêtes, élévation du niveau des mers).
+                    </p>
+                    <img src="images/pictures/presentation1.png" style="width: 100%;">
+                    <p>
+                        Les marais salés de Georgie forment une bande d’environ 8 km de large bordant la côte Atlantique
+                        et sont parcourus par un important réseau de rivières et chenaux. La marée, intervenant deux fois
+                        par jour, est le principal vecteur d’échange de nutriments entre les estuaires et les marais.
+                    </p>
+                    <p>
+                        Ces écosystèmes ont une grande importance économique (pêche) et écologique (flux énergie et
+                        nutriments, habitat) mais sont aujourd’hui menacés par l’intensité des activités anthropiques et
+                        le changement climatique, en particulier l’élévation du niveau marin.
+                    </p>
+                    <p>
+                        Les écosystèmes de marais salés sont des systèmes particulièrement sensibles aux changements environnementaux,
+                        ce qui en fait des écosystèmes sentinelles de la modification des facteurs climatiques. Pour cette raison,
+                        des recherches transdiciplinaires sur le long terme sont menées au sein du LTER Georgia Coastal Coastal
+                        Ecosystems (https://gce-lter.marsci.uga.edu/) afin d’analyser l’impact du changement climatique sur
+                        le fonctionnement de cet écosystème.
+                    </p>
+                    <p>
+                        Plus particulièrement, un suivi photographique a été réalisé depuis 2010 sur le site qui permettra,
+                        couplée aux données climatologiques et pédologiques acquises sur le site, d’analyser les processus
+                        écologiques en lien avec la répartition des espèces, leurs interactions (par exemple trophiques) et
+                        leurs traits biologiques. L’objectif de ce projet est de pouvoir à partir de cette base de données
+                        photographiques acquérir des données écologiquement pertinentes permettant de traiter des questions
+                        en lien avec ces processus. Le protocole de suivi photographique est présenté dans la figure ci-dessous.
                     </p>
                     <figure>
-                        <img src="images/details.jpg" width="100%">
+                        <img src="images/pictures/presentation2.jpg" width="100%">
                         <figcaption>
-                            Image database presentation on the salt marsh of LTER GCE site.
-                            A-study area; B-plant community of the salt marsh;
-                            C-image mosaic; D-image to analyse with the game
+                            Base de données d’image du marais du site LTER GCE. A- Zone d’étude, B- Communauté végétale du marais,
+                            C- Mosaique d’images, D-Image à analyser par le jeu
                         </figcaption>
                     </figure>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="gradientModal" tabindex="-1" role="dialog" aria-labelledby="myGradientLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myGradientLabel">Gradient de stress abiotique</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Les marais salés sont écosystèmes stressants pour les organismes car leur sol est périodiquement
+                        inondé par de l’eau de mer lors des marées. Il est donc à la fois gorgé d’eau et salé. Un simple
+                        cycle de marée entraîne notamment, sur 12 heures, des variations de la salinité, du taux d’humidité,
+                        de la température, de l’accessibilité à l’oxygène. L’intensité de ces stress, qui varie spatialement
+                        le long du gradient d’élévation du marais, va fortement influencer la composition et distribution
+                        spatiale des communautés.
+                    </p>
+                    <img src="images/pictures/gradient1.jpg" style="width: 100%;">
+                    <p>
+                        <strong>Gradient d’inondation:</strong> La décomposition de la matière organique et un processus
+                        qui consomme de l’oxygène. Lorsqu’elle se déroule dans des sols gorgés d’eau, l’oxygène est alors
+                        rapidement consommé, conduisant à des sols anoxiques et à l’accumulation de sulfites toxiques. Par
+                        conséquent, les sols de la partie basse du marais, plus fréquemment et longuement inondés, ont un
+                        potentiel redox inférieur (i.e. contiennent moins d’oxygène) aux sols de la partie haute du marais
+                        ou aux berges des chenaux, bénéficiant d’un meilleur drainage.
+                    </p>
+                    <p>
+                        <strong>Gradient de salinité:</strong> La salinité des sols des marais est modérée par l’apport
+                        d’eau de mer (i.e. marées) dans la partie basse du marais, et par l’apport d’eau douce de ruissellement
+                        (i.e. pluie) dans la partie haute, conduisant à un gradient de salinité parallèle au gradient d’élévation.<br />
+
+                        Dans les marais salés des basses latitudes, les concentrations de sel peuvent augmenter jusqu’à un
+                        pic dans les zones de moyenne élévation du marais du fait d’une évaporation plus importante de l’eau
+                        de mer, qui concentre le sel, pouvant conduire à une salinité du sol plusieurs fois supérieure à celle
+                        de l’eau de mer. Cela conduit à la formation de patches alcalins (« salt pans »), portions de marais au
+                        sol non végétalisé où le sel cristallise, et où la salinité du sol est nettement supérieur au seuil limite
+                        de tolérance des végétaux. Ces patches alcalins sont généralement entourés par une végétation typique des
+                        prés salés, constituée d’une communauté de plantes hautement tolérante au sel. Dans les zones où la salinité
+                        est modérément élevée, les communautés de plantes de prés salés peuvent se développer sans que n’apparaissent
+                        de patches alcalins.<br />
+
+                        Dans les marais salés des hautes latitudes, la salinité n’atteint pas de pic au milieu du marais et
+                        décroit simplement depuis la partie basse jusqu’à la partie haute du marais.
+                    </p>
+                    <img src="images/pictures/gradient2.png" style="width: 100%;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="adaptationModal" tabindex="-1" role="dialog" aria-labelledby="myAdaptationLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myAdaptationLabel">Adaptation des organismes</h4>
+                </div>
+                <div class="modal-body">
+                    <h4><span><img src="images/pictures/flore.png" style="width: 1.5em;"></span> Flore : Adaptation à l’inondation et à l’anoxie du sol</h4>
+                    <p>
+                        La plupart des plantes vivant dans des sols gorgés d’eau ont des racines adventives proches de la
+                        surface du sol pour en faciliter l’oxygénation. Elles développent généralement des tissus aérifères
+                        (aérenchymes) permettant le transport et la diffusion passive d’oxygène jusqu’aux racines. De plus,
+                        de nombreuses plantes des marais salés développent des voies métaboliques anaérobies leur permettant
+                        de réduire le coût des dépenses énergétiques liées à l’oxygénation du système racinaire.
+                    </p>
+                    <p>
+                        <em>Spartina alterniflora</em> est l’espèce végétale la mieux adaptée aux sols gorgés d’eau des marais salés de
+                        Georgie ce qui lui permet d’en dominer la partie inférieure fréquemment inondée.
+                    </p>
+                    <img src="images/pictures/adaptation1.jpg" style="width: 100%;">
+                    <h4><span><img src="images/pictures/flore.png" style="width: 1.5em;"></span> Flore : Adaptation à la salinité</h4>
+                    <p>
+                        Le sel affecte les plantes de façon indirecte, en augmentant la difficulté d’accès à la ressource
+                        hydrique du le sol, et de façon directe, en endommageant les processus cellulaires.
+                        Pour maintenir un potentiel osmotique inférieur à celui de l’eau du sol, les plantes de marais salés
+                        accumulent généralement des sels et autres solutés (e.g. sucres, proline) dans la vacuole de leurs cellules,
+                        augmentent en succulence, stockent le sel dans les tissus de leurs feuilles qu’elles perdent ensuite,
+                        et/ou l’excrètent via des glandes à sel localisées sur les racines, feuilles et/ou tiges.
+                    </p>
+                    <p>
+                        Les espèces les mieux adaptées à de fortes salinités sont celles appartenant aux communautés de prés salés,
+                        comme <em>Batis</em> et <em>Salicornia</em>.
+                    </p>
+                    <img src="images/pictures/adaptation2.jpg" style="width: 100%;">
+                    <h4><span><img src="images/pictures/faune.png" style="width: 1.5em;"></span> Faune: Adaptation aux cycles de submersion/émersion</h4>
+                    <p>
+                        Bien que l’action des marées contraigne fortement la distribution de la faune des marais salés, le sens
+                        du gradient de stress lié à l’inondation diffère entre les espèces aquatiques et terrestres qui devront
+                        tolérer ou éviter l’alternance de phases submergée et émergée. En fonction de leur mobilité, les espèces
+                        aquatiques (e.g. poissons, crabes) peuvent coloniser le marais à la faveur des marées hautes, et soit
+                        rejoindre les chenaux en suivant le retrait de l’eau à marée basse, soit trouver refuge dans des flaques
+                        ou dans la boue humide du marais. De la même façon, les espèces terrestres mobiles pourront migrer vers
+                        la partie haute du marais à marée montante, alors que les espèces moins mobiles pourront trouver refuge
+                        sur la végétation émergée (e.g. l’escargot <em>Littorina irrorata</em>)  ou s’enfermer dans des terriers bouchés
+                        hermétiquement avec de la boue (e.g. le crabe violoniste <em>Uca pugnax</em>) pour éviter l’inondation.
+                    </p>
+                    <img src="images/pictures/adaptation3.png" style="width: 70%; margin: auto; display: block;">
+                    <h4><span><img src="images/pictures/faune.png" style="width: 1.5em;"></span> Faune: Adaptation à la salinité</h4>
+                    <p>
+                        Les espèces aquatiques et terrestres des marais salés ont développé des mécanismes d’osmorégulation
+                        très efficaces, visant à limiter les pertes d’eau tout en excrétant les ions de leur organisme, afin
+                        de tolérer des gammes variable de salinité.)  L’efficacité de ces mécanismes, variable selon les organismes
+                        et la nature de leur tégument (peau nue vs exosquelette), est d’ailleurs proposé comme étant un facteur clé
+                        expliquant la distribution des espèces animales au sein du marais. Certaines espèces ont également développé
+                        des adaptations comportementales visant à réduire les effets négatifs de l’exposition à de fortes concentrations
+                        de sel en adoptant une vie nocturne ou en trouvant des refuges périodiques (e.g. sur la végétation).
+                    </p>
+                    <img src="images/pictures/adaptation4.jpg" style="width: 55%; margin: auto; display: block;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="formationModal" tabindex="-1" role="dialog" aria-labelledby="myFormationLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myFormationLabel">Formation du marais salé et interactions biotiques</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        L’existence du marais salé dépend d’un équilibre subtil entre des processus de transport de sédiment,
+                        de formation du sol, de variation du niveau marin, de dynamique de végétation et des interactions
+                        biotiques liant la faune et la flore.
+                    </p>
+                    <p>
+                        La formation du marais salé dans la zone de balancement des marées est généralement attribuée au
+                        processus de sédimentation, responsable l’accroissement de l’élévation de la topographie. Ce sol
+                        va pouvoir être colonisé par une espèce végétale pionnière fondatrice, Spartina alterniflora. Dès
+                        lors que cette espèce s’établie, son appareil végétatif aérien va capter les sédiments marins,
+                        favorisant leur accumulation à sa base, et conduisant à la formation d’une bute (sur la berge des
+                        chenaux) qui va progressivement s’élever et limiter la fréquence d’inondation des sols du marais.
+                        Le système racinaire et les rhizomes de Spartina ont également une fonction stabilisatrice du sol.
+                        Ce dernier sera enrichi en matière organique via le processus de décomposition de cette espèce végétale.
+                        Sur la berge des chenaux, les peuplements de Spartina sont luxuriants et peuvent atteindre 3 m de hauteur.
+                    </p>
+                    <p>
+                        Une fois le sol du marais stabilisé et enrichi en matière organique par l’espèce facilitatrice Spartina,
+                        il va pouvoir être colonisé par d’autres espèces végétales et animales, telles que les bivalves filtreurs
+                        Crassostraea virginica (huître de Virginie) et Geukensia demissa (moule zébrée), qui vont former de denses
+                        colonies dans la partie basse du marais, stabilisant d’autant plus le sol et réduisant considérablement
+                        son érosion.
+                    </p>
+                    <p>
+                        Ces bivalves filtreurs entretiennent avec Spartina une interaction mutualiste étroite. Spartina
+                        procure un site de fixation à ces bivalves (au niveau de la base de sa tige et de son système racinaire)
+                        et une source d’alimentation (via sa matière en décomposition), qui en retour enrichissent le sol en
+                        nutriments via le dépôt de leurs fèces/pseudofèces et accroissent le développement de Spartina.
+                    </p>
+                    <p>
+                        Dans la partie basse du marais, les sols sont plus fréquemment et durablement inondés, ce qui entraine
+                        une anoxie importante du substrat. Les espèces végétales pouvant s’y développer, telles que Spartina,
+                        sont capable de transporter de l’oxygène jusqu’à leurs racines, aérant ainsi le substrat à leur voisinage
+                        (rhizosphère), et facilitant l’établissement et le maintien d’autres espèces végétales et animales.
+                        Dans cette zone, Spartina domine mais présente un morphotype court mesurant 30-90 cm de haut.
+                    </p>
+                    <p>
+                        Les crabes fouisseurs du genre Uca, Sesarma et Armases, en construisant des galeries de terriers
+                        souterrains, participent également à l’oxygénation du sol et à son drainage, stimulant alors les
+                        processus de recyclage de la matière organique et augmentant la disponibilité en nutriments pour
+                        les plantes du marais. En retour, les plantes procurent un support aux terriers de ces crabes (stabilisés
+                        par les tiges et le système racinaire), mais également un habitat et une ressource alimentaire pour la
+                        faune du marais. En outre, l’ombrage de la végétation protège les invertébrés du marais de leurs prédateurs
+                        tout en limitant l’évaporation de l’eau du sol, et donc la hausse de salinité en résultant, en particulier
+                        dans la partie moyenne du marais où le sel peut s’accumuler et cristalliser.
+                    </p>
+                    <p>
+                        Dans les marais salés, les interactions « top-down » telles que le pâturage et la prédation influencent
+                        et régulent fortement la structure des communautés, affectant la distribution, la densité et la croissance
+                        des organismes. Par exemple, Spartina joue un rôle d’espèce clé de voûte en tant que ressource alimentaire
+                        pour de nombreux organismes tels que les gastéropodes Littoraria irrorata et Melampus bidentatus, et
+                        les crabes S. reticulatum et A. cinereum, qui exercent un contrôle « top-down » sur la croissance,
+                        la survie et la densité de cette plante. En retour, les espèces des niveaux trophiques supérieurs
+                        tels que les crabes Eurytium limosum, Callinectes sapidus et A. cinereum, régulent la distribution
+                        et l’abondance de leurs proies incluant la moule zébrée (G. demissa), les gastéropodes marins
+                        (Littoraria irrorata et Melampus bidentatus) ou d’autres espèces de crabes (e.g. Uca spp). La prédation
+                        par les crabes étant plus intense dans la partie basse du marais, les communautés de proies sont souvent
+                        plus abondantes dans les parties moyenne et haute du marais où elles sont moins vulnérables.
+                    </p>
+                    <p>
+                        La compétition est aussi une force importante dans la distribution des espèces au sein des marais
+                        salés, en particulier pour les organismes non mobiles tels que les plantes. En général, il existe
+                        une relation inverse entre compétitivité et tolérance au stress qui fait que les organismes compétitivement
+                        supérieurs occupent les zones les moins stressantes du marais et limitent les espèces les moins compétitrices
+                        aux zones les plus stressantes. Par exemple, des expériences de terrain ont mis en évidence que la limite
+                        inférieure de répartition de Juncus roemerianus, espèce végétale dominant la partie haute du marais, est
+                        contrainte par les stress abiotiques (faible tolérance à l’inondation et la salinité), alors que la limite
+                        supérieure de répartition de Spartina, qui dominent les habitats stressants de bas et moyen marais, est
+                        contrainte par la compétition avec d’autres plantes, en particulier Juncus.
+                    </p>
+                    <p>
+                        En revanche, la compétition ne semble pas être une force déterminante expliquant la répartition de
+                        la faune mobile du marais salé. Par exemple, la compétition directe pour l’espace ou la ressource
+                        alimentaire ne semble pas affecter les crabes des marais qui peuvent coexister de façon sympatrique,
+                        parfois au sein même des réseaux de galeries qu'ils creusent (e.g. S. reticulatum et U. pugnax),
+                        et qui montrent des préférences d’habitat, des spécialisations alimentaires et des rythmes d’activité différents.
+                    </p>
+                    <img src="images/pictures/formation1.jpg" style="width: 100%;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="organismesModal" tabindex="-1" role="dialog" aria-labelledby="myOrganismesLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myOrganismesLabel">Organismes cibles</h4>
+                </div>
+                <div class="modal-body">
+                    <h4>Espèces végétales d'interêt</h4>
+                    <p>
+                        <strong>Spartina alterniflora:</strong> Cette plante est une espèce fondatrice et clé de voûte permettant
+                        la formation et le maintien des marais salés de Georgie. Cette espèce pionnière est capable de coloniser
+                        les habitats de la zone de balancement des marées qui sont inhospitaliers pour tous les autres végétaux
+                        supérieurs. Elle capte, piège et stabilise ensuite le sédiment, y apporte de grandes quantités de matière
+                        organique, améliore les conditions édaphiques (réduction de la salinité, augmentation de l’oxygénation…),
+                        modifie localement l’hydrologie et le microclimat, transformant ainsi l’habitat et favorisant l’installation
+                        du reste des communautés végétales et animales du marais. S. alterniflora domine les habitats de bas marais
+                        (faible élévation), procure habitat, ressources alimentaires  et protection contre les prédateurs pour de
+                        nombreuses espèces animales, aussi bien au dessus qu’au dessous du sol, et procure des services écosystémiques
+                        tels que la séquestration du Carbone et le contrôle de l’érosion des sols.<br />
+                        Au sein de son aire de répartition naturelle, S. alterniflora est considérée comme désirable. Dans
+                        les lieux où elle a été introduite, ses effets sont considérés comme indésirables puisque ils résultent
+                        en la disparition des communautés natives.
+                    </p>
+                    <img src="images/pictures/organismes1.png" style="width: 40%; margin: auto; display: block;">
+                    <p>
+                        Les perturbations survenant dans les marais salés, comme le surpâturage et l’érosion des berges des
+                        chenaux causée par le changement climatique et l’élévation du niveau marin, peuvent conduire à une
+                        perte importante de Spartina, impactant par réaction en chaîne les communautés d’invertébrés via la
+                        réduction de la disponibilité en habitat et ressource et la modification des conditions abiotiques.
+                        Les gastéropodes Littoraria irrorata et les crabes Sesarma cinereum peuvent parfois atteindre de très
+                        fortes densités quand les conditions leurs sont favorables et que leurs prédateurs sont rares. Dans
+                        ces circonstances, ils peuvent occasionner une forte mortalité au sein des peuplements de Spartina
+                        par contrôle « top-down » et conduire à la formation d’importants patches de sol nu. La réduction
+                        des densités de Spartina affecte en retour sa capacité à protéger la côte contre les forces d’érosion
+                        (tempêtes, vent, intempéries, marée) ainsi que les communautés d’invertébrés qui ont un rôle important
+                        dans le transfert d’énergie et de nutriments entre le marais salé et les estuaires.
+                    </p>
+                    <img src="images/pictures/organismes2.png" style="width: 100%;">
+                    <p>
+                        <strong>Juncus roemerianus:</strong> Cette espèce modérément tolérante à la salinité domine habituellement
+                        les zones de moyenne et haute élévation du marais où elle s’avère plus compétitive que <em>Spartina alterniflora</em>.
+                    </p>
+                    <img src="images/pictures/organismes3.png" style="width: 40%; margin: auto; display: block;">
+                    <p>
+                        <strong>Autres espèces pérennes</strong>, très tolérante à la salinité, se développant dans les habitats
+                        de moyenne et haute élévation du marais.
+                    </p>
+                    <img src="images/pictures/organismes4.png" style="width: 100%;">
+                    <h4>Espèces animales d'interêt</h4>
+                    <p>
+                        <strong>Bivalve:</strong> La moule zébrée Geukensia demissa  est également une espèce clé dans le
+                        fonctionnement des marais salés. Elle stabilise le sol, filtre les détritus, le planton et les polluants
+                        de la colonne d’eau, et augmente la disponibilité en nutriments pour de nombreux autres organismes.
+                    </p>
+                    <img src="images/pictures/organismes5.png" style="width: 100%;">
+                    <p>
+                        <strong>Gastéropodes omnivores-détritivores:</strong> Ces escargots marins jouent un rôle important
+                        dans la régulation de la productivité primaire des marais salés. Ils exercent un contrôle « top-down »
+                        sur la croissance et l’abondance des plantes, et sur le recyclage de la matière organique, en consommant
+                        les tissus des plantes et en facilitant le développement des communautés de champignons décomposeurs sur
+                        celles-ci. En particulier, lorsque les conditions leurs sont favorables et que leurs prédateurs sont rares,
+                        ces gastéropodes peuvent dramatiquement altérer la qualité des habitats du marais en supprimant le
+                        développement de l’espèce clé de voûte <em>S. alterniflora</em>. Ils représentent également une importante
+                        ressource alimentaire pour les prédateurs du marais comme les crabes. En raison de la difficulté
+                        d’identifier le gastéropode Melampus bidentatus (petite taille) sur les images collectées dans le
+                        marais, nous nous intéresserons uniquement à l’identification et la quantification du gastéropode <em>Littoraria irrorata</em>.
+                    </p>
+                    <p>
+                        <strong>Crustacés décapodes:</strong> Les crabes font partie des invertébrés les plus abondants
+                        dans les marais salés et ont un rôle majeur en tant que médiateurs des flux d’énergie et de nutriments
+                        entre les niveaux trophiques et entre les écosystèmes marin et terrestre. La plupart des espèces de
+                        crabes du marais construisent des galeries de terriers ce qui favorise l’oxygénation et le drainage
+                        du sol, stimule les processus de recyclage de la matière organique et augmente la disponibilité des
+                        nutriments pour les autres organismes. Ces crabes peuvent être divisés en trois catégories en fonction
+                        de leurs rôles écologiques et de leurs niveaux trophiques :
+                        <ol>
+                            <li>
+                                Les crabes omnivores consomment les plantes du marais (e.g. <em>Spartina alterniflora</em>)
+                                et jouent un rôle écologique important en régulant la distribution et l’abondance des proies
+                                benthiques (e.g. gastéropodes, bivalves, autres crabes).
+                            </li>
+                            <li>
+                                Les crabs herbivores influencent et régulent fortement les communautés de plantes du marais,
+                                affectant leur distribution, croissance et densité via un contrôle « top-down ».
+                            </li>
+                            <li>
+                                Les crabes détritivores ont un rôle majeur dans les processus de décomposition de la matière organique.
+                            </li>
+                        </ol>
+                    </p>
+                    <img src="images/pictures/organismes6.png" style="width: 90%; margin: auto; display: block;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="tutorielModal" tabindex="-1" role="dialog" aria-labelledby="myTutorielLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myTutorielLabel">Tutoriel</h4>
+                </div>
+                <div class="modal-body">
+                    <h4>Niveaux de jeu</h4>
+                    <p>
+                        <strong>Entraînement:</strong> Le mode de jeu « Entraînement » permet d’apprendre à reconnaitre les différents objets à partir d’images
+                        déjà analysées et validées par des experts. Le nombre d’individus à trouver pour chaque espèce est
+                        indiqué au niveau de l’image qui est donnée à jouer. Après soumission de votre image analysée, chaque
+                        individu correctement reconnu sera compté et votre score sera réduit en fonction du nombre de mauvaises
+                        identifications effectuées. Le score minimum est de 50. Si tous les individus à identifier sont reconnus,
+                        le score du joueur sera augmenté.
+                    </p>
+                    <p>
+                        <strong>Normal:</strong> Dans le mode de jeu « Normal », le joueur analyse des images encore non traitées. Chaque image est
+                        traitée par plusieurs joueurs afin de confronter les observations et d’arriver à une convergence
+                        entre les résultats. Une fois cette convergence atteinte, les résultats sont stockés dans une matrice de données.
+                    </p>
+
+                    <h4>Modes de jeu</h4>
+                    <p>
+                        <strong>Identification des animaux:</strong> Dans le mode « Identification des animaux », l’objectif
+                        sera de digitaliser par des points chaque individu de chaque espèce.
+                    </p>
+                    <p>
+                        <strong>Identification des plantes:</strong> Dans le mode « Identification des plantes », l’objectif
+                        sera d’indiquer la présence de chaque espèce au sein des cellules d’une grille superposée à l’image.
+                    </p>
+
                 </div>
             </div>
         </div>
