@@ -77,6 +77,9 @@ public class ImageProviderService {
     }
 
     private List<Image> filterImageListByGameNumber(List<Image> images, GameMode mode) {
+        if(images.isEmpty()) {
+            return images;
+        }
         int maxPlayed = images.get(0).getModeStatus().get(mode).getGameNumber();
         return images.stream()
             .filter(i->i.getModeStatus().get(mode).getGameNumber() == maxPlayed)
