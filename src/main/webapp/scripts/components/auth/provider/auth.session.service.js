@@ -21,8 +21,8 @@ angular.module('ludecolApp')
                 $http.post('api/logout').success(function (response) {
                     NotificationService.stopLongPolling();
                     NotificationService.logout();
-                    ObjectiveService.stopLongPolling();
-                    ObjectiveService.logout();
+//                    ObjectiveService.stopLongPolling();
+//                    ObjectiveService.logout();
                     localStorageService.clearAll();
                     // to get a new csrf token call the api
                     $http.get('api/account');

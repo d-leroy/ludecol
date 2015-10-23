@@ -209,54 +209,330 @@
                     <h4 class="modal-title" id="myCrabLabel">Crabs</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <p class="lead"></p>
-                            <p>
-                                Les crabes des marais salés sont des espèces mobiles, dont l’activité varie en fonction de la marée
-                                et de l’heure de la journée. Lorsqu’ils ne sont pas à la recherche de nourriture /en activité, ils
-                                restent à l’abri dans leurs terriers. Ces galeries de terriers sont souvent creusées à proximité
-                                d’éléments structurels durs (racines, coquilles de bivalves) qui en permettent le maintien. Ces
-                                terriers leurs servent de refuges contre les prédateurs, la chaleur et l’inondation (marée haute)
-                                et sont également utilisés pour la reproduction, le repos et l’hibernation. De par leurs comportements
-                                (enfouissement, vie nocturne) et leur mobilité, il est difficile d’estimer l’abondance des crabes par
-                                le dénombrement directe des individus. Néanmoins, le dénombrement des trous de crabes (l’entrée des
-                                terriers) est un moyen indirect rapide et simple pour estimer la densité totale de crabes. Cependant
-                                cette approche ne permet pas toujours de pouvoir identifier la (les) espèce(s) de crabe(s) ayant
-                                creusé les trous dénombrés.
-                            </p>
+                    <ul class="nav nav-tabs">
+                        <li role="presentation" ng-repeat="tab in allTabs" ng-class="{active: tab===selectedTab}"><a ng-click="selectTab(tab)">{{tab}}</a></li>
+                    </ul>
+                    <div ng-show="selectedTab === 'Uca'">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="lead">Informations diagnostiques</p>
+                                <p>
+                                    Nom scientifique:
+                                    <ol>
+                                        <li><em>Uca pugnax</em></li>
+                                        <li><em>U. pugilator</em></li>
+                                        <li><em>U. minax</em></li>
+                                    </ol>
+                                    Ordre: Decapode<br />
+                                    Famille: Ocypodidae
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <img src="images/animals/crab1.png" style="width: 100%;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>
+                                    <strong>Habitat</strong>: Les crabes violonistes des marais sont communs et coexistent sur
+                                    l’ensemble du marais. Cependant l’abondance des espèces varie le long du gradient d’élévation.
+                                    Uca pugnax se trouvent préférentiellement sur les substrats boueux des habitats de bas marais
+                                    sous la <em>Spartina</em>. <em>U. pugilator</em> préfère les substrats sableux des hauts marais.
+                                    <em>U. minax</em> est le plus souvent retrouvé à la limite supérieure des hauts marais.
+                                </p>
 
-                            <p>
-                                <strong>Les terriers des crabes violonistes</strong> peuvent faire jusqu’à 3cm de diamètre et 92 cm de profondeur.
-                                Les terriers se terminent soit par une petite chambre soit sont connectés à d’autres terriers. Les
-                                terriers sont souvent entourés par de larges billes de boue (5mm de diamètre) provenant de la récente
-                                excavation des terriers par les crabes, et/ou par des billes de boue plus petites (2mm de diamètre)
-                                résultant de leur activité d’alimentation. Certains terriers se prolongent en surface par de courtes
-                                « cheminées » dont le rôle n’est pas encore bien compris.
-                            </p>
+                                <p>
+                                    <strong>Caractéristiques morphologiques</strong>: Les crabes violonistes (25 mm) présentent
+                                    un dimorphisme sexuel : les pinces des femelles sont isomorphes tandis que chez le male une
+                                    des pinces peut grossir jusqu’à atteindre la moitié du poids du corps.<br />
+                                    <em>U. pugnax</em> est brun-olive, les pinces sont jaune brunâtre avec des extrémités blanche. Les mâles ont une tache bleue roi
+                                    sur le centre de la carapace.<br />
+                                    Les mâles <em>U. pugilator</em> sont de couleur vive, ayant une carapace grise tachetée de
+                                    violet et brun et une grande pince grisâtre. Les femelles sont beaucoup plus ternes.<br />
+                                    <em>U. minax</em> est marron, l'avant de la carapace est gris. Ses pinces ont les articulations rouges.
+                                </p>
 
-                            <p>
-                                <img src="images/animals/burrow1.png" style="width: 100%;">
-                            </p>
+                                <p>
+                                    <strong>Habitudes alimentaires</strong>: Ils sont généralement considérés comme détritivores.
+                                    La petite pince des crabes récupère le sédiment pour l’amener aux pièces buccales. Tout ce
+                                    qui est comestible est récupéré (algues, bactéries, champignons ou détritus en décomposition
+                                    (<em>S. alterniflora</em>)). Le sédiment est ensuite rejeté sous forme de petites billes.
+                                </p>
 
-                            <p>
-                                <strong>Les terriers de l’espèce <em>Sesarma reticulatum</em></strong> sont plus larges (diamètres
-                                supérieur à 4cm) que ceux des crabes violonistes. Ils sont généralement abondants sur les berges
-                                des chenaux et se retrouvent jusque dans la zone moyenne des marais salés, préférentiellement associés
-                                aux habitats à <em>Spartina alterniflora</em>. La profondeur des terriers avoisine généralement celle du système
-                                racinaire de la végétation des marais salés ce qui permet à ces crabes de s’alimenter sur les racines
-                                des plantes tout en étant à l’abri de la prédation. <em>Sesarma</em> est connu pour fortement consommer les feuilles et
-                                les racines de <em>Spartina</em> durant toute sa saison de croissance, ce qui peut entrainer une forte mortalité
-                                de cette espèce végétale clé de voûte lorsque les crabes sont abondants. Depuis quelques années,
-                                la densité de <em>Sesarma</em> a fortement augmenté dans les marais salés du Nord-Est des états unis, possiblement
-                                dû à la pêche intensive de leurs prédateurs (e.g. <em>Callinectes sapidus</em>), causant une régression importante
-                                des peuplements de <em>Spartina</em> le long des berges des chenaux qui se retrouvent alors fortement exposés à
-                                l’érosion par la marée.
-                            </p>
+                                <p>
+                                    <strong>Taille maximale</strong>: Carapace jusqu’à 35 mm de large
+                                </p>
 
-                            <p>
-                                <img src="images/animals/burrow2.png" style="width: 100%;">
-                            </p>
+                                <p>
+                                    <strong>Reproduction</strong>: Ils présentent des périodicités de reproduction correspondant
+                                    aux phases lunaires et de marée.  La période de reproduction va de juin à septembre, débutant
+                                    généralement 4 à 5 jours après les marées de printemps.  Les accouplements ont lieu toutes
+                                    les 2 semaines environ. Après fécondations des œufs par les mâles, les femelles les couvent
+                                    pendant 12-15 jours jusqu’à l’éclosion des larves.
+                                </p>
+
+                                <p>
+                                    <strong>Prédateurs</strong>: Les crabes (<em>A. cinereum</em>, <em>E. limosum</em>, <em>C. sapidus</em>),
+                                    les oiseaux (ralidés, aigrettes, hérons) et les ratons laveurs. Les larves sont aussi consommées par les poissons.
+                                </p>
+
+                                <p>
+                                    <strong>Importance</strong>: Ces crabes sont les plus abondants des marais et régulent
+                                    la production primaire (<em>Spartina</em> et autres...). Leur activité d'enfouissement favorise
+                                    les processus de décomposition, l’oxygénation et le drainage des sols du marais. Ils
+                                    régulent les flux d’énergie dans le marais, enrichissent le sédiment en matière organique
+                                    et favorisent le turn-over des nutriments. Les crabes violonistes et <em>Spartina</em> semblent
+                                    entretenir une relation de type mutualisme facultatif.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-show="selectedTab === 'Sesarma'">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="lead">Informations diagnostiques</p>
+                                <p>
+                                    Nom scientifique: <em>Sesarma reticulatum</em><br />
+                                    Ordre: Decapode<br />
+                                    Famille: Grapsidae
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <img src="images/animals/crab2.png" style="width: 100%;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>
+                                    <strong>Habitat</strong>: Ce crabe nocturne construit et habite des terriers élaborés
+                                    dans les zones basses ou moyennes des marais dominées par <em>Spartina</em>.
+                                </p>
+
+                                <p>
+                                    <strong>Caractéristiques morphologiques</strong>: Sa carapace (25 mm), est de couleur
+                                    brun-violet et l’extrémité des pinces est blanc-jaunâtre. Ce crabe présente un dimorphisme
+                                    sexuel : les males ont des pinces beaucoup plus grande que les femelles.
+                                </p>
+
+                                <p>
+                                    <strong>Habitudes alimentaires</strong>: Principalement herbivores, ce crabe se nourrit
+                                    des feuilles aériennes des plantes, et des racines souterraines depuis leurs terriers.
+                                    Il consomme préférentiellement et abondamment <em>Spartina</em>, mais aussi des espèces comme
+                                    <em>Juncus</em>, <em>Borrichia</em> ou <em>Salicornia</em> dans les habitats de mi-marais.
+                                </p>
+
+                                <p>
+                                    <strong>Taille maximale</strong>: Carapace jusqu’à 32 mm de large
+                                </p>
+
+                                <p>
+                                    <strong>Reproduction</strong>: Ils présentent des périodicités de reproduction correspondant
+                                    aux phases lunaires et de marée.  La période de reproduction va de juin à septembre, débutant
+                                    généralement 4 à 5 jours après les marées de printemps.  Les accouplements ont lieu toutes
+                                    les 2 semaines environ. Après fécondations des œufs par les mâles, les femelles les couvent
+                                    pendant 12-15 jours jusqu’à l’éclosion des larves.
+                                </p>
+
+                                <p>
+                                    <strong>Prédateurs</strong>: De nombreux oiseaux, poissons, mammifères et des crabes de
+                                    plus grandes tailles (<em>E. limosum</em>, <em>C. sapidus</em>). Les larves sont aussi des ressources
+                                    alimentaires pour   bivalves filtreurs, poissons et autres zooplanctons.
+                                </p>
+
+                                <p>
+                                    <strong>Importance</strong>: Une surpopulation de <em>S. reticulatum</em>, peut entraîner le
+                                    déclin des habitats du marais où <em>Spartina</em> domine, favorisant alors l’érosion de la côte.
+                                    Ce crabe participe aussi le remaniement du sol par les terriers qu’il réalise.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-show="selectedTab === 'Armases'">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="lead">Informations diagnostiques</p>
+                                <p>
+                                    Nom scientifique: <em>Armases cinereum</em> (= <em>S. cinereum</em>)<br />
+                                    Ordre: Decapode<br />
+                                    Famille: Grapsidae
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <img src="images/animals/crab3.png" style="width: 100%;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>
+                                    <strong>Habitat</strong>: Ce crabe nocturne et semi-terrestre ne fait pas de terrier et
+                                    trouve protection sous la litière ou entre les rochers. Il se retrouve principalement
+                                    au-dessus de la ligne des eaux, depuis les zones de bas marais jusque dans les forêts littorales.
+                                </p>
+
+                                <p>
+                                    <strong>Caractéristiques morphologiques</strong>: Sa carapace est brune à olive avec
+                                    des taches noires ou grisâtres. Les extrémités des pinces sont blanches. Cette espèce
+                                    présente un dimorphisme sexuel : les males ont des pinces plus grandes que les femelles.
+                                </p>
+
+                                <p>
+                                    <strong>Habitudes alimentaires</strong>: Omnivores, ces crabes consomment des débris
+                                    végétaux frais ou en cours de décomposition (e.g. <em>Spartina</em>, <em>Juncus</em>), des champignons
+                                    ou des proies animales telles que les crabes violonistes (<em>Uca spp.</em>), insectes, araignées
+                                    ou escargots (<em>Melampus Bidentatus</em>, <em>Littoraria irrorata</em>).
+                                </p>
+
+                                <p>
+                                    <strong>Taille maximale</strong>: Carapace jusqu’à 25 mm de large
+                                </p>
+
+                                <p>
+                                    <strong>Reproduction</strong>: Ils présentent des périodicités de reproduction correspondant
+                                    aux phases lunaires et de marée.  La période de reproduction va de juin à septembre, débutant
+                                    généralement 4 à 5 jours après les marées de printemps.  Les accouplements ont lieu toutes
+                                    les 2 semaines environ. Après fécondations des œufs par les mâles, les femelles les couvent
+                                    pendant 12-15 jours jusqu’à l’éclosion des larves.
+                                </p>
+
+                                <p>
+                                    <strong>Prédateurs</strong>: De nombreux oiseaux, poissons, mammifères et des crabes de
+                                    plus grandes tailles (<em>E. limosum</em>, <em>C. sapidus</em>). Les larves sont aussi des ressources
+                                    alimentaires pour   bivalves filtreurs, poissons et autres zooplanctons.
+                                </p>
+
+                                <p>
+                                    <strong>Importance</strong>: Ce crabe semi-terrestre, omnivore et très mobile, joue un
+                                    rôle important dans la régulation des flux d’énergie entre les différents niveaux trophiques
+                                    (en tant que proie ou prédateur) et le long du gradient terrestre-marin.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-show="selectedTab === 'Eurytium'">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="lead">Informations diagnostiques</p>
+                                <p>
+                                    Nom scientifique: <em>Eurytium limosum</em><br />
+                                    Ordre: Decapode<br />
+                                    Famille: Xanthidae
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <img src="images/animals/crab4.png" style="width: 100%;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>
+                                    <strong>Habitat</strong>: Ce crabe vit principalement dans des terriers créés dans la
+                                    zone intertidale, en particulier dans les peuplements de <em>Spartina</em>. Ce crabe peut se
+                                    trouver sur les berges des chenaux, les portions basses du marais et plus rarement aux
+                                    élévations plus hautes.
+                                </p>
+
+                                <p>
+                                    <strong>Caractéristiques morphologiques</strong>: Sa carapace (37 mm) est de couleur
+                                    noire-grisâtre, la partie basale de ses pattes de couleur jaune et l’extrémité de ses
+                                    pinces jaune-orangé.
+                                </p>
+
+                                <p>
+                                    <strong>Habitudes alimentaires</strong>: Leurs principales proies sont d’autres crabes
+                                    et plus particulièrement le taxon Uca. Ils consomment également des polychètes, ostracodes,
+                                    bivalves (e.g. <em>Geukensia demissa</em>), escargots (<em>M. bidentatus</em> et <em>L. irrorata</em>),
+                                    mais aussi des détritus de plantes tels que <em>Spartina</em>.
+                                </p>
+
+                                <p>
+                                    <strong>Taille maximale</strong>: Généralement inférieure à 50mm
+                                </p>
+
+                                <p>
+                                    <strong>Reproduction</strong>: Ils présentent des périodicités de reproduction correspondant
+                                    aux phases lunaires et de marée.  La période de reproduction va de juin à septembre, débutant
+                                    généralement 4 à 5 jours après les marées de printemps.  Les accouplements ont lieu toutes
+                                    les 2 semaines environ. Après fécondations des œufs par les mâles, les femelles les couvent
+                                    pendant 12-15 jours jusqu’à l’éclosion des larves.
+                                </p>
+
+                                <p>
+                                    <strong>Prédateurs</strong>: Les crabes (<em>C. sapidus</em>), oiseaux, et mammifères mais aussi
+                                    par les bivalves filtreurs et les poissons durant leur stade larvaire.
+                                </p>
+
+                                <p>
+                                    <strong>Importance</strong>: Cette espèce prédatrice régule la distribution et l’abondance
+                                    des espèces benthiques dont il se nourri.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-show="selectedTab === 'Callinectes'">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="lead">Informations diagnostiques</p>
+                                <p>
+                                    Nom scientifique: <em>Callinectes sapidus</em><br />
+                                    Ordre: Decapode<br />
+                                    Famille: Portunidae
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <img src="images/animals/crab5.png" style="width: 100%;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>
+                                    <strong>Habitat</strong>: Ce crabe vit dans toutes les zones des estuaires (eau peu
+                                    profonde et saumâtre, herbiers de salicorne, zones de vase). Les males matures préfèrent
+                                    les chenaux, rivières et amont des estuaires. Hors saison de reproduction, les femelles
+                                    tendent à rester dans les zones salées de l’aval des estuaires.  La zone peu profonde
+                                    du marais constitue des nurseries pour les jeunes.
+                                </p>
+
+                                <p>
+                                    <strong>Caractéristiques morphologiques</strong>: Ce crabe est grisâtre ou bleu-verdâtre,
+                                    avec des épines rouges caractéristiques de chaque côté de sa carapace et des pinces bleues.
+                                    La dernière paire de pattes sert de rame faisant de ces crabes d’excellents nageurs.
+                                    Les individus présentent un dimorphisme sexuel au niveau de l’abdomen qui est long et
+                                    fin chez les mâles, triangulaire chez les femelles immatures et rond chez les femelles matures.
+                                    L’extrémité des pinces est rouge chez les femelles.
+                                </p>
+
+                                <p>
+                                    <strong>Habitudes alimentaires</strong>: Omnivore, il consomme à la fois des plantes
+                                    (e.g. <em>Spartina</em>) et des animaux tels que des bivalves (e.g. <em>Geukensia demissa</em>), des crustacés
+                                    (e.g. crevettes, <em>Uca spp.</em>, <em>A. cinereum</em>, <em>E. limosum</em>, <em>C.
+                                    sapidus</em>), poissons, escargots (e.g. <em>L. irrorata</em>, <em>M. bidentatus</em>), et des charognes.
+                                </p>
+
+                                <p>
+                                    <strong>Taille maximale</strong>: Carapace jusqu’à 23 mm de large
+                                </p>
+
+                                <p>
+                                    <strong>Reproduction</strong>: Pendant l’été, les femelles immatures migrent vers les
+                                    zones amont des estuaires où les males résident. Après la reproduction, les femelles
+                                    retournent pondre dans la partie aval des estuaires,  dans les chenaux et zones basses
+                                    des marais.
+                                </p>
+
+                                <p>
+                                    <strong>Prédateurs</strong>: Les grands mammifères (incluant les humains), les alligators,
+                                    les oiseaux marins, les gros poissons, les autres <em>C.  sapidus</em>.
+                                </p>
+
+                                <p>
+                                    <strong>Importance</strong>: Ces espèces prédatrices régulent les espèces benthiques
+                                    dont ils se nourrissent.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

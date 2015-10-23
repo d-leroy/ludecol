@@ -40,7 +40,7 @@ public class FactResource {
         log.debug("REST request to get a random fact");
         String result = "<fun fact here>";
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("tips"));
+            BufferedReader reader = new BufferedReader(new FileReader("tipsFR"));
             List<String> lines = reader.lines().collect(Collectors.toList());
             result = lines.get(rand.nextInt(lines.size()));
         } catch (FileNotFoundException e) {

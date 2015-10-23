@@ -15,8 +15,8 @@ angular.module('ludecolApp')
                         $translate.use(account.langKey);
                         NotificationService.login();
                         NotificationService.startLongPolling(true);
-                        ObjectiveService.login();
-                        ObjectiveService.startLongPolling(true);
+//                        ObjectiveService.login();
+//                        ObjectiveService.startLongPolling(true);
                     });
                     deferred.resolve(data);
 

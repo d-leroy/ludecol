@@ -22,31 +22,31 @@ angular.module('ludecolApp')
         NotificationService.setOnNotificationReceived(function(result) {$scope.notifications = $scope.notifications.concat(result);});
         NotificationService.setOnLogout(function() {$scope.notifications = [];});
 
-        ObjectiveService.setOnObjectivesReceived(function(result) {
-            $scope.ongoing_objectives = [];
-            $scope.pending_objectives = [];
-            for(var i=0,ii=result.length;i<ii;i++) {
-                var completed = result[i].completed_games;
-                var toComplete = result[i].games_to_complete;
-                var toCorrect = toComplete - result[i].pending_games.length;
-                if(completed < toComplete) {
-                    //It's an ongoing objective
-                    $scope.ongoing_objectives.push({
-                        title: "Complete " + toComplete + " " + PrettyPrinting.getMode(result[i].game_mode,false,true) + " games",
-                        state: "Completed : " + completed + "/" + toComplete
-                    });
-                }
-                else {
-                    //It's a pending objective
-                    $scope.pending_objectives.push({
-                        title: "Complete " + toComplete + " " + PrettyPrinting.getMode(result[i].game_mode,false,true) + " games",
-                        state: "Corrected : " + toCorrect + "/" + toComplete
-                    });
-                }
-            }
-        });
+//        ObjectiveService.setOnObjectivesReceived(function(result) {
+//            $scope.ongoing_objectives = [];
+//            $scope.pending_objectives = [];
+//            for(var i=0,ii=result.length;i<ii;i++) {
+//                var completed = result[i].completed_games;
+//                var toComplete = result[i].games_to_complete;
+//                var toCorrect = toComplete - result[i].pending_games.length;
+//                if(completed < toComplete) {
+//                    //It's an ongoing objective
+//                    $scope.ongoing_objectives.push({
+//                        title: "Complete " + toComplete + " " + PrettyPrinting.getMode(result[i].game_mode,false,true) + " games",
+//                        state: "Completed : " + completed + "/" + toComplete
+//                    });
+//                }
+//                else {
+//                    //It's a pending objective
+//                    $scope.pending_objectives.push({
+//                        title: "Complete " + toComplete + " " + PrettyPrinting.getMode(result[i].game_mode,false,true) + " games",
+//                        state: "Corrected : " + toCorrect + "/" + toComplete
+//                    });
+//                }
+//            }
+//        });
 
-        ObjectiveService.setOnLogout(function() {$scope.ongoing_objectives = []; $scope.pending_objectives = []});
+//        ObjectiveService.setOnLogout(function() {$scope.ongoing_objectives = []; $scope.pending_objectives = []});
 
         //Does not work when the user logs in, but works on page (re)loads.
         Principal.identity().then(function(account) {

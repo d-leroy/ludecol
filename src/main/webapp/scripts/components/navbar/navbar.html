@@ -27,7 +27,7 @@
                     <div class="dropdown-menu" style="width: 300px; padding: 0px;">
                         <ul class="list-group" style="margin: 0px;">
                             <li class="list-group-item" style="padding: 10px 0px; border-radius: 0px;">
-                                <h4 style="margin: 0px 10px;">Notifications</h4>
+                                <h4 style="margin: 0px 10px;" translate="global.menu.notifications.main">Notifications</h4>
                             </li>
                             <li class="list-group-item" style="padding: 0px;">
                                 <div style="height: 250px; overflow: auto;">
@@ -50,7 +50,15 @@
                                 </div>
                             </li>
                             <li class="list-group-item" style="border-radius: 0px;">
-                                <a ui-sref="game-history" class="text-center"><div><strong>Show all notifications</strong></div></a>
+                                <a ui-sref="game-history" class="text-center">
+                                    <div>
+                                        <strong>
+                                            <span translate="global.menu.notifications.show-all">
+                                                Show all notifications
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </a>
                             </li>
                         </ul>
                     </div>
@@ -136,7 +144,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li ui-sref-active="active" ng-switch-when="true"><a ui-sref="profile"><span class="glyphicon glyphicon-user"></span>
-                            &#xA0;<span>Profile</span></a></li>
+                            &#xA0;<span translate="global.menu.account.profile">Profile</span></a></li>
                         <li ui-sref-active="active" ng-switch-when="true"><a ui-sref="settings"><span class="glyphicon glyphicon-wrench"></span>
                             &#xA0;<span translate="global.menu.account.settings">Settings</span></a></li>
                         <li ui-sref-active="active" ng-switch-when="true"><a ui-sref="password"><span class="glyphicon glyphicon-lock"></span>
@@ -162,9 +170,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li ui-sref-active="active"><a ui-sref="image-manager"><span class="glyphicon glyphicon-picture"></span>
-                            &#xA0;<span>Image manager</span></a></li>
-                        <li ui-sref-active="active"><a ui-sref="user-manager"><span class="glyphicon glyphicon-user"></span>
-                            &#xA0;<span>User manager</span></a></li>
+                            &#xA0;<span translate="global.menu.admin.manager">Image manager</span></a></li>
                         <li ui-sref-active="active"><a ui-sref="metrics"><span class="glyphicon glyphicon-dashboard"></span>
                             &#xA0;<span translate="global.menu.admin.metrics">Metrics</span></a></li>
                         <li ui-sref-active="active"><a ui-sref="health"><span class="glyphicon glyphicon-heart"></span>

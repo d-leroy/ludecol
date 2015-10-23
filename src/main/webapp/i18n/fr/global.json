@@ -7,6 +7,10 @@
             "play": "Jouer",
             "training": "Entraînement",
             "options": "Options",
+            "notifications": {
+                "main": "Notifications",
+                "show-all": "Montrer toutes les notifications"
+            },
             "entities": {
                 "main": "Entités",
                 "image": "Image",
@@ -18,7 +22,8 @@
             },
             "account": {
                 "main": "Compte",
-                "settings": "Profil",
+                "profile": "Profil",
+                "settings": "Informations",
                 "password": "Mot de passe",
                 "sessions": "Sessions",
                 "login": "S'authentifier",
@@ -28,6 +33,7 @@
             "admin": {
                 "main": "Administration",
                 "tracker": "Suivi des utilisateurs",
+                "manager": "Gestionnaire d'images",
                 "metrics": "Métriques",
                 "health": "Diagnostics",
                 "configuration": "Configuration",

@@ -7,6 +7,10 @@
             "play": "Play",
             "training": "Training",
             "options": "Options",
+            "notifications": {
+                "main": "Notifications",
+                "show-all": "Show all notifications"
+            },
             "entities": {
                 "main": "Entities",
                 "image": "Image",
@@ -18,6 +22,7 @@
             },
             "account": {
                 "main": "Account",
+                "profile": "Profile",
                 "settings": "Settings",
                 "password": "Password",
                 "sessions": "Sessions",
@@ -28,6 +33,7 @@
             "admin": {
                 "main": "Administration",
                 "tracker": "User tracker",
+                "manager": "Image manager",
                 "metrics": "Metrics",
                 "health": "Health",
                 "configuration": "Configuration",
