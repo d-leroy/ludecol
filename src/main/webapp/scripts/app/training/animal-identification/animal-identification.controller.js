@@ -8,6 +8,10 @@ angular.module('ludecolApp')
 
     .controller('TrainingAnimalIdentificationController', function ($scope, Principal, ScoreboardService, TrainingAnimalGameService, FeatureCollection, RadioModel, ImageService) {
 
+        $scope.allTabs = ['Uca','Sesarma','Armases','Eurytium','Callinectes'];
+        $scope.selectedTab = 'Uca';
+        $scope.selectTab = function(tab) {$scope.selectedTab = tab; console.log(tab);}
+
         Principal.identity().then(function(account) {
             $scope.account = account;
             $scope.isAuthenticated = Principal.isAuthenticated;

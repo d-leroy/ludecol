@@ -12,10 +12,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -48,6 +45,25 @@ public class ImageProviderService {
     private final Logger log = LoggerFactory.getLogger(ImageProviderService.class);
 
     private Random rand = new Random();
+
+    private List<Image> filterEmptyImages(List<Image> images, GameMode mode) {
+        List<Image> result = images;
+        switch(mode) {
+            case AnimalIdentification:
+                result = images.stream().filter(i-> {
+                    Map<?, List> refResult = i.getModeStatus().get(mode).getReferenceResult();
+                    return refResult != null && refResult.values().stream().anyMatch(l->!l.isEmpty());
+                }).collect(Collectors.toList());
+                break;
+            case PlantIdentification:
+                result = images.stream().filter(i-> {
+                    Map<?, List<Boolean>> refResult = i.getModeStatus().get(mode).getReferenceResult();
+                    return refResult != null && refResult.values().stream().anyMatch(l->l.stream().anyMatch(b->b));
+                }).collect(Collectors.toList());
+                break;
+        }
+        return result;
+    }
 
     private List<Image> filterPlayedImages(List<Image> images, GameMode mode, String login) {
         List<String> games = gameRepository.findAllByUsrAndGameMode(login, mode).stream()
@@ -284,6 +300,7 @@ public class ImageProviderService {
         //Eligible images are in the PROCESSED status for the requested mode.
         List<Image> images = mongoTemplate.find(query(where("mode_status."+mode+".status").is(ImageStatus.PROCESSED.toString())), Image.class);
         //Eligible images have not already been played by the requesting player.
+        images = filterEmptyImages(images, mode);
         images = filterPlayedTrainingImages(images, mode, login);
         images = images.stream()
             .sorted(Comparator.comparingInt(i -> i.getModeStatus().get(mode).getGameNumber()))

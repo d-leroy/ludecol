@@ -1,12 +1,12 @@
 <div ng-cloak>
-    <h1 class="text-center">Plant identification</h1>
+    <h1 class="text-center">Identification de plantes</h1>
 
     <div ng-show="errorMsg === true">
         <p class="text-center">
-            Sorry, no image is available to you in this game mode at this time.
+            Désolé, aucune image n'a été trouvée dans ce mode.
         </p>
         <div style="width: 25%; margin: 0 auto;">
-            <a class="btn btn-primary btn-lg" ui-sref="home" style="width: 100%;">Back to the menu</a>
+            <a class="btn btn-primary btn-lg" ui-sref="home" style="width: 100%;">Retour à l'accueil</a>
         </div>
     </div>
 
@@ -21,7 +21,7 @@
                        ng-disabled="Salicornia === undefined">
                     <span class="glyphicon glyphicon-pencil" ng-show="radioModel.selected === 'Salicornia'"></span>
                     <span class="glyphicon glyphicon-lock" ng-show="Salicornia === undefined"></span>
-                    Salicornia
+                    Salicoria
                 </label>
                 <label class="btn color2" ng-model="radioModel.selected"
                        btn-radio="'Spartina'" uncheckable
@@ -64,11 +64,11 @@
             <hr/>
             <div style="margin: 0 auto; width: 128px; height: 128px; background-color: lightgrey;">
                 <img ng-show="radioModel.selected !== null" ng-src="images/plants/{{radioModel.selected}}.jpg" />
-                <a ng-show="radioModel.selected !== null" ng-click="showModal()">More details</a>
+                <a ng-show="radioModel.selected !== null" ng-click="showModal()">Plus de détails</a>
             </div>
             <hr/>
             <div>
-                <a class="btn btn-default" ng-click="submit()">Submit</a> <a class="btn btn-default" ng-click="skip()">Skip</a>
+                <a class="btn btn-default" ng-click="submit()">Soumettre</a> <a class="btn btn-default" ng-click="skip()">Passer</a>
             </div>
         </div>
     </div>
@@ -83,22 +83,22 @@
         <div ng-show="displayOptions" style="clear: both;">
             <ul class="list-unstyled">
                 <li ng-show="Batis !== undefined">
-                    <input type="checkbox" id="batisCheckbox" ng-model="showBatis"><label for="batisCheckbox">Show batis</label>
+                    <input type="checkbox" id="batisCheckbox" ng-model="showBatis"><label for="batisCheckbox">Afficher batis</label>
                 </li>
                 <li ng-show="Borrichia !== undefined">
-                    <input type="checkbox" id="borrichiaCheckbox" ng-model="showBorrichia"><label for="borrichiaCheckbox">Show borrichia</label>
+                    <input type="checkbox" id="borrichiaCheckbox" ng-model="showBorrichia"><label for="borrichiaCheckbox">Afficher borrichia</label>
                 </li>
                 <li ng-show="Juncus !== undefined">
-                    <input type="checkbox" id="juncusCheckbox" ng-model="showJuncus"><label for="juncusCheckbox">Show juncus</label>
+                    <input type="checkbox" id="juncusCheckbox" ng-model="showJuncus"><label for="juncusCheckbox">Afficher juncus</label>
                 </li>
                 <li ng-show="Limonium !== undefined">
-                    <input type="checkbox" id="limoniumCheckbox" ng-model="showLimonium"><label for="limoniumCheckbox">Show limonium</label>
+                    <input type="checkbox" id="limoniumCheckbox" ng-model="showLimonium"><label for="limoniumCheckbox">Afficher limonium</label>
                 </li>
                 <li ng-show="Salicornia !== undefined">
-                    <input type="checkbox" id="salicorniaCheckbox" ng-model="showSalicornia"><label for="salicorniaCheckbox">Show salicornia</label>
+                    <input type="checkbox" id="salicorniaCheckbox" ng-model="showSalicornia"><label for="salicorniaCheckbox">Afficher salicornia</label>
                 </li>
                 <li ng-show="Spartina !== undefined">
-                    <input type="checkbox" id="spartinaCheckbox" ng-model="showSpartina"><label for="spartinaCheckbox">Show spartina</label>
+                    <input type="checkbox" id="spartinaCheckbox" ng-model="showSpartina"><label for="spartinaCheckbox">Afficher spartina</label>
                 </li>
             </ul>
         </div>

@@ -58,4 +58,14 @@ public class ImageModeStatus {
     public void setReferenceResult(Map referenceResult) {
         this.referenceResult = referenceResult;
     }
+
+    @Override
+    public String toString() {
+        return "ImageModeStatus{" +
+            "status=" + status +
+            ", gameNumber=" + gameNumber +
+            ", gameResults=" + gameResults +
+            ", referenceResult=" + referenceResult +
+            '}';
+    }
 }

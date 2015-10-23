@@ -200,7 +200,7 @@ public class TrainingGameService {
             return null;
         TrainingGame trainingGame;
         GameResult refResult;
-        switch(game.getGameMode()) {
+        switch(mode) {
             case AnimalIdentification: {
                 refResult = new AnimalIdentificationResult();
                 Map<AnimalSpecies,List<double[]>> refMap = new HashMap();
