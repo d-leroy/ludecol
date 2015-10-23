@@ -216,6 +216,7 @@ public class ImageProviderService {
                 }
             })
             .collect(Collectors.toList());
+        log.debug("Number of images after sorting : {}", images.size());
         if(images.isEmpty()) {
             images = mongoTemplate.find(query(where("mode_status." + mode + ".status").is(ImageStatus.IN_PROCESSING.toString())), Image.class);
             images = images.stream()
