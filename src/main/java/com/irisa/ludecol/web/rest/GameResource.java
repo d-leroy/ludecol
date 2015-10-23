@@ -117,6 +117,19 @@ public class GameResource {
     }
 
     /**
+     * GET  /games/:id -> get all games.
+     */
+    @RequestMapping(value = "/games",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    public ResponseEntity<Iterable<Game>> getAll() {
+        List<Game> result = gameRepository.findAll();
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
      * DELETE /games -> deletes the game if it is not completed and adds the image tp the "skipped images" list of the user
      */
     @RequestMapping(value = "/games/{id}",
@@ -150,6 +163,8 @@ public class GameResource {
             .map(list -> new ResponseEntity<>(list, HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+
 
     /**
      * GET  /games/image/:img -> get all games on the "img" image.
