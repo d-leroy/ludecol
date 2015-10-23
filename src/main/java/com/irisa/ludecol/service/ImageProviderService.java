@@ -141,7 +141,7 @@ public class ImageProviderService {
             i++;
             c=n2.charAt(i);
         }
-        int prefix2 = Integer.parseInt(n1.substring(0, i));
+        int prefix2 = Integer.parseInt(n2.substring(0, i));
         if(prefix1 > prefix2) {
             return -1;
         }
