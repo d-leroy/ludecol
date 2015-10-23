@@ -170,9 +170,13 @@ public class ImageProviderService {
 
         List<Image> images = mongoTemplate.find(query(where("mode_status." + mode + ".status").is(ImageStatus.NOT_PROCESSED.toString())), Image.class);
 
+        log.debug("Total number of unprocessed images : {}", images.size());
+
         images = images.stream()
             .filter(i -> !played.contains(i.getId()))
             .collect(Collectors.toList());
+
+        log.debug("Total number of unprocessed images unplayed by current user : {}", images.size());
 
         images = images.stream()
             .sorted(new Comparator<Image>() {
@@ -239,6 +243,7 @@ public class ImageProviderService {
         }
         //Only images from the highest priority set
         images = filterImageListBySet(images);
+        log.debug("Eligible images in set : {}", images.size());
         //Only images with the highest game number
         images = filterImageListByGameNumber(images, mode);
         log.debug("Total number of eligible images : {}", images.size());
