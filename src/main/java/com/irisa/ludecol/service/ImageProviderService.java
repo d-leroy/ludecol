@@ -134,14 +134,14 @@ public class ImageProviderService {
             i++;
             c=n1.charAt(i);
         }
-        int prefix1 = Integer.parseInt(n1.substring(0, i-1));
+        int prefix1 = Integer.parseInt(n1.substring(0, i));
         i=0;
         c=n2.charAt(i);
         while(Character.isDigit(c) && i<n2.length()) {
             i++;
             c=n2.charAt(i);
         }
-        int prefix2 = Integer.parseInt(n1.substring(0, i-1));
+        int prefix2 = Integer.parseInt(n1.substring(0, i));
         if(prefix1 > prefix2) {
             return -1;
         }
