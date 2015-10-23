@@ -56,57 +56,57 @@
                     </div>
                 </li>
 
-                <li ng-switch-when="true">
-                    <a class="dropdown-toggle" data-toggle="dropdown">
-                        <span style="font-size: 18px;" class="glyphicon glyphicon-exclamation-sign"></span>
-                    </a>
-                    <div class="dropdown-menu" style="width: 300px; padding: 0px;">
-                        <ul class="list-group" style="margin: 0px;">
-                            <li ng-hide="ongoing_objectives.length === 0" class="list-group-item"
-                                style="padding: 10px 0px; border-radius: 0px;">
-                                <h4 style="margin: 0px 10px;">Ongoing objectives : {{ongoing_objectives.length}}/3</h4>
-                            </li>
-                            <li ng-show="ongoing_objectives.length === 0" class="list-group-item disabled"
-                                style="padding: 10px 0px; border-radius: 0px; background-color: #FFF; border: 0 none; margin: 25px 0;">
-                                <h4 style="margin: 0px 10px;">No ongoing objective</h4>
-                            </li>
-                            <li ng-hide="ongoing_objectives.length === 0" class="list-group-item" style="padding: 0px;">
-                                <div style="overflow: auto;">
-                                    <ul class="list-group" style="margin: 0px;">
-                                        <li class="list-group-item notification" ng-repeat="objective in ongoing_objectives"
-                                            style="cursor: default;">
-                                            <div style="display:inline-block;">
-                                                <p><strong>{{objective.title}}</strong></p>
-                                                <p style="margin: 0;">{{objective.state}}</p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                            <li ng-hide="pending_objectives.length === 0" class="list-group-item"
-                                style="padding: 10px 0px; border-radius: 0px;">
-                                <h4 style="margin: 0px 10px;">Pending objectives : {{pending_objectives.length}}</h4>
-                            </li>
-                            <li ng-show="pending_objectives.length === 0" class="list-group-item disabled"
-                                style="padding: 10px 0px; border-radius: 0px; background-color: #FFF; border: 0 none; margin: 25px 0;">
-                                <h4 style="margin: 0px 10px;">No pending objective</h4>
-                            </li>
-                            <li ng-hide="pending_objectives.length === 0"  class="list-group-item" style="padding: 0px;">
-                                <div style="height: 140px; overflow: auto;">
-                                    <ul class="list-group" style="margin: 0px;">
-                                        <li class="list-group-item notification" ng-repeat="objective in pending_objectives"
-                                            style="cursor: default;">
-                                            <div style="display:inline-block;">
-                                                <p><strong>{{objective.title}}</strong></p>
-                                                <p style="margin: 0;">{{objective.state}}</p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                <!--<li ng-switch-when="true">-->
+                    <!--<a class="dropdown-toggle" data-toggle="dropdown">-->
+                        <!--<span style="font-size: 18px;" class="glyphicon glyphicon-exclamation-sign"></span>-->
+                    <!--</a>-->
+                    <!--<div class="dropdown-menu" style="width: 300px; padding: 0px;">-->
+                        <!--<ul class="list-group" style="margin: 0px;">-->
+                            <!--<li ng-hide="ongoing_objectives.length === 0" class="list-group-item"-->
+                                <!--style="padding: 10px 0px; border-radius: 0px;">-->
+                                <!--<h4 style="margin: 0px 10px;">Ongoing objectives : {{ongoing_objectives.length}}/3</h4>-->
+                            <!--</li>-->
+                            <!--<li ng-show="ongoing_objectives.length === 0" class="list-group-item disabled"-->
+                                <!--style="padding: 10px 0px; border-radius: 0px; background-color: #FFF; border: 0 none; margin: 25px 0;">-->
+                                <!--<h4 style="margin: 0px 10px;">No ongoing objective</h4>-->
+                            <!--</li>-->
+                            <!--<li ng-hide="ongoing_objectives.length === 0" class="list-group-item" style="padding: 0px;">-->
+                                <!--<div style="overflow: auto;">-->
+                                    <!--<ul class="list-group" style="margin: 0px;">-->
+                                        <!--<li class="list-group-item notification" ng-repeat="objective in ongoing_objectives"-->
+                                            <!--style="cursor: default;">-->
+                                            <!--<div style="display:inline-block;">-->
+                                                <!--<p><strong>{{objective.title}}</strong></p>-->
+                                                <!--<p style="margin: 0;">{{objective.state}}</p>-->
+                                            <!--</div>-->
+                                        <!--</li>-->
+                                    <!--</ul>-->
+                                <!--</div>-->
+                            <!--</li>-->
+                            <!--<li ng-hide="pending_objectives.length === 0" class="list-group-item"-->
+                                <!--style="padding: 10px 0px; border-radius: 0px;">-->
+                                <!--<h4 style="margin: 0px 10px;">Pending objectives : {{pending_objectives.length}}</h4>-->
+                            <!--</li>-->
+                            <!--<li ng-show="pending_objectives.length === 0" class="list-group-item disabled"-->
+                                <!--style="padding: 10px 0px; border-radius: 0px; background-color: #FFF; border: 0 none; margin: 25px 0;">-->
+                                <!--<h4 style="margin: 0px 10px;">No pending objective</h4>-->
+                            <!--</li>-->
+                            <!--<li ng-hide="pending_objectives.length === 0"  class="list-group-item" style="padding: 0px;">-->
+                                <!--<div style="height: 140px; overflow: auto;">-->
+                                    <!--<ul class="list-group" style="margin: 0px;">-->
+                                        <!--<li class="list-group-item notification" ng-repeat="objective in pending_objectives"-->
+                                            <!--style="cursor: default;">-->
+                                            <!--<div style="display:inline-block;">-->
+                                                <!--<p><strong>{{objective.title}}</strong></p>-->
+                                                <!--<p style="margin: 0;">{{objective.state}}</p>-->
+                                            <!--</div>-->
+                                        <!--</li>-->
+                                    <!--</ul>-->
+                                <!--</div>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                    <!--</div>-->
+                <!--</li>-->
 
                 <!--<li ui-sref-active="active" ng-switch-when="true" ng-show="isInRole('ROLE_ADMIN')" class="dropdown pointer">-->
                     <!--<a class="dropdown-toggle" data-toggle="dropdown" href="">-->

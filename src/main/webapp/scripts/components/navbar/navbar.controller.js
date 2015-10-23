@@ -52,7 +52,7 @@ angular.module('ludecolApp')
         Principal.identity().then(function(account) {
             if(account !== null) {
                 NotificationService.startLongPolling(true);
-                ObjectiveService.startLongPolling(true);
+//                ObjectiveService.startLongPolling(true);
             }
         });
     });
