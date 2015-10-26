@@ -3,7 +3,11 @@
 angular.module('ludecolApp')
 .controller('SubmitModalInstanceCtrl', function ($scope, $modalInstance, Fact) {
 
-    $scope.fact = Fact.get();
+    Fact.get(function(res) {
+        var el = document.createElement("div");
+        el.innerText = el.textContent = res.response;
+        $scope.fact = el.innerHTML;
+    });
 
     $scope.ok = function () {
         $modalInstance.close(true);
