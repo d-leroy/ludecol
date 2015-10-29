@@ -3,6 +3,7 @@ package com.irisa.ludecol.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.domain.Image;
+import com.irisa.ludecol.domain.subdomain.GameMode;
 import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
 import com.irisa.ludecol.repository.GameRepository;
 import com.irisa.ludecol.repository.ImageRepository;
@@ -143,6 +144,12 @@ public class GameResource {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         if(game.getCompleted())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        Image img = imageRepository.findOne(game.getImg());
+        ImageModeStatus modeStatus = img.getModeStatus().get(game.getGameMode());
+        if(modeStatus.getGameNumber() > 0) {
+            modeStatus.setGameNumber(modeStatus.getGameNumber()-1);
+        }
+        imageRepository.save(img);
         userService.updateSkippedList(game.getUsr(),game.getImg(),game.getGameMode());
         gameRepository.delete(id);
         return ResponseEntity.ok().build();
