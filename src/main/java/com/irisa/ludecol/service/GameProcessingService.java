@@ -443,9 +443,9 @@ public class GameProcessingService {
         imageRepository.save(img);
 
         //If the image hasn't been processed yet for the given mode but has accrued enough submissions, it is processed now.
-        if(!imageModeStatus.getStatus().equals(ImageStatus.PROCESSED) && results.size() >= imageSet.getRequiredSubmissions()) {
-            processImage(mode,results,img);
-        }
+//        if(!imageModeStatus.getStatus().equals(ImageStatus.PROCESSED) && results.size() >= imageSet.getRequiredSubmissions()) {
+//            processImage(mode,results,img);
+//        }
     }
 
     private void processImage(GameMode mode, List<GameResult> results, Image image) {
