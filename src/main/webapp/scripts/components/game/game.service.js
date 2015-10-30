@@ -32,7 +32,7 @@ angular.module('ludecolApp')
                 else {
                     _startNewGame();
                 }
-            });
+            }, function(e){ _startNewGame();});
         }
 
         var _skipGame = function() {
