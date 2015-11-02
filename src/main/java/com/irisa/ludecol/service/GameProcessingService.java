@@ -105,7 +105,7 @@ public class GameProcessingService {
         return result;
     }
 
-    private Map<AnimalSpecies,List<double[]>> processAnimalIdentification(final List<AnimalIdentificationResult> gameResults) {
+    public Map<AnimalSpecies,List<double[]>> processAnimalIdentification(final List<AnimalIdentificationResult> gameResults) {
         final int nb_submissions = gameResults.size();
         final Map<AnimalSpecies,List<double[]>> result = new HashMap();
         for(AnimalSpecies species : AnimalSpecies.values()) {
@@ -329,7 +329,7 @@ public class GameProcessingService {
         leafVertice.stream().forEach(p->pathList.addAll(getPaths(p,graph)));
         final List<GraphPath<double[],DefaultWeightedEdge>> paths = new ArrayList<>();
         pathList.stream().forEach(l -> {
-            if (l.size() >= MIN_PATH_LENGTH) {
+            if (l.size() >= MIN_PATH_LENGTH-1) {
                 final GraphPath<double[], DefaultWeightedEdge> path =
                     new GraphPathImpl(graph, graph.getEdgeSource(l.get(0)),
                         graph.getEdgeTarget(l.get(l.size() - 1)), l,
@@ -401,7 +401,7 @@ public class GameProcessingService {
                 final double[] q = graph.getEdgeSource(e);
                 final List<List<DefaultWeightedEdge>> paths = getPaths(q,graph);
                 if(paths.isEmpty()) {
-                    // The explored edge's source has not predecessor, we thus
+                    // The explored edge's source has no predecessor, we thus
                     // just add the explored edge to the result as a new path.
                     final List<DefaultWeightedEdge> path = new ArrayList();
                     path.add(e);

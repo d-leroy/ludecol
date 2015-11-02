@@ -96,24 +96,26 @@ public class ImageProviderService {
         if(images.isEmpty()) {
             return images;
         }
-        int maxPlayed = images.get(0).getModeStatus().get(mode).getGameNumber();
+        int maxPlayed = images.stream()
+            .collect(Collectors.maxBy(Comparator.comparingInt(i->i.getModeStatus().get(mode).getGameNumber())))
+            .get().getSetPriority();
         return images.stream()
             .filter(i->i.getModeStatus().get(mode).getGameNumber() == maxPlayed)
             .collect(Collectors.toList());
     }
 
     private List<Image> filterImageListBySet(List<Image> images) {
-        ImageSet imageSet = imageSetRepository.findAll().stream()
-            .collect(Collectors.minBy(Comparator.comparingInt(ImageSet::getPriority))).get();
-        return images.stream()
-            .filter(i->imageSet.getName().equals(i.getImageSet()))
-            .collect(Collectors.toList());
-//        int maxSetPriority = images.stream()
-//            .collect(Collectors.minBy(Comparator.comparingInt(Image::getSetPriority)))
-//            .get().getSetPriority();
+//        ImageSet imageSet = imageSetRepository.findAll().stream()
+//            .collect(Collectors.minBy(Comparator.comparingInt(ImageSet::getPriority))).get();
 //        return images.stream()
-//            .filter(i -> i.getSetPriority() == maxSetPriority)
+//            .filter(i->imageSet.getName().equals(i.getImageSet()))
 //            .collect(Collectors.toList());
+        int minSetPriority = images.stream()
+            .collect(Collectors.minBy(Comparator.comparingInt(Image::getSetPriority)))
+            .get().getSetPriority();
+        return images.stream()
+            .filter(i -> i.getSetPriority() == minSetPriority)
+            .collect(Collectors.toList());
     }
 
     private int compareImageNames(String n1, String n2) {
@@ -121,7 +123,7 @@ public class ImageProviderService {
             return 0;
         }
 
-        //Images must be treated by ascending order on their suffix (_0, _1, _2, ...)
+        //Images must be treated in ascending order on their suffix (_0, _1, _2, ...)
         int i=n1.length()-1;
         char c=n1.charAt(i);
         while(Character.isDigit(c) && i>=0) {
@@ -143,7 +145,7 @@ public class ImageProviderService {
             return 1;
         }
 
-        //In case of suffix equality, images must be treated by ascending order on their prefix
+        //In case of suffix equality, images must be treated in ascending order on their prefix
         i=0;
         c=n1.charAt(i);
         while(Character.isDigit(c) && i<n1.length()) {
@@ -186,53 +188,11 @@ public class ImageProviderService {
 
         List<Image> images = mongoTemplate.find(query(where("mode_status." + mode + ".status").is(ImageStatus.NOT_PROCESSED.toString())), Image.class);
 
-        log.debug("Total number of unprocessed images : {}", images.size());
-
+        //Filter out images already played in the given game mode
         images = images.stream()
             .filter(i -> !played.contains(i.getId()))
             .collect(Collectors.toList());
 
-        log.debug("Total number of unprocessed images unplayed by current user : {}", images.size());
-
-        images = images.stream()
-            .sorted(new Comparator<Image>() {
-                @Override
-                public int compare(Image i1, Image i2) {
-                    GameMode altMode;
-                    switch(mode) {
-                        case AnimalIdentification: altMode = GameMode.PlantIdentification; break;
-                        case PlantIdentification: altMode = GameMode.AnimalIdentification; break;
-                        default: altMode = null;
-                    }
-                    if(altMode != null) {
-                        ImageModeStatus a1 = i1.getModeStatus().get(altMode);
-                        ImageModeStatus a2 = i2.getModeStatus().get(altMode);
-                        switch(a1.getStatus()) {
-                            case IN_PROCESSING:
-                            case PROCESSED:
-                            case UNAVAILABLE:
-                                switch(a2.getStatus()) {
-                                    case NOT_PROCESSED:
-                                        return 1;
-                                }
-                                break;
-                            case NOT_PROCESSED:
-                                switch(a2.getStatus()) {
-                                    case IN_PROCESSING:
-                                    case PROCESSED:
-                                    case UNAVAILABLE:
-                                        return -1;
-                                }
-                                break;
-                        }
-                    }
-                    ImageModeStatus m1 = i1.getModeStatus().get(mode);
-                    ImageModeStatus m2 = i2.getModeStatus().get(mode);
-                    return Integer.compare(m1.getGameNumber(), m2.getGameNumber());
-                }
-            })
-            .collect(Collectors.toList());
-        log.debug("Number of images after sorting : {}", images.size());
         if(images.isEmpty()) {
             images = mongoTemplate.find(query(where("mode_status." + mode + ".status").is(ImageStatus.IN_PROCESSING.toString())), Image.class);
             images = images.stream()
@@ -260,9 +220,22 @@ public class ImageProviderService {
         }
         //Only images from the highest priority set
         images = filterImageListBySet(images);
-        log.debug("Eligible images in set : {}", images.size());
+        log.debug("Total number of eligible images after set filtering : {}", images.size());
         //Only images with the highest game number
         images = filterImageListByGameNumber(images, mode);
+        log.debug("Total number of eligible images after game number filtering : {}", images.size());
+        //Only images with the highest game number in the other mode
+        GameMode altMode;
+        switch(mode) {
+            case AnimalIdentification: altMode = GameMode.PlantIdentification; break;
+            case PlantIdentification: altMode = GameMode.AnimalIdentification; break;
+            default: altMode = null;
+        }
+        if(altMode != null) {
+            images = filterImageListByGameNumber(images, altMode);
+            log.debug("Total number of eligible images after alt game mode filtering : {}", images.size());
+        }
+
         log.debug("Total number of eligible images : {}", images.size());
         if(images.isEmpty()) {
             userRepository.save(user);
@@ -275,9 +248,10 @@ public class ImageProviderService {
         if(!tmp.isEmpty()) {
             images = tmp;
         }
-//        Image image = images.get(rand.nextInt(images.size()));
+        //Sort images in ascending order on their name
         images.sort((i1,i2)->compareImageNames(i1.getName(),i2.getName()));
         Image image = images.get(0);
+        //If the image attributed was a skipped image, remove it from the skipped images list
         skippedImages.removeIf(p -> p.getX().equals(image.getId()) && p.getY().equals(mode));
         userRepository.save(user);
         return image;
@@ -308,7 +282,7 @@ public class ImageProviderService {
         if(images.isEmpty()) {
             return null;
         }
-        List<Image> tmp = images.stream()
+            List<Image> tmp = images.stream()
             .filter(i->!skipped.contains(i.getId()))
             .collect(Collectors.toList());
         if(!tmp.isEmpty()) {
