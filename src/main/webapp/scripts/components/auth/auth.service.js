@@ -13,8 +13,8 @@ angular.module('ludecolApp')
                         // After the login the language will be changed to
                         // the language selected by the user during his registration
                         $translate.use(account.langKey);
-                        NotificationService.login();
-                        NotificationService.startLongPolling(true);
+//                        NotificationService.login();
+//                        NotificationService.startLongPolling(true);
 //                        ObjectiveService.login();
 //                        ObjectiveService.startLongPolling(true);
                     });

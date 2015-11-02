@@ -51,7 +51,7 @@ angular.module('ludecolApp')
         //Does not work when the user logs in, but works on page (re)loads.
         Principal.identity().then(function(account) {
             if(account !== null) {
-                NotificationService.startLongPolling(true);
+//                NotificationService.startLongPolling(true);
 //                ObjectiveService.startLongPolling(true);
             }
         });

@@ -19,8 +19,8 @@ angular.module('ludecolApp')
             logout: function() {
                 // logout from the server
                 $http.post('api/logout').success(function (response) {
-                    NotificationService.stopLongPolling();
-                    NotificationService.logout();
+//                    NotificationService.stopLongPolling();
+//                    NotificationService.logout();
 //                    ObjectiveService.stopLongPolling();
 //                    ObjectiveService.logout();
                     localStorageService.clearAll();
