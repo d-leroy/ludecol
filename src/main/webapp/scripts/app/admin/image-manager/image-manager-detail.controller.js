@@ -111,7 +111,7 @@ angular.module('ludecolApp')
                 $scope.currentImage = $scope.images[i];
 
                 angular.forEach($scope.modes,function(value){
-                    value.nb = $scope.currentImage.mode_status[value.name].gameNumber;
+                    value.nb = $scope.currentImage.mode_status[value.name].submittedGames;
                     value.state = $scope.currentImage.mode_status[value.name].status;
                 });
 

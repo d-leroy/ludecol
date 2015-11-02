@@ -437,16 +437,15 @@ public class GameProcessingService {
         objectiveService.handleObjectiveUpdate(player.getLogin());
 
         ImageModeStatus imageModeStatus = img.getModeStatus().get(mode);
-        imageModeStatus.getGameResults().add(game.getGameResult());
         List<GameResult> results = imageModeStatus.getGameResults();
         results.add(game.getGameResult());
         imageModeStatus.setSubmittedGames(results.size());
         imageRepository.save(img);
 
         //If the image hasn't been processed yet for the given mode but has accrued enough submissions, it is processed now.
-//        if(!imageModeStatus.getStatus().equals(ImageStatus.PROCESSED) && results.size() >= imageSet.getRequiredSubmissions()) {
-//            processImage(mode,results,img);
-//        }
+        if(!imageModeStatus.getStatus().equals(ImageStatus.PROCESSED) && results.size() >= imageSet.getRequiredSubmissions()) {
+            processImage(mode,results,img);
+        }
     }
 
     public void processImage(GameMode mode, List<GameResult> results, Image image) {

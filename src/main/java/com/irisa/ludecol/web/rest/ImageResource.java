@@ -131,6 +131,8 @@ public class ImageResource {
         Map<String,List<GameResult>> imgPlantGameResultMap = new HashMap<>();
         Map<String,Integer> imgAnimalGameNumberMap = new HashMap<>();
         Map<String,Integer> imgPlantGameNumberMap = new HashMap<>();
+        long nbAnimals = games.stream().filter(Game::getCompleted).filter(g->g.getGameMode().equals(GameMode.AnimalIdentification)).count();
+        long nbPlants = games.stream().filter(Game::getCompleted).filter(g->g.getGameMode().equals(GameMode.PlantIdentification)).count();
         games.stream()
             .forEach(g->{
                 String img = g.getImg();
@@ -144,6 +146,8 @@ public class ImageResource {
                                 l.add(g.getGameResult());
                                 imgAnimalGameResultMap.put(img, l);
                             }
+                        } else {
+                            gameRepository.delete(g);
                         }
                         if (imgAnimalGameNumberMap.containsKey(img)) {
                             imgAnimalGameNumberMap.put(img,imgAnimalGameNumberMap.get(img)+1);
@@ -161,6 +165,8 @@ public class ImageResource {
                                 l.add(g.getGameResult());
                                 imgPlantGameResultMap.put(img, l);
                             }
+                        } else {
+                            gameRepository.delete(g);
                         }
                         if (imgPlantGameNumberMap.containsKey(img)) {
                             imgPlantGameNumberMap.put(img,imgPlantGameNumberMap.get(img)+1);
@@ -178,6 +184,7 @@ public class ImageResource {
                 String id = i.getId();
                 ImageModeStatus animals = map.get(GameMode.AnimalIdentification);
                 animals.setStatus(ImageStatus.NOT_PROCESSED);
+                animals.setReferenceResult(null);
                 if(imgAnimalGameResultMap.containsKey(id)) {
                     List<GameResult> results = imgAnimalGameResultMap.get(id);
                     animals.setSubmittedGames(results.size());
@@ -197,6 +204,7 @@ public class ImageResource {
 
                 ImageModeStatus plants = map.get(GameMode.PlantIdentification);
                 plants.setStatus(ImageStatus.NOT_PROCESSED);
+                plants.setReferenceResult(null);
                 if(imgPlantGameResultMap.containsKey(id)) {
                     List<GameResult> results = imgPlantGameResultMap.get(id);
                     plants.setSubmittedGames(results.size());
@@ -215,6 +223,8 @@ public class ImageResource {
                 }
             });
         imageRepository.save(images);
+        log.debug("Number of Animal games : {}", nbAnimals);
+        log.debug("Number of Plant games : {}", nbPlants);
         return ResponseEntity.ok().build();
     }
 
