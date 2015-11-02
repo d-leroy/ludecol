@@ -105,11 +105,6 @@ public class ImageProviderService {
     }
 
     private List<Image> filterImageListBySet(List<Image> images) {
-//        ImageSet imageSet = imageSetRepository.findAll().stream()
-//            .collect(Collectors.minBy(Comparator.comparingInt(ImageSet::getPriority))).get();
-//        return images.stream()
-//            .filter(i->imageSet.getName().equals(i.getImageSet()))
-//            .collect(Collectors.toList());
         int minSetPriority = images.stream()
             .collect(Collectors.minBy(Comparator.comparingInt(Image::getSetPriority)))
             .get().getSetPriority();
