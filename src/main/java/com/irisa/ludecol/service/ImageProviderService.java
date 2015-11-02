@@ -98,7 +98,7 @@ public class ImageProviderService {
         }
         int maxPlayed = images.stream()
             .collect(Collectors.maxBy(Comparator.comparingInt(i->i.getModeStatus().get(mode).getGameNumber())))
-            .get().getSetPriority();
+            .get().getModeStatus().get(mode).getGameNumber();
         return images.stream()
             .filter(i->i.getModeStatus().get(mode).getGameNumber() == maxPlayed)
             .collect(Collectors.toList());
@@ -233,7 +233,7 @@ public class ImageProviderService {
         }
         if(altMode != null) {
             images = filterImageListByGameNumber(images, altMode);
-            log.debug("Total number of eligible images after alt game mode filtering : {}", images.size());
+            log.debug("Total number of eligible images after {} filtering : {}", altMode, images.size());
         }
 
         log.debug("Total number of eligible images : {}", images.size());
