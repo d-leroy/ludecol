@@ -10,6 +10,7 @@ import com.irisa.ludecol.repository.GameRepository;
 import com.irisa.ludecol.repository.ImageRepository;
 import com.irisa.ludecol.repository.ImageSetRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
+import com.irisa.ludecol.service.GameProcessingService;
 import com.irisa.ludecol.service.ImageProviderService;
 import com.irisa.ludecol.service.ImageService;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -57,6 +59,9 @@ public class ImageResource {
 
     @Inject
     private GameRepository gameRepository;
+
+    @Inject
+    private GameProcessingService gameProcessingService;
 
 //    @Inject
 //    private ReferenceGameRepository referenceGameRepository;
@@ -117,6 +122,65 @@ public class ImageResource {
     }
 
     /**
+     * PUT  /images -> updates an existing image.
+     */
+    @RequestMapping(value = "/images/submittedgames",
+        method = RequestMethod.PUT,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    public ResponseEntity<Void> updateSubmittedGames() throws URISyntaxException {
+        List<Game> games = gameRepository.findAll();
+        Map<String,Integer> imagePlantMap = new HashMap<>();
+        Map<String,Integer> imageAnimalMap = new HashMap<>();
+        games.stream()
+            .forEach(g->{
+                String img = g.getImg();
+                switch(g.getGameMode()) {
+                    case AnimalIdentification: {
+                        if(imageAnimalMap.containsKey(img)) {
+                            imageAnimalMap.put(img,imageAnimalMap.get(img)+1);
+                        } else {
+                            imageAnimalMap.put(img,1);
+                        }
+                    }
+                    break;
+                    case PlantIdentification: {
+                        if(imagePlantMap.containsKey(img)) {
+                            imagePlantMap.put(img,imagePlantMap.get(img)+1);
+                        } else {
+                            imagePlantMap.put(img,1);
+                        }
+                    }
+                    break;
+                }
+            });
+        List<Image> images = imageRepository.findAll();
+        images.stream()
+            .forEach(i->{
+                Map<GameMode,ImageModeStatus> map = i.getModeStatus();
+                ImageModeStatus animals = map.get(GameMode.AnimalIdentification);
+                animals.setSubmittedGames(animals.getGameResults().size());
+                if(imageAnimalMap.containsKey(i.getId())) {
+                    animals.setGameNumber(imageAnimalMap.get(i.getId()));
+                }
+                if(animals.getSubmittedGames() >= 3) {
+                    gameProcessingService.processImage(GameMode.AnimalIdentification,animals.getGameResults(),i);
+                }
+                ImageModeStatus plants = map.get(GameMode.PlantIdentification);
+                plants.setSubmittedGames(plants.getGameResults().size());
+                if(imagePlantMap.containsKey(i.getId())) {
+                    plants.setGameNumber(imagePlantMap.get(i.getId()));
+                }
+                if(plants.getSubmittedGames() >= 3) {
+                    gameProcessingService.processImage(GameMode.PlantIdentification,plants.getGameResults(),i);
+                }
+            });
+        imageRepository.save(images);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * GET  /images -> get the list of images satisfying the request.
      */
     @RequestMapping(value = "/images",
@@ -144,15 +208,7 @@ public class ImageResource {
                 }
                 else {
                     log.debug("REST request to get page number {} of Images from set : {}", pageNumber, set);
-                    Page<Image> pageList = imageRepository.findByImageSet(set,pageRequest);
-                    pageList.forEach(i-> {
-                        Map<GameMode,ImageModeStatus> map = i.getModeStatus();
-                        ImageModeStatus animals = map.get(GameMode.AnimalIdentification);
-                        animals.setSubmittedGames(animals.getGameResults().size());
-                        ImageModeStatus plants = map.get(GameMode.PlantIdentification);
-                        plants.setSubmittedGames(plants.getGameResults().size());
-                    });
-                    result = new ResponseEntity<>(pageList, HttpStatus.OK);
+                    result = new ResponseEntity<>(imageRepository.findByImageSet(set,pageRequest), HttpStatus.OK);
                 }
             }
         }

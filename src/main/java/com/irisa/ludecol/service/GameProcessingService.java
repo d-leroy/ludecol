@@ -105,7 +105,7 @@ public class GameProcessingService {
         return result;
     }
 
-    public Map<AnimalSpecies,List<double[]>> processAnimalIdentification(final List<AnimalIdentificationResult> gameResults) {
+    private Map<AnimalSpecies,List<double[]>> processAnimalIdentification(final List<AnimalIdentificationResult> gameResults) {
         final int nb_submissions = gameResults.size();
         final Map<AnimalSpecies,List<double[]>> result = new HashMap();
         for(AnimalSpecies species : AnimalSpecies.values()) {
@@ -449,7 +449,7 @@ public class GameProcessingService {
 //        }
     }
 
-    private void processImage(GameMode mode, List<GameResult> results, Image image) {
+    public void processImage(GameMode mode, List<GameResult> results, Image image) {
         Map processedResults = null;
         switch (mode) {
             case PlantIdentification: {

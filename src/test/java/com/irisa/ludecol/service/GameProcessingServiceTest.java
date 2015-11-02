@@ -35,7 +35,7 @@ public class GameProcessingServiceTest {
             gameResults.add(result);
         }
         GameProcessingService processingService = new GameProcessingService();
-        System.out.println(processingService.processAnimalIdentification(gameResults));
+//        System.out.println(processingService.processAnimalIdentification(gameResults));
 
     }
 }
