@@ -177,6 +177,7 @@ public class ImageResource {
                 Map<GameMode,ImageModeStatus> map = i.getModeStatus();
                 String id = i.getId();
                 ImageModeStatus animals = map.get(GameMode.AnimalIdentification);
+                animals.setStatus(ImageStatus.NOT_PROCESSED);
                 if(imgAnimalGameResultMap.containsKey(id)) {
                     List<GameResult> results = imgAnimalGameResultMap.get(id);
                     animals.setSubmittedGames(results.size());
@@ -195,6 +196,7 @@ public class ImageResource {
                 }
 
                 ImageModeStatus plants = map.get(GameMode.PlantIdentification);
+                plants.setStatus(ImageStatus.NOT_PROCESSED);
                 if(imgPlantGameResultMap.containsKey(id)) {
                     List<GameResult> results = imgPlantGameResultMap.get(id);
                     plants.setSubmittedGames(results.size());
