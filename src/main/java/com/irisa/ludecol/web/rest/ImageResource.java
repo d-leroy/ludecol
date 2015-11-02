@@ -180,6 +180,8 @@ public class ImageResource {
         List<Image> images = imageRepository.findAll();
         images.stream()
             .forEach(i->{
+                i.setFaunaSpecies(EnumSet.allOf(AnimalSpecies.class));
+                i.setFloraSpecies(EnumSet.allOf(PlantSpecies.class));
                 Map<GameMode,ImageModeStatus> map = i.getModeStatus();
                 String id = i.getId();
                 ImageModeStatus animals = map.get(GameMode.AnimalIdentification);
