@@ -14,6 +14,8 @@ public class ImageModeStatus {
 
     private Integer gameNumber = 0;
 
+    private Integer submittedGames = 0;
+
     @JsonIgnore
     private List<GameResult> gameResults = new ArrayList<>();
 
@@ -47,6 +49,14 @@ public class ImageModeStatus {
         this.gameNumber = gameNumber;
     }
 
+    public Integer getSubmittedGames() {
+        return submittedGames;
+    }
+
+    public void setSubmittedGames(Integer submittedGames) {
+        this.submittedGames = submittedGames;
+    }
+
     public List<GameResult> getGameResults() {
         return gameResults;
     }
@@ -64,6 +74,7 @@ public class ImageModeStatus {
         return "ImageModeStatus{" +
             "status=" + status +
             ", gameNumber=" + gameNumber +
+            ", submittedGames=" + submittedGames +
             ", gameResults=" + gameResults +
             ", referenceResult=" + referenceResult +
             '}';

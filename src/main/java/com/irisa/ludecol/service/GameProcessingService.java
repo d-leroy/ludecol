@@ -440,6 +440,7 @@ public class GameProcessingService {
         imageModeStatus.getGameResults().add(game.getGameResult());
         List<GameResult> results = imageModeStatus.getGameResults();
         results.add(game.getGameResult());
+        imageModeStatus.setSubmittedGames(results.size());
         imageRepository.save(img);
 
         //If the image hasn't been processed yet for the given mode but has accrued enough submissions, it is processed now.

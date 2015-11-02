@@ -17,7 +17,7 @@ import java.util.*;
  * Created by dorian on 24/09/15.
  */
 
-public class GameProcessingServiceTest extends Application {
+public class GameProcessingServiceJfxTest extends Application {
 
     private int nb_submissions = 3;
     private int nb_points = 10;

@@ -4,6 +4,8 @@ import com.codahale.metrics.annotation.Timed;
 import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.domain.Image;
 import com.irisa.ludecol.domain.ImageSet;
+import com.irisa.ludecol.domain.subdomain.GameMode;
+import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
 import com.irisa.ludecol.repository.GameRepository;
 import com.irisa.ludecol.repository.ImageRepository;
 import com.irisa.ludecol.repository.ImageSetRepository;
@@ -12,6 +14,7 @@ import com.irisa.ludecol.service.ImageProviderService;
 import com.irisa.ludecol.service.ImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,6 +31,7 @@ import java.io.FileOutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -140,7 +144,15 @@ public class ImageResource {
                 }
                 else {
                     log.debug("REST request to get page number {} of Images from set : {}", pageNumber, set);
-                    result = new ResponseEntity<>(imageRepository.findByImageSet(set,pageRequest), HttpStatus.OK);
+                    Page<Image> pageList = imageRepository.findByImageSet(set,pageRequest);
+                    pageList.forEach(i-> {
+                        Map<GameMode,ImageModeStatus> map = i.getModeStatus();
+                        ImageModeStatus animals = map.get(GameMode.AnimalIdentification);
+                        animals.setSubmittedGames(animals.getGameResults().size());
+                        ImageModeStatus plants = map.get(GameMode.PlantIdentification);
+                        plants.setSubmittedGames(plants.getGameResults().size());
+                    });
+                    result = new ResponseEntity<>(pageList, HttpStatus.OK);
                 }
             }
         }
