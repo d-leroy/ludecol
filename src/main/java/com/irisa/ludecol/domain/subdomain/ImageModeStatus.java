@@ -45,6 +45,10 @@ public class ImageModeStatus {
         return gameNumber;
     }
 
+    public void setGameResults(List<GameResult> gameResults) {
+        this.gameResults = gameResults;
+    }
+
     public void setGameNumber(Integer gameNumber) {
         this.gameNumber = gameNumber;
     }

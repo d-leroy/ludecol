@@ -4,8 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.irisa.ludecol.domain.Game;
 import com.irisa.ludecol.domain.Image;
 import com.irisa.ludecol.domain.ImageSet;
-import com.irisa.ludecol.domain.subdomain.GameMode;
-import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
+import com.irisa.ludecol.domain.subdomain.*;
 import com.irisa.ludecol.repository.GameRepository;
 import com.irisa.ludecol.repository.ImageRepository;
 import com.irisa.ludecol.repository.ImageSetRepository;
@@ -31,10 +30,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * REST controller for managing Image.
@@ -131,25 +127,45 @@ public class ImageResource {
     @RolesAllowed(AuthoritiesConstants.ADMIN)
     public ResponseEntity<Void> updateSubmittedGames() throws URISyntaxException {
         List<Game> games = gameRepository.findAll();
-        Map<String,Integer> imagePlantMap = new HashMap<>();
-        Map<String,Integer> imageAnimalMap = new HashMap<>();
+        Map<String,List<GameResult>> imgAnimalGameResultMap = new HashMap<>();
+        Map<String,List<GameResult>> imgPlantGameResultMap = new HashMap<>();
+        Map<String,Integer> imgAnimalGameNumberMap = new HashMap<>();
+        Map<String,Integer> imgPlantGameNumberMap = new HashMap<>();
         games.stream()
             .forEach(g->{
                 String img = g.getImg();
                 switch(g.getGameMode()) {
                     case AnimalIdentification: {
-                        if(imageAnimalMap.containsKey(img)) {
-                            imageAnimalMap.put(img,imageAnimalMap.get(img)+1);
+                        if(g.getCompleted()) {
+                            if (imgAnimalGameResultMap.containsKey(img)) {
+                                imgAnimalGameResultMap.get(img).add(g.getGameResult());
+                            } else {
+                                List<GameResult> l = new ArrayList();
+                                l.add(g.getGameResult());
+                                imgAnimalGameResultMap.put(img, l);
+                            }
+                        }
+                        if (imgAnimalGameNumberMap.containsKey(img)) {
+                            imgAnimalGameNumberMap.put(img,imgAnimalGameNumberMap.get(img)+1);
                         } else {
-                            imageAnimalMap.put(img,1);
+                            imgAnimalGameNumberMap.put(img, 1);
                         }
                     }
                     break;
                     case PlantIdentification: {
-                        if(imagePlantMap.containsKey(img)) {
-                            imagePlantMap.put(img,imagePlantMap.get(img)+1);
+                        if(g.getCompleted()) {
+                            if (imgPlantGameResultMap.containsKey(img)) {
+                                imgPlantGameResultMap.get(img).add(g.getGameResult());
+                            } else {
+                                List<GameResult> l = new ArrayList();
+                                l.add(g.getGameResult());
+                                imgPlantGameResultMap.put(img, l);
+                            }
+                        }
+                        if (imgPlantGameNumberMap.containsKey(img)) {
+                            imgPlantGameNumberMap.put(img,imgPlantGameNumberMap.get(img)+1);
                         } else {
-                            imagePlantMap.put(img,1);
+                            imgPlantGameNumberMap.put(img, 1);
                         }
                     }
                     break;
@@ -159,21 +175,41 @@ public class ImageResource {
         images.stream()
             .forEach(i->{
                 Map<GameMode,ImageModeStatus> map = i.getModeStatus();
+                String id = i.getId();
                 ImageModeStatus animals = map.get(GameMode.AnimalIdentification);
-                animals.setSubmittedGames(animals.getGameResults().size());
-                if(imageAnimalMap.containsKey(i.getId())) {
-                    animals.setGameNumber(imageAnimalMap.get(i.getId()));
+                if(imgAnimalGameResultMap.containsKey(id)) {
+                    List<GameResult> results = imgAnimalGameResultMap.get(id);
+                    animals.setSubmittedGames(results.size());
+                    animals.setGameResults(results);
+                    if(animals.getSubmittedGames() >= 3) {
+                        gameProcessingService.processImage(GameMode.AnimalIdentification,animals.getGameResults(),i);
+                    }
+                } else {
+                    animals.setSubmittedGames(0);
+                    animals.setGameResults(Collections.EMPTY_LIST);
                 }
-                if(animals.getSubmittedGames() >= 3) {
-                    gameProcessingService.processImage(GameMode.AnimalIdentification,animals.getGameResults(),i);
+                if(imgAnimalGameNumberMap.containsKey(id)) {
+                    animals.setGameNumber(imgAnimalGameNumberMap.get(id));
+                } else {
+                    animals.setGameNumber(0);
                 }
+
                 ImageModeStatus plants = map.get(GameMode.PlantIdentification);
-                plants.setSubmittedGames(plants.getGameResults().size());
-                if(imagePlantMap.containsKey(i.getId())) {
-                    plants.setGameNumber(imagePlantMap.get(i.getId()));
+                if(imgPlantGameResultMap.containsKey(id)) {
+                    List<GameResult> results = imgPlantGameResultMap.get(id);
+                    plants.setSubmittedGames(results.size());
+                    plants.setGameResults(results);
+                    if(plants.getSubmittedGames() >= 3) {
+                        gameProcessingService.processImage(GameMode.PlantIdentification,plants.getGameResults(),i);
+                    }
+                } else {
+                    plants.setSubmittedGames(0);
+                    plants.setGameResults(Collections.EMPTY_LIST);
                 }
-                if(plants.getSubmittedGames() >= 3) {
-                    gameProcessingService.processImage(GameMode.PlantIdentification,plants.getGameResults(),i);
+                if(imgPlantGameNumberMap.containsKey(id)) {
+                    plants.setGameNumber(imgPlantGameNumberMap.get(id));
+                } else {
+                    plants.setGameNumber(0);
                 }
             });
         imageRepository.save(images);
