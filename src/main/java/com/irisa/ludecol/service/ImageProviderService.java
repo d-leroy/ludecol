@@ -275,24 +275,29 @@ public class ImageProviderService {
 
         //Eligible images are in the PROCESSED status for the requested mode.
         List<Image> images = mongoTemplate.find(query(where("mode_status."+mode+".status").is(ImageStatus.PROCESSED.toString())), Image.class);
-        //Eligible images have not already been played by the requesting player.
+        //Eligible images should not be completely empty
         images = filterEmptyImages(images, mode);
+        //Eligible images have not already been played by the requesting player.
+        //TODO filterPlayedImages?
         images = filterPlayedTrainingImages(images, mode, login);
-        images = images.stream()
-            .sorted(Comparator.comparingInt(i -> i.getModeStatus().get(mode).getGameNumber()))
-            .collect(Collectors.toList());
         if(images.isEmpty()) {
             return null;
         }
-            List<Image> tmp = images.stream()
+        List<Image> tmp = images.stream()
             .filter(i->!skipped.contains(i.getId()))
             .collect(Collectors.toList());
-        if(!tmp.isEmpty()) {
+        if (tmp.isEmpty()) {
+            log.debug("Total number of eligible images after skipped images filtering : 0");
+            List<Image> l = images;
+            //Reinitializing the relevant subset of skipped images to allow users to choose which one they want to process first
+            skippedImages.removeIf(p -> p.getY().equals(mode) && l.stream().anyMatch(i -> i.getId().equals(p.getX())));
+        } else {
             images = tmp;
+            log.debug("Total number of eligible images after skipped images filtering : {}", images.size());
         }
         log.debug("Total number of eligible images : {}", images.size());
         Image image = images.get(rand.nextInt(images.size()));
-        skippedImages.removeIf(p -> p.getX().equals(image.getId()) && p.getY().equals(mode));
+        skippedImages.removeIf(p -> p.getY().equals(mode) && p.getX().equals(image.getId()));
         userRepository.save(user);
         return image;
     }
