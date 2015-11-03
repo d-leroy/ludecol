@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-.controller('TrainingSubmitModalInstanceCtrl', function ($scope, $modalInstance) {
+.controller('DefaultModalInstanceCtrl', function ($scope, $modalInstance) {
 
   $scope.ok = function () {
     $modalInstance.close(true);

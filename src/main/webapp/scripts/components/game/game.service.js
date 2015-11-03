@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .factory('GameService', function ($state, Image, SubmitModalService, ImageService) {
+    .factory('GameService', function ($state, Image, SubmitModalService, SkipModalService, ImageService) {
 
         var _mode, _login, _successCallback, _errorCallback, _game, _queryFunction, _updateFunction, _deleteFunction, _submitCallback;
 
@@ -39,7 +39,16 @@ angular.module('ludecolApp')
             console.log(_game.id);
             _deleteFunction({id: _game.id},function() {
 //                initializeGame(_login,_mode,_emptyResultSupplier,_resultSupplier,_successCallback,_errorCallback,_queryFunction,_updateFunction,_deleteFunction);
-                $state.go('home');
+//                $state.go('home');
+                var modalInstance = SkipModalService();
+                modalInstance.result.then(
+                    function (newGame) {
+                        if(newGame) {initializeGame(_login,_mode,_emptyResultSupplier,_resultSupplier,_successCallback,_errorCallback,_queryFunction,_updateFunction,_deleteFunction)}
+                        else {$state.go('home');}
+                    },
+                    function () {
+
+                    });
             })
         }
 

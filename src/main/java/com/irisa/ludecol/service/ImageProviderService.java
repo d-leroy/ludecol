@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -216,6 +217,19 @@ public class ImageProviderService {
         //Only images from the highest priority set
         images = filterImageListBySet(images);
         log.debug("Total number of eligible images after set filtering : {}", images.size());
+        //Only non-skipped images unless only skipped images remain
+        List<Image> tmp = images.stream()
+            .filter(i->!skipped.contains(i.getId()))
+            .collect(Collectors.toList());
+        if (tmp.isEmpty()) {
+            log.debug("Total number of eligible images after skipped images filtering : 0");
+            List<Image> l = images;
+            //Reinitializing the relevant subset of skipped images to allow users to choose which one the want to process first
+            skippedImages.removeIf(p -> p.getY().equals(mode) && l.stream().anyMatch(i -> i.getId().equals(p.getX())));
+        } else {
+            images = tmp;
+            log.debug("Total number of eligible images after skipped images filtering : {}", images.size());
+        }
         //Only images with the highest game number
         images = filterImageListByGameNumber(images, mode);
         log.debug("Total number of eligible images after game number filtering : {}", images.size());
@@ -235,13 +249,6 @@ public class ImageProviderService {
         if(images.isEmpty()) {
             userRepository.save(user);
             return null;
-        }
-        //Only non-skipped images unless only skipped images remain
-        List<Image> tmp = images.stream()
-            .filter(i->!skipped.contains(i.getId()))
-            .collect(Collectors.toList());
-        if(!tmp.isEmpty()) {
-            images = tmp;
         }
         //Sort images in ascending order on their name
         images.sort((i1,i2)->compareImageNames(i1.getName(),i2.getName()));

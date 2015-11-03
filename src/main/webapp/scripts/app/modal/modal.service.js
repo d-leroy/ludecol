@@ -11,21 +11,21 @@ angular.module('ludecolApp')
             });
         }
     })
-    .factory('TrainingSubmitModalService', function($modal) {
+    .factory('FeedbackModalService', function($modal) {
         return function() {
             return $modal.open({
-                templateUrl: 'scripts/app/modal/training-submit-modal.html',
-                controller: 'TrainingSubmitModalInstanceCtrl',
+                templateUrl: 'scripts/app/modal/feedback-modal.html',
+                controller: 'DefaultModalInstanceCtrl',
                 backdrop: 'static',
                 keyboard: false
             });
         }
     })
-    .factory('TutorialModalService', function($modal) {
+    .factory('SkipModalService', function($modal) {
         return function() {
             return $modal.open({
-                templateUrl: 'scripts/app/modal/tutorial-modal.html',
-                controller: 'TutorialModalInstanceCtrl',
+                templateUrl: 'scripts/app/modal/skip-modal.html',
+                controller: 'DefaultModalInstanceCtrl',
                 backdrop: 'static',
                 keyboard: false
             });
