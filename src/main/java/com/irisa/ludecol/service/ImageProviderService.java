@@ -216,6 +216,7 @@ public class ImageProviderService {
         }
         //Only images from the highest priority set
         images = filterImageListBySet(images);
+        ImageSet imageSet = imageSetRepository.findOne(images.get(0).getImageSet());
         log.debug("Total number of eligible images after set filtering : {}", images.size());
         //Only non-skipped images unless only skipped images remain
         List<Image> tmp = images.stream()
@@ -230,7 +231,8 @@ public class ImageProviderService {
             images = tmp;
             log.debug("Total number of eligible images after skipped images filtering : {}", images.size());
         }
-        //Only images with the highest game number
+        //Only images with the highest ongoing game number but less than the required number of submissions
+        images = images.stream().filter(i->i.getModeStatus().get(mode).getGameNumber() < imageSet.getRequiredSubmissions()).collect(Collectors.toList());
         images = filterImageListByGameNumber(images, mode);
         log.debug("Total number of eligible images after game number filtering : {}", images.size());
         //Only images with the highest game number in the other mode
