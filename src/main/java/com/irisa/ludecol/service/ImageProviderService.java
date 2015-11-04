@@ -216,7 +216,7 @@ public class ImageProviderService {
         }
         //Only images from the highest priority set
         images = filterImageListBySet(images);
-        ImageSet imageSet = imageSetRepository.findOne(images.get(0).getImageSet());
+        ImageSet imageSet = imageSetRepository.findByNamegit status(images.get(0).getImageSet());
         log.debug("Total number of eligible images after set filtering : {}", images.size());
         //Only non-skipped images unless only skipped images remain
         List<Image> tmp = images.stream()

@@ -142,7 +142,6 @@ public class GameProcessingService {
                 for (double[] q : referencePoints) {
                     Double dist = Math.pow(p[0] - q[0], 2) + Math.pow(p[1] - q[1], 2);
                     if (dist < d) {
-                        log.debug("--------------Distance : {}-------------",dist);
                         d = dist;
                         r = q;
                     }
