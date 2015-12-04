@@ -9,6 +9,7 @@ import com.irisa.ludecol.repository.GameRepository;
 import com.irisa.ludecol.repository.ImageRepository;
 import com.irisa.ludecol.repository.ImageSetRepository;
 import com.irisa.ludecol.security.AuthoritiesConstants;
+import com.irisa.ludecol.service.DataExportService;
 import com.irisa.ludecol.service.GameProcessingService;
 import com.irisa.ludecol.service.ImageProviderService;
 import com.irisa.ludecol.service.ImageService;
@@ -58,6 +59,9 @@ public class ImageResource {
 
     @Inject
     private GameProcessingService gameProcessingService;
+
+    @Inject
+    private DataExportService dataExportService;
 
 //    @Inject
 //    private ReferenceGameRepository referenceGameRepository;
@@ -288,6 +292,19 @@ public class ImageResource {
         return Optional.ofNullable(imageRepository.findOne(id))
             .map(image -> new ResponseEntity<>(image, HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    /**
+     * GET  /images/download -> get the data of the "id" image set.
+     */
+    @RequestMapping(value = "/images/download",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    public ResponseEntity<DataExportService.DataWrapper> download() {
+        log.debug("REST request to get the data of all images");
+        return new ResponseEntity<>(dataExportService.exportImageStatistics(), HttpStatus.OK);
     }
 
     /**

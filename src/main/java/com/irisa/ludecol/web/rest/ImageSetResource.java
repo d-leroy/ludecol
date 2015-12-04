@@ -46,7 +46,7 @@ public class ImageSetResource {
     private DataExportService dataExportService;
 
     /**
-     * POST  /images -> Create a new image set.
+     * POST  /imagesets -> Create a new image set.
      */
     @RequestMapping(value = "/imagesets",
             method = RequestMethod.POST,
@@ -66,7 +66,7 @@ public class ImageSetResource {
     }
 
     /**
-     * PUT  /images -> Updates an existing image set.
+     * PUT  /imagesets -> Updates an existing image set.
      */
     @RequestMapping(value = "/imagesets",
         method = RequestMethod.PUT,
@@ -116,7 +116,7 @@ public class ImageSetResource {
     }
 
     /**
-     * GET  /images -> get all the image sets.
+     * GET  /imagesets -> get all the image sets.
      */
     @RequestMapping(value = "/imagesets",
             method = RequestMethod.GET,
@@ -129,7 +129,7 @@ public class ImageSetResource {
     }
 
     /**
-     * GET  /images/:id -> get the "id" image set.
+     * GET  /imagesets/:id -> get the "id" image set.
      */
     @RequestMapping(value = "/imagesets/{id}",
         method = RequestMethod.GET,
@@ -144,7 +144,7 @@ public class ImageSetResource {
     }
 
     /**
-     * GET  /images/:id/download -> get the data of the "id" image set.
+     * GET  /imagesets/:id/download -> get the data of the "id" image set.
      */
     @RequestMapping(value = "/imagesets/{id}/download",
         method = RequestMethod.GET,
@@ -157,7 +157,7 @@ public class ImageSetResource {
     }
 
     /**
-     * DELETE  /images/:id -> delete the "id" image set.
+     * DELETE  /imagesets/:id -> delete the "id" image set.
      */
     @RequestMapping(value = "/imagesets/{id}",
             method = RequestMethod.DELETE,

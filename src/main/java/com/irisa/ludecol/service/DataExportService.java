@@ -4,6 +4,7 @@ import com.irisa.ludecol.domain.Image;
 import com.irisa.ludecol.domain.ImageSet;
 import com.irisa.ludecol.domain.subdomain.AnimalSpecies;
 import com.irisa.ludecol.domain.subdomain.GameMode;
+import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
 import com.irisa.ludecol.domain.subdomain.PlantSpecies;
 import com.irisa.ludecol.repository.ImageRepository;
 import org.slf4j.Logger;
@@ -28,6 +29,34 @@ public class DataExportService {
 
     public static class DataWrapper {
         public String result;
+    }
+
+    public DataWrapper exportImageStatistics() {
+
+        List<Image> images = imageRepository.findAll();
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("Image" + "\t" + "Mode" + "\t" + "Number of submissions" + "\n");
+
+        for (Image image : images) {
+            Map<GameMode,ImageModeStatus> map = image.getModeStatus();
+            if(map.get(GameMode.AnimalIdentification).getReferenceResult() != null) {
+                builder.append(image.getName() + "\t" + "Animal Identification" + map.get(GameMode.AnimalIdentification).getGameNumber() + "\n");
+            }
+        }
+
+        for (Image image : images) {
+            Map<GameMode,ImageModeStatus> map = image.getModeStatus();
+            if(map.get(GameMode.AnimalIdentification).getReferenceResult() != null) {
+                builder.append(image.getName() + "\t" + "Plant Identification" + map.get(GameMode.PlantIdentification).getGameNumber() + "\n");
+            }
+        }
+
+        DataWrapper result = new DataWrapper();
+
+        result.result = builder.toString();
+        return result;
     }
 
     public DataWrapper exportSet(ImageSet imageSet) {
