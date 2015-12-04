@@ -29,6 +29,13 @@ public class DataExportService {
 
     public static class DataWrapper {
         public String result;
+
+        @Override
+        public String toString() {
+            return "DataWrapper{" +
+                "result='" + result + '\'' +
+                '}';
+        }
     }
 
     public DataWrapper exportImageStatistics() {
@@ -56,6 +63,7 @@ public class DataExportService {
         DataWrapper result = new DataWrapper();
 
         result.result = builder.toString();
+
         return result;
     }
 

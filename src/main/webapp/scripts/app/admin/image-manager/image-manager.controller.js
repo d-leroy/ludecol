@@ -16,9 +16,12 @@ angular.module('ludecolApp')
 
             $scope.loadAll();
 
+            $scope.encode = function(text) {
+                return encodeURIComponent(text);
+            }
+
             $scope.download = function() {
-                var set = $stateParams.set;
-                ImageDownload.get({id: set},function(res){
+                ImageDownload.get({}, function(res){
                     $scope.downloadData = res.result;
                 });
             }
