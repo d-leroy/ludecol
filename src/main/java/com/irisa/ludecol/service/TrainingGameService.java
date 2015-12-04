@@ -44,8 +44,6 @@ public class TrainingGameService {
                 double[] r = null;
                 for (double[] q : referencePoints) {
                     Double dist = Math.pow(p[0] - q[0], 2) + Math.pow(p[1] - q[1], 2);
-                    log.debug("Distance : {}", dist);
-                    log.debug("D : {}", d);
                     if (dist < d) {
                         d = dist;
                         r = q;
