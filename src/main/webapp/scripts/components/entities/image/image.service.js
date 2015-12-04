@@ -19,4 +19,15 @@ angular.module('ludecolApp')
             },
             'delete': {method: 'DELETE'}
         });
+    })
+    .factory('ImageDownload', function ($resource) {
+        return $resource('api/images/download', {}, {
+            'get': {
+                method: 'GET',
+                transformResponse: function (data) {
+                    data = angular.fromJson(data);
+                    return data;
+                }
+            }
+        });
     });

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ludecolApp')
-    .controller('ImageManagerController', function ($scope, Principal, Image, ImageSet) {
+    .controller('ImageManagerController', function ($scope, Principal, Image, ImageSet, ImageDownload) {
         Principal.identity().then(function(account) {
             $scope.account = account;
             $scope.isAuthenticated = Principal.isAuthenticated;
@@ -16,10 +16,18 @@ angular.module('ludecolApp')
 
             $scope.loadAll();
 
+            $scope.download = function() {
+                var set = $stateParams.set;
+                ImageDownload.get({id: set},function(res){
+                    $scope.downloadData = res.result;
+                });
+            }
+
             $scope.clear = function () {
                 $scope.imageSet = {name: null, id: null, priority: 0, required_submissions: 3};
                 $scope.editForm.$setPristine();
                 $scope.editForm.$setUntouched();
+                $scope.downloadData = null;
                 $scope.loadAll();
             };
 
