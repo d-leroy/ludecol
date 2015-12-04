@@ -42,14 +42,14 @@ public class DataExportService {
         for (Image image : images) {
             Map<GameMode,ImageModeStatus> map = image.getModeStatus();
             if(map.get(GameMode.AnimalIdentification).getReferenceResult() != null) {
-                builder.append(image.getName() + "\t" + "Animal Identification" + map.get(GameMode.AnimalIdentification).getGameNumber() + "\n");
+                builder.append(image.getName() + "\t" + "Animal Identification" + "\t" + map.get(GameMode.AnimalIdentification).getGameNumber() + "\n");
             }
         }
 
         for (Image image : images) {
             Map<GameMode,ImageModeStatus> map = image.getModeStatus();
             if(map.get(GameMode.AnimalIdentification).getReferenceResult() != null) {
-                builder.append(image.getName() + "\t" + "Plant Identification" + map.get(GameMode.PlantIdentification).getGameNumber() + "\n");
+                builder.append(image.getName() + "\t" + "Plant Identification" + "\t" + map.get(GameMode.PlantIdentification).getGameNumber() + "\n");
             }
         }
 
