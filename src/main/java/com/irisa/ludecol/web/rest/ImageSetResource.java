@@ -164,7 +164,7 @@ public class ImageSetResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @RolesAllowed(AuthoritiesConstants.ADMIN)
-    public ResponseEntity<DataExportService.DataWrapper> download(@PathVariable String id) {
+    public ResponseEntity<DataExportService.DataWrapper> downloadAnimal(@PathVariable String id) {
         log.debug("REST request to get the raw data for animals on the ImageSet: {}", id);
         return new ResponseEntity<>(dataExportService.exportSetAnimal(imageSetRepository.findByName(id)), HttpStatus.OK);
     }
@@ -177,7 +177,7 @@ public class ImageSetResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
     @RolesAllowed(AuthoritiesConstants.ADMIN)
-    public ResponseEntity<DataExportService.DataWrapper> download(@PathVariable String id) {
+    public ResponseEntity<DataExportService.DataWrapper> downloadPlant(@PathVariable String id) {
         log.debug("REST request to get the raw data for plants on the ImageSet : {}", id);
         return new ResponseEntity<>(dataExportService.exportSetPlant(imageSetRepository.findByName(id)), HttpStatus.OK);
     }
