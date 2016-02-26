@@ -21,7 +21,7 @@ angular.module('ludecolApp')
             }
         };
     })
-    .controller('ImageManagerDetailController', function ($scope, $state, $stateParams, Principal, Image, FileUpload, ImageService, ImageSetDownload) {
+    .controller('ImageManagerDetailController', function ($scope, $state, $stateParams, Principal, Image, FileUpload, ImageService, ImageSetDownload, ImageSetDownloadAnimal, ImageSetDownloadPlant) {
         Principal.identity().then(function(account) {
             $scope.account = account;
             $scope.isAuthenticated = Principal.isAuthenticated;
