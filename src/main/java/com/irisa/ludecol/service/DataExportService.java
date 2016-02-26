@@ -2,10 +2,7 @@ package com.irisa.ludecol.service;
 
 import com.irisa.ludecol.domain.Image;
 import com.irisa.ludecol.domain.ImageSet;
-import com.irisa.ludecol.domain.subdomain.AnimalSpecies;
-import com.irisa.ludecol.domain.subdomain.GameMode;
-import com.irisa.ludecol.domain.subdomain.ImageModeStatus;
-import com.irisa.ludecol.domain.subdomain.PlantSpecies;
+import com.irisa.ludecol.domain.subdomain.*;
 import com.irisa.ludecol.repository.ImageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,6 +100,52 @@ public class DataExportService {
                     + plantMap.get(PlantSpecies.Salicornia) + "\t"
                     + plantMap.get(PlantSpecies.Spartina) + "\t"
                     + "\n");
+            }
+        }
+        DataWrapper result = new DataWrapper();
+        result.result = builder.toString();
+        return result;
+    }
+
+    public DataWrapper exportSetAnimal(ImageSet imageSet) {
+        List<Image> images = imageRepository.findByImageSet(imageSet.getName());
+        StringBuilder builder = new StringBuilder();
+        builder.append("Image" + "\t" + "Burrow" + "\t" + "Crab" + "\t" + "Mussel" + "\t" + "Snail" + "\n");
+        for(Image image : images) {
+            List<GameResult> results = image.getModeStatus().get(GameMode.AnimalIdentification).getGameResults();
+            for (GameResult result : results) {
+                Map<AnimalSpecies,List<double[]>> resMap = ((AnimalIdentificationResult)result).getSpeciesMap();
+                builder.append(image.getName());
+                Arrays.asList(AnimalSpecies.values()).stream().sorted((o1, o2) -> o1.toString().compareTo(o2.toString()))
+                    .forEach(s -> {
+                        List<double[]> l = resMap.get(s);
+                        builder.append("\t" + l == null ? 0 : l.size());
+                    });
+                builder.append("\n");
+            }
+        }
+        DataWrapper result = new DataWrapper();
+        result.result = builder.toString();
+        return result;
+    }
+
+    public DataWrapper exportSetPlant(ImageSet imageSet) {
+        List<Image> images = imageRepository.findByImageSet(imageSet.getName());
+        StringBuilder builder = new StringBuilder();
+        builder.append("Image" + "\t" + "Batis" + "\t" + "Borrichia" + "\t" + "Juncus" + "\t" + "Limonium" + "\t" + "Salicornia" + "\t" + "Spartina" + "\n");
+        for(Image image : images) {
+            List<GameResult> results = image.getModeStatus().get(GameMode.PlantIdentification).getGameResults();
+            for (GameResult result : results) {
+                Map<PlantSpecies,List<Boolean>> resMap = ((PlantIdentificationResult)result).getSpeciesMap();
+                builder.append(image.getName());
+                Arrays.asList(PlantSpecies.values()).stream().sorted((o1, o2) -> o1.toString().compareTo(o2.toString()))
+                    .forEach(s -> {
+                        List<Boolean> l = resMap.get(s);
+                        int s1 = l.stream().filter(b -> b).collect(Collectors.toList()).size();
+                        int s2 = l.size();
+                        builder.append("\t" + l == null ? 0. : (s1 * 1.) / (s2 * 1.));
+                    });
+                builder.append("\n");
             }
         }
         DataWrapper result = new DataWrapper();

@@ -63,6 +63,20 @@ angular.module('ludecolApp')
                 });
             }
 
+            $scope.downloadAnimal = function() {
+                var set = $stateParams.set;
+                ImageSetDownloadAnimal.get({id: set},function(res){
+                    $scope.downloadData = res.result;
+                });
+            }
+
+            $scope.downloadPlant = function() {
+                var set = $stateParams.set;
+                ImageSetDownloadPlant.get({id: set},function(res){
+                    $scope.downloadData = res.result;
+                });
+            }
+
             $scope.encode = function(text) {
                 return encodeURIComponent(text);
             }

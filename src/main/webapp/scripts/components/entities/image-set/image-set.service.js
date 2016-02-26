@@ -24,4 +24,26 @@ angular.module('ludecolApp')
                 }
             }
         });
+    })
+    .factory('ImageSetDownloadAnimal', function ($resource) {
+        return $resource('api/imagesets/:id/download/animal', {}, {
+            'get': {
+                method: 'GET',
+                transformResponse: function (data) {
+                    data = angular.fromJson(data);
+                    return data;
+                }
+            }
+        });
+    })
+    .factory('ImageSetDownloadPlant', function ($resource) {
+        return $resource('api/imagesets/:id/download/plant', {}, {
+            'get': {
+                method: 'GET',
+                transformResponse: function (data) {
+                    data = angular.fromJson(data);
+                    return data;
+                }
+            }
+        });
     });

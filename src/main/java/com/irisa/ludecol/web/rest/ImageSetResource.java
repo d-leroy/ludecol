@@ -157,6 +157,32 @@ public class ImageSetResource {
     }
 
     /**
+     * GET  /imagesets/:id/download/animal -> get the data of the "id" image set.
+     */
+    @RequestMapping(value = "/imagesets/{id}/download/animal",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    public ResponseEntity<DataExportService.DataWrapper> download(@PathVariable String id) {
+        log.debug("REST request to get the raw data for animals on the ImageSet: {}", id);
+        return new ResponseEntity<>(dataExportService.exportSetAnimal(imageSetRepository.findByName(id)), HttpStatus.OK);
+    }
+
+    /**
+     * GET  /imagesets/:id/download/plant -> get the data of the "id" image set.
+     */
+    @RequestMapping(value = "/imagesets/{id}/download/plant",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    @RolesAllowed(AuthoritiesConstants.ADMIN)
+    public ResponseEntity<DataExportService.DataWrapper> download(@PathVariable String id) {
+        log.debug("REST request to get the raw data for plants on the ImageSet : {}", id);
+        return new ResponseEntity<>(dataExportService.exportSetPlant(imageSetRepository.findByName(id)), HttpStatus.OK);
+    }
+
+    /**
      * DELETE  /imagesets/:id -> delete the "id" image set.
      */
     @RequestMapping(value = "/imagesets/{id}",
