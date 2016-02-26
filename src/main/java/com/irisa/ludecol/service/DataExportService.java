@@ -119,7 +119,9 @@ public class DataExportService {
                 Arrays.asList(AnimalSpecies.values()).stream().sorted((o1, o2) -> o1.toString().compareTo(o2.toString()))
                     .forEach(s -> {
                         List<double[]> l = resMap.get(s);
-                        builder.append("\t" + l == null ? 0 : l.size());
+                        int n = l == null ? 0 : l.size();
+                        String ns = ""+n;
+                        builder.append("\t" + ns);
                     });
                 builder.append("\n");
             }
@@ -143,7 +145,9 @@ public class DataExportService {
                         List<Boolean> l = resMap.get(s);
                         int s1 = l.stream().filter(b -> b).collect(Collectors.toList()).size();
                         int s2 = l.size();
-                        builder.append("\t" + l == null ? 0. : (s1 * 1.) / (s2 * 1.));
+                        double d = l == null ? 0. : (s1 * 1.) / (s2 * 1.);
+                        String ds = ""+d;
+                        builder.append("\t" + ds);
                     });
                 builder.append("\n");
             }
